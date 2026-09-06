@@ -351,7 +351,7 @@ function App() {
 
         const modelName = getActualModelName(selectedAiModel);
         const formatPrompt = selectedPatterns.map(id => getPatternPrompt(id)).join("\n\n");
-        const systemPrompt = `※あなたはベテラン釣り船「山下丸」の船長です。海の男らしく、媚びないけれどお客様への温かみがある性格として、以下の釣行記録を作成してください。■ 絶対厳守のルール・文体：「です・ます調」で統一する。簡潔な「〜です」「〜でした」という表現にする（「〜ですね」「〜ですよ」などの甘い語尾、丁寧すぎる表現禁止、「だぜ」「だな」などの友達や後輩にしゃべるような表現は禁止）。・表現：「混じる」は「交じる」に、「潮周り」は「潮回り」に統一。・速度：潮や流れは「速い」を使用（「早い」は不可）。・日付：「今日は」「本日は」を使用（「この日は」「当日は」は使用不可）。・禁止：絵文字、太文字、装飾記号（★、◆など）は一切使用しない。・段落と改行の禁止：途中で絶対に改行を行わず、すべての文章を隙間なく繋げて、ひと続きの1つの段落として出力してください。＃ハルシネーション防止の対策・捏造の禁止：提供された【釣果データ】および【船長からの追加情報】にある事実のみを使用してください。書いていない出来事、釣れていない魚種などを勝手に想像して創作（捏造）することは絶対に禁止です。・推測の禁止：情報が不足している項目について、無理に推測で文章を膨らませないでください。情報がない場合はその話題には触れず、ある事実だけを使って簡潔に構成してください。・誇張の禁止：釣果やサイズについて、データ以上の大げさな表現はしないでください。・トーンの合わせ方：指定された「船全体の調子（絶好調/好調/普通/食い渋り/厳しい）」に100%合わせて文章のテンションを調整してください。■ 記載内容のルール1. 冒頭：必ず「〇〇沖へと出船しました。」から開始し、次に「海上では…」と天候や海況（風・波・水温・潮色）を伝える。海況を伝える際は情景が目に浮かぶような表現を1文交え、潮回り、海水温、潮色を簡潔に一連の流れで記載してください。特に指示がない限り"水深〇〇mでした"は不要です。2. 状況：潮の流れの強さや変化、魚の活性、印象的なエピソードを組み込む。3. 竿頭の釣果と名前、二番手は釣果だけを紹介する：名前を出すのは「竿頭」のみ。単位（匹、尾、枚、杯など）は魚によって変更すること。4. サイズ：数字（〇cm）は絶対に出さず、「良型」「中型主体」などの言葉のみで表現する。5. 分析：竿頭の釣り方や好釣果の要因、決め手、コツ、工夫した点などを分析して書く。6. 締め：釣れた人・釣れなかった人双方に配慮し、「またのご乗船お待ちしております」と前向きに締める。■ 出力フォーマット必ず以下の■■■タイトル■■■という区切り文字で区切って、それぞれ明確に切り口やトーンを変えた指定パターンの文章を出力してください。余計な挨拶やマークダウン(\`\`\`など)は含めないでください。${formatPrompt}`;
+        const systemPrompt = `※あなたはベテラン釣り船「山下丸」の船長です。海の男らしく、媚びないけれどお客様への温かみがある性格として、以下の釣行記録を作成してください。■ 絶対厳守のルール・文体：「です・ます調」で統一する。簡潔な「〜です」「〜でした」という表現にする（「〜ですね」「〜ですよ」などの甘い語尾、丁寧すぎる表現禁止、「だぜ」「だな」などの友達や後輩にしゃべるような表現は禁止）。・敬称のルール：竿頭などお客様のお名前を紹介する際は、かしこまりすぎた「様」ではなく、必ず「さん」付けに統一すること（例: 〇〇さん）。・表現：「混じる」は「交じる」に、「潮周り」は「潮回り」に統一。・速度：潮や流れは「速い」を使用（「早い」は不可）。・日付：「今日は」「本日は」を使用（「この日は」「当日は」は使用不可）。・禁止：絵文字、太文字、装飾記号（★、◆など）は一切使用しない。・段落と改行の禁止：途中で絶対に改行を行わず、すべての文章を隙間なく繋げて、ひと続きの1つの段落として出力してください。＃ハルシネーション防止の対策・捏造の禁止：提供された【釣果データ】および【船長からの追加情報】にある事実のみを使用してください。書いていない出来事、釣れていない魚種などを勝手に想像して創作（捏造）することは絶対に禁止です。・推測の禁止：情報が不足している項目について、無理に推測で文章を膨らませないでください。情報がない場合はその話題には触れず、ある事実だけを使って簡潔に構成してください。・誇張の禁止：釣果やサイズについて、データ以上の大げさな表現はしないでください。・トーンの合わせ方：指定された「船全体の調子（絶好調/好調/普通/食い渋り/厳しい）」に100%合わせて文章のテンションを調整してください。■ 記載内容のルール1. 冒頭：必ず「〇〇沖へと出船しました。」から開始し、次に「海上では…」と天候や海況（風・波・水温・潮色）を伝える。海況を伝える際は情景が目に浮かぶような表現を1文交え、潮回り、海水温、潮色を簡潔に一連の流れで記載してください。特に指示がない限り"水深〇〇mでした"は不要です。2. 状況：潮の流れの強さや変化、魚の活性、印象的なエピソードを組み込む。3. 竿頭の釣果とお名前（敬称は「さん」）、二番手は釣果だけを紹介する：名前を出すのは「竿頭」のみ。単位（匹、尾、枚、杯など）は魚によって変更すること。4. サイズ：数字（〇cm）は絶対に出さず、「良型」「中型主体」などの言葉のみで表現する。5. 分析：竿頭の釣り方や好釣果の要因、決め手、コツ、工夫した点などを分析して書く。6. 締め：釣れた人・釣れなかった人双方に配慮し、「またのご乗船お待ちしております」と前向きに締める。■ 出力フォーマット必ず以下の■■■タイトル■■■という区切り文字で区切って、それぞれ明確に切り口やトーンを変えた指定パターンの文章を出力してください。余計な挨拶やマークダウン(\`\`\`など)は含めないでください。${formatPrompt}`;
 
         const unit = getUnit(record.targetFish);
         let inputData = `日付: ${record.date} (${getDayOfWeek(record.date)})\n釣り物: ${record.targetFish}\n釣果: ${record.min}〜${record.max} ${unit}\n竿頭: ${record.topAnglerName || 'なし'}\nポイント: ${record.point || ''}\n水深: ${record.waterDepth || ''}m / 水温: ${record.waterTemp || ''}℃ / 潮色: ${record.tide || ''} / 潮回り: ${record.tideState || ''}\n天候・風波: 前半[${record.weather1 || ''}, ${record.windDir1 || ''} ${record.windSpeed1 || ''}, ${record.waveHeight1 || ''}] / 後半[${record.weather2 || ''}, ${record.windDir2 || ''} ${record.windSpeed2 || ''}, ${record.waveHeight2 || ''}]`;
@@ -422,7 +422,7 @@ function App() {
             text += `型: ${record.sizeMin || '?'}〜${record.sizeMax || '?'} cm\n`;
         }
         if (record.topAnglerName) {
-            text += `竿頭: ${record.topAnglerName} 様\n`;
+            text += `竿頭: ${record.topAnglerName} さん\n`;
         }
         if (record.point || record.waterTemp || record.waterDepth || record.tide || record.tideState) {
             text += `【海の状況】\n`;
@@ -959,7 +959,7 @@ function App() {
                                                 {r.waterTemp && <span>{r.waterTemp}℃</span>}
                                                 {r.tide && <span>{r.tide}</span>}
                                                 {r.tideState && <span>{r.tideState}</span>}
-                                                {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${r.weather2}` : ''}</span>}
+                                                {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${weather2}` : ''}</span>}
                                                 {(r.windDir1 || r.windSpeed1) && <span>{r.windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
                                                 {r.waveHeight1 && <span>{r.waveHeight1}</span>}
                                             </div>
@@ -1172,7 +1172,7 @@ function App() {
             {/* 下部固定ナビゲーション */}
             <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2">
                 <button
-                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('input')}
                 >
                     <IconAnchor className="w-5 h-5 mb-0.5" />
@@ -1180,7 +1180,7 @@ function App() {
                 </button>
 
                 <button
-                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors relative ${activeTab === 'counter' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors relative ${activeTab === 'counter' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => {
                         if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
                         else setActiveTab('counter');
@@ -1195,7 +1195,7 @@ function App() {
                 </button>
 
                 <button
-                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('history')}
                 >
                     <IconCalendar className="w-5 h-5 mb-0.5" />
