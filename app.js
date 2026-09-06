@@ -1172,7 +1172,7 @@ function App() {
             {/* 下部固定ナビゲーション */}
             <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2">
                 <button
-                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('input')}
                 >
                     <IconAnchor className="w-5 h-5 mb-0.5" />
@@ -1180,7 +1180,7 @@ function App() {
                 </button>
 
                 <button
-                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors relative ${activeTab === 'counter' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors relative ${activeTab === 'counter' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => {
                         if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
                         else setActiveTab('counter');
@@ -1195,7 +1195,7 @@ function App() {
                 </button>
 
                 <button
-                    className={`flex-1 flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('history')}
                 >
                     <IconCalendar className="w-5 h-5 mb-0.5" />
