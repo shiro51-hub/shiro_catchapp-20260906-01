@@ -1137,7 +1137,8 @@ function App() {
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 if (r.aiAnalysisResult) {
-                                                    setCurrentAnalysis({ record, data: r.aiAnalysisResult });
+                                                    // 修正箇所：存在しないrecordではなくrを渡すことで、保存済みの分析結果を即座に再表示
+                                                    setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
                                                     setShowAnalysisModal(true);
                                                 } else {
                                                     handleRunAiAnalysis(r);
