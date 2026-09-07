@@ -27,7 +27,8 @@ const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
 function ShareImageModal({ record, onClose, setToastMessage }) {
     const [isAnonymous, setIsAnonymous] = React.useState(false);
     const [isGenerating, setIsGenerating] = React.useState(false);
-    const [cardTheme, setCardTheme] = React.useState('dark'); // 'dark' or 'light' (marine blue)
+    const [cardTheme, setCardTheme] = React.useState('light'); // 初期をマリンブルーに
+    const [useImageLogo, setUseImageLogo] = React.useState(false); // 画像ロゴ使用スイッチ
     const cardRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -78,31 +79,52 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
     return (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]">
-            <div className="flex-1 w-full overflow-y-auto pb-[280px] pt-8 px-4 flex justify-center items-start no-scrollbar">
+            <div className="flex-1 w-full overflow-y-auto pb-[320px] pt-8 px-4 flex justify-center items-start no-scrollbar">
                 <div 
                     ref={cardRef} 
                     className={`${bgClass} ${textClass} relative flex flex-col border-[6px] shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
                     style={{ width: '100%', maxWidth: '420px', minWidth: '340px' }}
                 >
-                    {/* 背景透かしロゴ (白のまま透明度だけ変える) */}
-                    <img 
-                        src="./fish_logo.png" 
-                        onError={(e) => e.target.style.display='none'} 
-                        className={`absolute inset-0 m-auto w-[85%] h-[85%] object-contain pointer-events-none transition-all duration-300 ${isDark ? 'opacity-[0.12]' : 'opacity-[0.15]'}`} 
-                        alt="" 
-                    />
+                    {/* 背景透かし (画像を使うか、内蔵の透かしを使うか分岐) */}
+                    {useImageLogo ? (
+                        <img 
+                            src="./fish_logo.png" 
+                            onError={(e) => e.target.style.display='none'} 
+                            className={`absolute inset-0 m-auto w-[85%] h-[85%] object-contain pointer-events-none transition-all duration-300 ${isDark ? 'opacity-[0.12]' : 'opacity-[0.25]'}`} 
+                            alt="" 
+                        />
+                    ) : (
+                        <div className={`absolute inset-0 m-auto flex items-center justify-center pointer-events-none overflow-hidden transition-all duration-300 ${isDark ? 'opacity-[0.03]' : 'opacity-[0.08]'}`}>
+                            <div className="font-black text-white text-[70px] sm:text-[85px] leading-none transform -rotate-12 select-none tracking-tighter whitespace-nowrap">
+                                YAMASHITAMARU
+                            </div>
+                        </div>
+                    )}
                     
                     <div className="p-4 sm:p-5 flex flex-col gap-4 relative z-10">
                         {/* ヘッダー */}
                         <div className={`flex justify-between items-start border-b pb-3 ${isDark ? 'border-slate-700/80' : 'border-blue-400/50'}`}>
                             <div className="flex flex-col gap-1.5">
-                                {/* テキストロゴ */}
-                                <img 
-                                    src="./text_logo.png" 
-                                    onError={(e) => e.target.style.display='none'} 
-                                    className="h-8 sm:h-10 object-contain object-left mb-1 transition-all duration-300" 
-                                    alt="yamashitamaru" 
-                                />
+                                {/* テキストロゴ分岐 */}
+                                {useImageLogo ? (
+                                    <img 
+                                        src="./text_logo.png" 
+                                        onError={(e) => e.target.style.display='none'} 
+                                        className="h-8 sm:h-10 object-contain object-left mb-1 transition-all duration-300" 
+                                        alt="yamashitamaru" 
+                                    />
+                                ) : (
+                                    <div className="flex flex-col items-start mb-1 select-none">
+                                        <div className="font-black text-[24px] sm:text-[28px] tracking-tighter text-white leading-none mb-0.5" style={{ transform: 'scaleX(1.15)', transformOrigin: 'left' }}>
+                                            yamashitamaru
+                                        </div>
+                                        <div className="font-bold text-[10px] sm:text-[11px] tracking-[0.25em] text-white/90">
+                                            kawahagi spirit
+                                        </div>
+                                        <div className="w-full h-1.5 bg-yellow-400 mt-1 rounded-full shadow-sm"></div>
+                                    </div>
+                                )}
+
                                 <div className={`text-xs sm:text-sm font-bold tracking-widest ${isDark ? 'text-sky-300' : 'text-sky-100'}`}>
                                     {record.date.replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 && `| ${record.weather1}`}
                                 </div>
@@ -212,14 +234,14 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             </div>
 
             {/* コントロールパネル */}
-            <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-4 flex flex-col gap-3 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
-                <div className="flex justify-between items-center mb-1">
+            <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-4 flex flex-col gap-2.5 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
+                <div className="flex justify-between items-center mb-0.5">
                     <span className="font-black text-gray-800 dark:text-slate-100 text-base sm:text-lg">釣果ボードを作成</span>
                     <button onClick={onClose} className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300">✕</button>
                 </div>
                 
                 {/* テーマ切り替えボタン */}
-                <div className="flex gap-2 p-1 bg-gray-100 dark:bg-slate-700/50 rounded-xl mb-1">
+                <div className="flex gap-2 p-1 bg-gray-100 dark:bg-slate-700/50 rounded-xl">
                     <button 
                         onClick={() => setCardTheme('light')} 
                         className={`flex-1 py-2 text-sm font-black rounded-lg transition-all ${cardTheme === 'light' ? 'bg-sky-500 shadow text-white' : 'text-gray-500 dark:text-slate-400 active:bg-gray-200'}`}
@@ -234,23 +256,26 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     </button>
                 </div>
 
-                <label className="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
+                <label className="flex items-center justify-between p-2.5 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
                     <span className="text-sm font-bold text-gray-700 dark:text-slate-200">
                         お名前を隠す（匿名化）
-                        <div className="text-[10px] text-gray-500 dark:text-slate-400 mt-0.5">SNSで共有する際などにプライバシーを保護します</div>
                     </span>
-                    <input 
-                        type="checkbox" 
-                        className="w-5 h-5 text-sky-500 rounded focus:ring-sky-500 border-gray-300 dark:border-slate-600 dark:bg-slate-800"
-                        checked={isAnonymous}
-                        onChange={(e) => setIsAnonymous(e.target.checked)}
-                    />
+                    <input type="checkbox" className="w-5 h-5 text-sky-500 rounded border-gray-300" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
+                </label>
+
+                {/* 画像ロゴのオンオフスイッチ（新機能） */}
+                <label className="flex items-center justify-between p-2.5 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
+                    <span className="text-sm font-bold text-gray-700 dark:text-slate-200">
+                        アップロードした画像を使う
+                        <div className="text-[10px] text-gray-500 dark:text-slate-400 mt-0.5 leading-tight">※背景が白くなる場合はオフにしてください</div>
+                    </span>
+                    <input type="checkbox" className="w-5 h-5 text-sky-500 rounded border-gray-300" checked={useImageLogo} onChange={(e) => setUseImageLogo(e.target.checked)} />
                 </label>
 
                 <button 
                     onClick={handleDownload}
                     disabled={isGenerating}
-                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3.5 rounded-xl text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2"
+                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3.5 rounded-xl text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2 mt-1"
                 >
                     {isGenerating ? (
                         <><span className="animate-spin text-lg leading-none mb-1">↻</span> キャプチャ中...</>
