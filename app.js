@@ -91,16 +91,16 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー */}
+                        {/* ヘッダー：日付をロゴの真ん中直下に配置 */}
                         <div className={`flex justify-between items-center border-b pb-2 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
-                            <div className="flex flex-col">
+                            <div className="flex flex-col items-center">
                                 <img 
                                     src="./text_logo.png" 
                                     onError={(e) => { e.target.style.display='none'; }} 
-                                    className="h-8 sm:h-9 object-contain object-left" 
+                                    className="h-8 sm:h-9 object-contain" 
                                     alt="yamashitamaru" 
                                 />
-                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.5 }}>
+                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.5 }}>
                                     {record.date.replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 && `| ${record.weather1}`}
                                 </div>
                             </div>
@@ -111,7 +111,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 【左：釣果＋数】 / 【右：竿頭＋純白名前＋末尾に小さく「さん」】 */}
+                        {/* 【左：釣果＋純白数字】 / 【右：竿頭＋純白名前＋末尾に「さん」】 */}
                         <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -120,10 +120,10 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                             釣果
                                         </span>
                                         <div className="flex items-baseline gap-1 mt-0.5" style={{ lineHeight: 1.25 }}>
-                                            <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm">
                                                 {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                             </span>
-                                            <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                            <span className="text-xs sm:text-sm font-bold text-slate-200">{unit}</span>
                                         </div>
                                     </div>
 
@@ -154,10 +154,10 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     <div className="flex justify-between items-baseline border-b border-white/10 pb-1">
                                         <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>釣果</span>
                                         <div className="flex items-baseline gap-1">
-                                            <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm">
                                                 {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                             </span>
-                                            <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                            <span className="text-xs sm:text-sm font-bold text-slate-200">{unit}</span>
                                         </div>
                                     </div>
                                     <div className="flex flex-col pt-0.5">
@@ -183,7 +183,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             )}
                         </div>
 
-                        {/* 座席リスト（平均以上：白文字、その他：薄いグレー） */}
+                        {/* 座席リスト（平均以上：白、その他：薄いグレー） */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
@@ -194,9 +194,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         const isTop = c === stats.max && c > 0;
                                         const isAvg = c >= stats.avg && c > 0 && !isTop;
                                         
-                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100'; // その他：薄いグレー
-                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black'; // 竿頭：山吹色
-                                        else if (isAvg) textColor = 'text-white font-bold'; // 平均以上：白
+                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100';
+                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black';
+                                        else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
                                             <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
@@ -224,9 +224,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         const isTop = c === stats.max && c > 0;
                                         const isAvg = c >= stats.avg && c > 0 && !isTop;
 
-                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100'; // その他：薄いグレー
-                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black'; // 竿頭：山吹色
-                                        else if (isAvg) textColor = 'text-white font-bold'; // 平均以上：白
+                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100';
+                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black';
+                                        else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
                                             <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
@@ -247,24 +247,25 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報 */}
-                        <div className={`rounded-lg px-2.5 py-2.5 text-[11px] sm:text-xs flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`} style={{ lineHeight: 1.5, paddingBottom: '6px' }}>
-                            <div className="flex items-center gap-2.5 flex-wrap">
+                        {/* フッター情報（文字サイズを一回り拡大 text-xs sm:text-sm、水深をポイントの次に配置） */}
+                        <div className={`rounded-lg px-3 py-2.5 text-xs sm:text-sm flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`} style={{ lineHeight: 1.5 }}>
+                            <div className="flex items-center gap-3 flex-wrap font-bold">
                                 {/* 型（サイズ） */}
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
-                                    型: <span className="font-bold text-white">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
+                                    型: <span className="font-black text-white">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
                                 </div>
-                                <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>
-                                    総計: <span className="font-bold text-white">{record.total || 0}</span> {unit}
+                                <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
+                                    総計: <span className="font-black text-white">{record.total || 0}</span> {unit}
                                 </div>
-                                <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>
-                                    平均: <span className="font-bold text-white">{record.avg || 0}</span> {unit}
+                                <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
+                                    平均: <span className="font-black text-white">{record.avg || 0}</span> {unit}
                                 </div>
                             </div>
-                            <div className={`flex gap-2 shrink-0 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                            <div className={`flex gap-2.5 shrink-0 flex-wrap font-bold ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>
                                 {record.waterTemp && <span>水温:{record.waterTemp}℃</span>}
                                 {record.tideState && <span>潮:{record.tideState}</span>}
-                                {record.point && <span>{record.point}</span>}
+                                {record.point && <span className="text-white font-black">{record.point}</span>}
+                                {record.waterDepth && <span>水深:{record.waterDepth}m</span>}
                             </div>
                         </div>
                     </div>
