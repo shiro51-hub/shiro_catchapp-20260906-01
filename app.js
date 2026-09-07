@@ -49,6 +49,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     const textClass = isDark ? 'text-slate-100' : 'text-white';
     const canvasBg = isDark ? '#0f172a' : '#0369a1';
 
+    // 竿頭の人数の取得（複数人対応）
+    const topCount = stats.topNames ? stats.topNames.length : (record.topAnglerName ? 1 : 0);
+
     const handleDownload = async () => {
         setIsGenerating(true);
         setToastMessage('ボードを作成しています...');
@@ -109,41 +112,80 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 本日の釣果（中央揃え） ＋ 【左：釣果: 匹数 / 右：👑 竿頭: 名前】 */}
-                        <div className={`rounded-lg px-3.5 py-3 border shadow-sm flex flex-col justify-center gap-1.5 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
-                            {/* 本日の釣果：センター配置 */}
-                            <div className="text-center pb-0.5">
-                                <span className={`text-xs sm:text-sm font-black tracking-widest inline-block ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.4 }}>
-                                    — 本日の釣果 —
-                                </span>
-                            </div>
+                        {/* 新レイアウト：【左：釣果＋数】 / 【右：竿頭＋橙色名前＋末尾に小さく「さん」】 */}
+                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                            {topCount <= 2 ? (
+                                /* 竿頭が1〜2名の場合：横並び2分割レイアウト */
+                                <div className="flex justify-between items-end gap-2">
+                                    {/* 左側：釣果（上：グレー、下：橙色数字） */}
+                                    <div className="flex flex-col items-start shrink-0">
+                                        <span className={`text-[11px] sm:text-xs font-bold tracking-wider ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                            釣果
+                                        </span>
+                                        <div className="flex items-baseline gap-1 mt-0.5" style={{ lineHeight: 1.25 }}>
+                                            <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                                {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
+                                            </span>
+                                            <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                        </div>
+                                    </div>
 
-                            {/* 左：釣果: 5〜35 枚 ／ 右：👑 竿頭: 〇〇 さん */}
-                            <div className="flex justify-between items-center gap-2 pt-1">
-                                {/* 左側：釣果: 匹数 */}
-                                <div className="flex items-baseline gap-1.5 shrink-0 pb-1" style={{ lineHeight: 1.3 }}>
-                                    <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
-                                        釣果:
-                                    </span>
-                                    <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
-                                    </span>
-                                    <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                    {/* 右側：竿頭（上：グレー、下：橙色お名前、末尾に1つだけ「さん」） */}
+                                    <div className="flex flex-col items-end text-right flex-1 min-w-0 pl-2">
+                                        <span className={`text-[11px] sm:text-xs font-bold tracking-wider flex items-center ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                            <span className="mr-0.5 text-xs">👑</span>竿頭
+                                        </span>
+                                        <div className="mt-0.5 w-full flex justify-end items-baseline truncate">
+                                            {isAnonymous ? (
+                                                <span className={`text-lg sm:text-xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>非公開</span>
+                                            ) : topCount === 0 ? (
+                                                <span className={`text-lg font-black ${isDark ? 'text-slate-500' : 'text-white/60'}`}>-</span>
+                                            ) : (
+                                                <div className="flex items-baseline justify-end truncate max-w-full">
+                                                    <span className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black truncate ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
+                                                        {stats.topNames.join('・')}
+                                                    </span>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-1 shrink-0 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                                        さん
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-
-                                {/* 右側：👑 竿頭: 名前 */}
-                                <div className="flex items-baseline justify-end gap-1 pl-2 pb-1" style={{ lineHeight: 1.4 }}>
-                                    <span className={`text-sm sm:text-base font-bold shrink-0 ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        👑 竿頭:
-                                    </span>
-                                    <span className="text-xl sm:text-2xl font-black text-white truncate max-w-[140px] sm:max-w-[170px] inline-block" style={{ lineHeight: 1.4, paddingBottom: '4px' }}>
-                                        {isAnonymous ? '非公開' : (record.topAnglerName || '-')}
-                                    </span>
-                                    {!isAnonymous && record.topAnglerName && (
-                                        <span className="text-xs sm:text-sm font-bold text-slate-300 shrink-0 inline-block pb-0.5">さん</span>
-                                    )}
+                            ) : (
+                                /* 竿頭が3名以上（3〜5名など）の場合：上下2段展開で全員のお名前をゆったり表示 */
+                                <div className="flex flex-col gap-1.5">
+                                    <div className="flex justify-between items-baseline border-b border-white/10 pb-1">
+                                        <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>釣果</span>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                                {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
+                                            </span>
+                                            <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col pt-0.5">
+                                        <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'} mb-0.5`}>
+                                            👑 竿頭 ({topCount}名)
+                                        </span>
+                                        <div className="flex flex-wrap items-baseline gap-1">
+                                            {isAnonymous ? (
+                                                <span className={`text-sm font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>非公開</span>
+                                            ) : (
+                                                <div className="flex flex-wrap items-baseline gap-x-1">
+                                                    <span className={`text-sm sm:text-base font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.4 }}>
+                                                        {stats.topNames.join('・')}
+                                                    </span>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-0.5 shrink-0 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                                        さん
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
 
                         {/* 座席リスト */}
@@ -170,7 +212,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     </span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
-                                                    {isTop && <span className="text-xs">👑</span>}
+                                                    {isTop && <span className="text-xs mr-0.5">👑</span>}
                                                     <span className="inline-block" style={{ lineHeight: 1.4 }}>{c}</span>
                                                 </div>
                                             </div>
@@ -200,7 +242,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     </span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
-                                                    {isTop && <span className="text-xs">👑</span>}
+                                                    {isTop && <span className="text-xs mr-0.5">👑</span>}
                                                     <span className="inline-block" style={{ lineHeight: 1.4 }}>{c}</span>
                                                 </div>
                                             </div>
