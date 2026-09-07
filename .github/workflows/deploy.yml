@@ -1,70 +1,77 @@
-name: Build and Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # メインブランチ名が master の場合は master に変更してください
 
+# GitHub Pages へのデプロイ権限
 permissions:
   contents: read
   pages: write
   id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: 'pages'
+  cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: リポジトリのチェックアウト
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Node.js のセットアップ
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install Babel
+      - name: 依存パッケージのインストール
         run: |
-          npm init -y
-          npm install --save-dev @babel/core @babel/cli @babel/preset-react
+          if [ -f package.json ]; then
+            npm install
+          else
+            npm install @babel/core @babel/cli @babel/preset-react
+          fi
 
-      - name: Build / Pre-compile scripts
+      - name: アプリのビルド & キャッシュ対策処理
         run: |
+          # 公開用ディレクトリを作成
           mkdir -p dist
-          # 5つのファイルを1つに結合して事前にJSへトランスパイル
+
+          # 1. 5つのReact/JSファイルを結合して1つの bundle.js に事前コンパイル
           cat api.js counter.js settings.js report.js app.js > dist/temp_combined.jsx
           npx babel dist/temp_combined.jsx --out-file dist/bundle.js --presets=@babel/preset-react
           rm dist/temp_combined.jsx
 
-          # 高速配信用にHTMLを調整（Babel本体と個別スクリプト読み込みを排除）
+          # 2. 高速配信用にHTMLを調整（Babel本体と個別スクリプト読み込みを排除）
           sed '/<script src="https:\/\/unpkg.com\/@babel\/standalone/d' index.html > dist/index.html
-          sed -i '/<script type="text\/babel" src="api.js"><\/script>/c\<script src="bundle.js"><\/script>' dist/index.html
+          
+          # ★キャッシュ対策：コミットIDをバージョン番号として付与（即時反映させる仕掛け）
+          CACHE_BUST_TAG="<script src=\"bundle.js?v=${{ github.sha }}\"><\/script>"
+          sed -i "/<script type=\"text\/babel\" src=\"api.js\"><\/script>/c\\$CACHE_BUST_TAG" dist/index.html
+          
           sed -i '/<script type="text\/babel" src="counter.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="settings.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="report.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="app.js"><\/script>/d' dist/index.html
 
-          # 【追加】画像やPWA関連ファイルを公開用フォルダ(dist)に忘れずコピーする
+          # 3. 画像やPWA関連ファイルを公開用フォルダに漏れなくコピー
           cp *.png dist/ 2>/dev/null || true
           cp *.jpg dist/ 2>/dev/null || true
+          cp *.jpeg dist/ 2>/dev/null || true
+          cp *.svg dist/ 2>/dev/null || true
+          cp *.ico dist/ 2>/dev/null || true
+          cp *.webp dist/ 2>/dev/null || true
           cp manifest.json dist/ 2>/dev/null || true
           cp sw.js dist/ 2>/dev/null || true
 
-      - name: Upload artifact
+      - name: GitHub Pages 用アーティファクトのアップロード
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: './dist'
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
+      - name: GitHub Pages へデプロイ
         id: deployment
         uses: actions/deploy-pages@v4
