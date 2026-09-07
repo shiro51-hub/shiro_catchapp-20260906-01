@@ -106,40 +106,47 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 本日の釣果・型・竿頭（スリム＆コンパクト設計） */}
-                        <div className={`rounded-lg px-3 py-2 border shadow-sm flex flex-col justify-center ${isDark ? 'bg-slate-800/80 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
-                            {/* 1行目：釣果幅 */}
-                            <div className="flex justify-between items-baseline">
-                                <span className={`text-xs font-black tracking-wider ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                    本日の釣果
+                        {/* 本日の釣果（中央） / 匹数(左)・サイズ(右) / 竿頭(中央) */}
+                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col justify-center ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                            {/* 1段目：本日の釣果（センター） */}
+                            <div className="text-center pb-1">
+                                <span className={`text-xs font-black tracking-widest ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                    — 本日の釣果 —
                                 </span>
+                            </div>
+
+                            {/* 2段目：左側に匹数、右側にサイズ */}
+                            <div className="flex justify-between items-baseline px-1 py-1">
+                                {/* 左側：匹数 */}
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-2xl sm:text-3xl font-black leading-none ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                         {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                     </span>
                                     <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
                                 </div>
-                            </div>
 
-                            {/* 2行目：型と竿頭を1行に凝縮 */}
-                            <div className={`flex justify-between items-center pt-1.5 mt-1 border-t text-[11px] sm:text-xs ${isDark ? 'border-slate-700' : 'border-white/15'}`}>
-                                <div className="text-slate-300 font-bold truncate pr-2">
+                                {/* 右側：サイズ */}
+                                <div className="text-right">
                                     {(record.sizeMin || record.sizeMax) ? (
-                                        <span>型: <span className="text-white font-black">{record.sizeMin || '?'}〜{record.sizeMax || '?'}</span> cm</span>
+                                        <span className="text-xs sm:text-sm font-bold text-slate-300">
+                                            型: <span className="text-white font-black">{record.sizeMin || '?'}〜{record.sizeMax || '?'}</span> cm
+                                        </span>
                                     ) : (
-                                        <span className="opacity-70">型: -</span>
+                                        <span className="text-xs text-slate-400 font-bold">型: -</span>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-1 font-bold shrink-0">
-                                    <span className={isDark ? 'text-amber-400' : 'text-yellow-300'}>👑 竿頭:</span>
-                                    <span className="text-white font-black truncate max-w-[130px] sm:max-w-[160px]">
-                                        {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
-                                    </span>
-                                </div>
+                            </div>
+
+                            {/* 3段目：竿頭の名前（センター） */}
+                            <div className={`text-center pt-2 mt-1.5 border-t text-xs sm:text-sm ${isDark ? 'border-slate-700/80' : 'border-white/15'}`}>
+                                <span className={`font-bold mr-1.5 ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>👑 本日の竿頭:</span>
+                                <span className="text-white font-black">
+                                    {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
+                                </span>
                             </div>
                         </div>
 
-                        {/* 座席リスト（人数が多い時は自動で高さを詰め、文字を最適化） */}
+                        {/* 座席リスト */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
