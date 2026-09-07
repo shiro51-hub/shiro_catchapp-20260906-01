@@ -1033,7 +1033,7 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（ロゴ＋サブタイトルをセットでしっかり左方向へスライド配置） */}
+            {/* ヘッダー（サブタイトルをもう一回り大きく text-xs sm:text-sm に調整） */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8 shrink-0"></div>
                 <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-3.5 sm:-translate-x-5">
@@ -1053,7 +1053,7 @@ function App() {
                     >
                         山下丸
                     </span>
-                    <span className="font-sans font-bold text-[10px] sm:text-[11px] tracking-widest text-sky-300 drop-shadow-sm mt-0.5 uppercase">
+                    <span className="font-sans font-extrabold text-xs sm:text-sm tracking-wider text-sky-300 drop-shadow-sm mt-0.5 uppercase">
                         {activeTab === 'history' ? 'SeaNote Archive' : activeTab === 'counter' ? 'Count Fish' : 'CatchLog Pro'}
                     </span>
                 </div>
