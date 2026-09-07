@@ -2,6 +2,214 @@
 // app.js : メイン司令塔・画面遷移・全体レンダリング
 // ==========================================
 
+// 画像キャプチャ用のライブラリを動的に読み込む機能
+const loadHtml2Canvas = () => {
+    return new Promise((resolve, reject) => {
+        if (window.html2canvas) {
+            resolve(window.html2canvas);
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => resolve(window.html2canvas);
+        script.onerror = () => reject(new Error('画像の生成に必要なツールの読み込みに失敗しました'));
+        document.head.appendChild(script);
+    });
+};
+
+const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+);
+
+// ==========================================
+// デジタル釣果ボード（SNS画像）作成モーダル
+// ==========================================
+function ShareImageModal({ record, onClose, setToastMessage }) {
+    const [isAnonymous, setIsAnonymous] = React.useState(false);
+    const [isGenerating, setIsGenerating] = React.useState(false);
+    const cardRef = React.useRef(null);
+
+    React.useEffect(() => {
+        loadHtml2Canvas(); // モーダルを開いた瞬間に裏でツールを読み込んでおく
+    }, []);
+
+    if (!record) return null;
+
+    const stats = getTopAnglerDetails(record.port || [], record.starboard || []);
+    const unit = getUnit(record.targetFish);
+    const pSeats = (record.port || []).filter(s => s && s.isVisible !== false);
+    const sSeats = (record.starboard || []).filter(s => s && s.isVisible !== false);
+
+    const handleDownload = async () => {
+        setIsGenerating(true);
+        setToastMessage('カードを作成しています...');
+        try {
+            const html2canvas = await loadHtml2Canvas();
+            const canvas = await html2canvas(cardRef.current, {
+                scale: 3, // SNSに耐える高画質化
+                backgroundColor: '#0f172a', // ダーク背景
+                useCORS: true,
+                logging: false
+            });
+            const imgData = canvas.toDataURL('image/png');
+            
+            // スマホやPCへダウンロード
+            const link = document.createElement('a');
+            const safeDate = record.date.replace(/-/g, '');
+            const safeTarget = record.targetFish || '釣果';
+            link.download = `山下丸_${safeDate}_${safeTarget}.png`;
+            link.href = imgData;
+            link.click();
+            
+            setToastMessage('釣果カードを保存しました！\n写真アプリからSNSに投稿できます。');
+        } catch (e) {
+            console.error(e);
+            setToastMessage('画像の作成に失敗しました。電波の良い場所でお試しください。');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]">
+            {/* プレビュー表示エリア (スクロール可能) */}
+            <div className="flex-1 w-full overflow-y-auto pb-48 pt-8 px-4 flex justify-center items-start no-scrollbar">
+                {/* 撮影用のノード。見栄えを担保するため固定幅で配置 */}
+                <div 
+                    ref={cardRef} 
+                    className="bg-slate-900 text-slate-100 relative flex flex-col border-[6px] border-slate-950 shadow-2xl rounded-lg overflow-hidden" 
+                    style={{ width: '100%', maxWidth: '420px', minWidth: '340px' }}
+                >
+                    {/* 背景透かしロゴ (ここをPNGに変更) */}
+                    <img src="./fish_logo.png" onError={(e) => e.target.style.display='none'} className="absolute -bottom-10 -right-10 w-64 h-64 object-cover opacity-20 pointer-events-none rounded-lg" alt="" />
+                    
+                    <div className="p-4 sm:p-5 flex flex-col gap-4 relative z-10">
+                        {/* ヘッダー */}
+                        <div className="flex justify-between items-start border-b border-slate-700/80 pb-3">
+                            <div className="flex flex-col gap-1.5">
+                                {/* テキストロゴ (ここをPNGに変更) */}
+                                <img src="./text_logo.png" onError={(e) => e.target.style.display='none'} className="h-6 sm:h-7 object-contain object-left mb-1 rounded" alt="yamashitamaru" />
+                                <div className="text-[11px] sm:text-xs text-sky-300 font-bold tracking-widest">{record.date.replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 && `| ${record.weather1}`}</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-2xl sm:text-3xl font-black text-white tracking-tight">{record.targetFish}</div>
+                            </div>
+                        </div>
+
+                        {/* 竿頭 */}
+                        <div className="bg-gradient-to-b from-slate-800/90 to-slate-800/40 rounded-xl p-4 border border-amber-500/30 flex flex-col items-center justify-center shadow-lg relative overflow-hidden backdrop-blur-sm">
+                            <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-amber-600 via-amber-300 to-amber-600"></div>
+                            <div className="text-amber-400 text-[11px] sm:text-xs font-black mb-1.5 flex items-center tracking-widest"><IconTrophy className="w-4 h-4 mr-1" /> 本日の竿頭</div>
+                            <div className="flex items-end justify-center gap-3">
+                                <div className="text-xl sm:text-2xl font-black truncate max-w-[150px] sm:max-w-[200px] text-white">
+                                    {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
+                                </div>
+                                <div className="text-4xl sm:text-5xl font-black text-amber-500 leading-none">{stats.max}<span className="text-lg sm:text-xl ml-1 text-amber-200">{unit}</span></div>
+                            </div>
+                            {(record.sizeMin || record.sizeMax) && (
+                                <div className="text-xs font-bold text-slate-300 mt-2 bg-slate-900/50 px-3 py-1 rounded-full">型: {record.sizeMin || '?'}〜{record.sizeMax || '?'} cm</div>
+                            )}
+                        </div>
+
+                        {/* 座席リスト */}
+                        <div className="flex gap-2.5 w-full mt-1">
+                            {/* 左舷 */}
+                            <div className="flex-1 bg-slate-800/40 rounded-lg p-2.5 border border-slate-700/50 backdrop-blur-sm">
+                                <div className="text-red-400 font-black text-[11px] sm:text-xs tracking-widest border-b border-red-900/50 pb-1 mb-2 text-center">左舷</div>
+                                <div className="space-y-1">
+                                    {pSeats.map((s, i) => {
+                                        const c = parseInt(s.count) || 0;
+                                        const isTop = c === stats.max && c > 0;
+                                        const isAvg = c >= stats.avg && c > 0 && !isTop;
+                                        return (
+                                            <div key={`p-${i}`} className={`flex justify-between items-center text-[11px] sm:text-xs py-0.5 border-b border-slate-700/30 last:border-0 ${isTop ? 'text-amber-400 font-black' : isAvg ? 'text-white font-bold' : 'text-slate-400'}`}>
+                                                <div className="truncate pr-1 flex-1">
+                                                    <span className="opacity-50 mr-1">{s.id}.</span>
+                                                    <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
+                                                </div>
+                                                <div className="font-black flex items-center">{isTop && <IconTrophy className="w-2.5 h-2.5 mr-0.5 text-amber-500" />}{c}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            {/* 右舷 */}
+                            <div className="flex-1 bg-slate-800/40 rounded-lg p-2.5 border border-slate-700/50 backdrop-blur-sm">
+                                <div className="text-emerald-400 font-black text-[11px] sm:text-xs tracking-widest border-b border-emerald-900/50 pb-1 mb-2 text-center">右舷</div>
+                                <div className="space-y-1">
+                                    {sSeats.map((s, i) => {
+                                        const c = parseInt(s.count) || 0;
+                                        const isTop = c === stats.max && c > 0;
+                                        const isAvg = c >= stats.avg && c > 0 && !isTop;
+                                        return (
+                                            <div key={`s-${i}`} className={`flex justify-between items-center text-[11px] sm:text-xs py-0.5 border-b border-slate-700/30 last:border-0 ${isTop ? 'text-amber-400 font-black' : isAvg ? 'text-white font-bold' : 'text-slate-400'}`}>
+                                                <div className="truncate pr-1 flex-1">
+                                                    <span className="opacity-50 mr-1">{s.id}.</span>
+                                                    <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
+                                                </div>
+                                                <div className="font-black flex items-center">{isTop && <IconTrophy className="w-2.5 h-2.5 mr-0.5 text-amber-500" />}{c}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* フッター情報 */}
+                        <div className="bg-slate-950/60 rounded-lg p-2.5 text-[10px] sm:text-[11px] flex flex-wrap gap-x-4 gap-y-1.5 justify-between border border-slate-800 mt-1">
+                            <div className="flex gap-4">
+                                <div className="text-slate-400">船中総計: <span className="text-white font-bold">{record.total || 0}</span> {unit}</div>
+                                <div className="text-slate-400">一人平均: <span className="text-white font-bold">{record.avg || 0}</span> {unit}</div>
+                            </div>
+                            <div className="flex gap-2 sm:gap-3 text-slate-500">
+                                {record.waterTemp && <span>水温: {record.waterTemp}℃</span>}
+                                {record.tideState && <span>潮: {record.tideState}</span>}
+                                {record.point && <span>場所: {record.point}</span>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* コントロールパネル */}
+            <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-4 flex flex-col gap-3 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
+                <div className="flex justify-between items-center mb-1">
+                    <span className="font-black text-gray-800 dark:text-slate-100 text-base sm:text-lg">釣果ボードを作成</span>
+                    <button onClick={onClose} className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300">✕</button>
+                </div>
+                
+                <label className="flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
+                    <span className="text-sm font-bold text-gray-700 dark:text-slate-200">
+                        お名前を隠す（匿名化）
+                        <div className="text-[10px] text-gray-500 dark:text-slate-400 mt-0.5">SNSで共有する際などにプライバシーを保護します</div>
+                    </span>
+                    <input 
+                        type="checkbox" 
+                        className="w-5 h-5 text-sky-500 rounded focus:ring-sky-500 border-gray-300 dark:border-slate-600 dark:bg-slate-800"
+                        checked={isAnonymous}
+                        onChange={(e) => setIsAnonymous(e.target.checked)}
+                    />
+                </label>
+
+                <button 
+                    onClick={handleDownload}
+                    disabled={isGenerating}
+                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3.5 rounded-xl text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2"
+                >
+                    {isGenerating ? (
+                        <><span className="animate-spin text-lg leading-none mb-1">↻</span> キャプチャ中...</>
+                    ) : (
+                        <><IconCamera className="w-5 h-5" /> この画像をスマホに保存</>
+                    )}
+                </button>
+            </div>
+        </div>
+    );
+}
+
+// ==========================================
+// アプリ本体
+// ==========================================
 function App() {
     const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('fishing_last_tab') || 'input');
     const [counterMode, setCounterMode] = React.useState(() => localStorage.getItem('fishing_counter_mode') || 'tap');
@@ -52,6 +260,9 @@ function App() {
     const [expandedRecordId, setExpandedRecordId] = React.useState(null);
     const [sharedRecordId, setSharedRecordId] = React.useState(null);
     const [recordToDelete, setRecordToDelete] = React.useState(null);
+    
+    // SNS画像作成用モーダルの対象レコード
+    const [shareImageRecord, setShareImageRecord] = React.useState(null);
 
     const [showMemoModal, setShowMemoModal] = React.useState(false);
     const [activeMemoRecordId, setActiveMemoRecordId] = React.useState(null);
@@ -684,6 +895,13 @@ function App() {
                 handleCopyPattern={handleCopyPattern}
             />
 
+            {/* SNS画像生成モーダル */}
+            <ShareImageModal
+                record={shareImageRecord}
+                onClose={() => setShareImageRecord(null)}
+                setToastMessage={setToastMessage}
+            />
+
             {/* ヘッダー */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white p-2.5 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8"></div>
@@ -1070,19 +1288,33 @@ function App() {
 
                                     <div className="p-3 border-t border-gray-100 dark:border-slate-700/60 flex gap-2 flex-wrap items-center">
                                         <button
+                                            onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-600 dark:text-sky-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
+                                        >
+                                            <IconCamera /> SNS画像
+                                        </button>
+                                        
+                                        {/* AI分析ボタン */}
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (r.aiAnalysisResult) {
+                                                    setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
+                                                    setShowAnalysisModal(true);
+                                                } else {
+                                                    handleRunAiAnalysis(r);
+                                                }
+                                            }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-600 dark:text-emerald-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors select-none"
+                                        >
+                                            {analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '📊 AI分析 (保存済)' : '📊 AI分析'}
+                                        </button>
+
+                                        <button
                                             onClick={(e) => { e.stopPropagation(); setSharedRecordId(sharedRecordId === r.id ? null : r.id); }}
                                             className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
                                         >
                                             <IconShare /> 共有
-                                        </button>
-
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
-                                            className={`px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm transition-colors bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 border border-gray-200 dark:border-slate-700 active:bg-gray-200 ${
-                                                r.detailedMemo ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-700 dark:text-slate-300'
-                                            }`}
-                                        >
-                                            📝 メモ {r.detailedMemo ? '✓' : ''}
                                         </button>
 
                                         {generatingAiId === r.id ? (
@@ -1102,53 +1334,6 @@ function App() {
                                                 <IconStar className="w-3.5 h-3.5 mr-1" /> 保存済日報
                                             </button>
                                         ) : null}
-
-                                        {/* AI分析ボタン：通常タップで結果表示 / 1秒長押しで再分析実行 */}
-                                        <button
-                                            onPointerDown={(e) => {
-                                                e.stopPropagation();
-                                                if (aiAnalysisTimerRef.current) clearTimeout(aiAnalysisTimerRef.current);
-                                                aiAnalysisTimerRef.current = setTimeout(() => {
-                                                    if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
-                                                    if (window.confirm(`${r.date} のAI分析を最新データで再実行しますか？`)) {
-                                                        handleRunAiAnalysis(r);
-                                                    }
-                                                }, 1000);
-                                            }}
-                                            onPointerUp={(e) => {
-                                                e.stopPropagation();
-                                                if (aiAnalysisTimerRef.current) {
-                                                    clearTimeout(aiAnalysisTimerRef.current);
-                                                    aiAnalysisTimerRef.current = null;
-                                                }
-                                            }}
-                                            onPointerLeave={() => {
-                                                if (aiAnalysisTimerRef.current) {
-                                                    clearTimeout(aiAnalysisTimerRef.current);
-                                                    aiAnalysisTimerRef.current = null;
-                                                }
-                                            }}
-                                            onPointerCancel={() => {
-                                                if (aiAnalysisTimerRef.current) {
-                                                    clearTimeout(aiAnalysisTimerRef.current);
-                                                    aiAnalysisTimerRef.current = null;
-                                                }
-                                            }}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (r.aiAnalysisResult) {
-                                                    // 修正箇所：存在しないrecordではなくrを渡すことで、保存済みの分析結果を即座に再表示
-                                                    setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
-                                                    setShowAnalysisModal(true);
-                                                } else {
-                                                    handleRunAiAnalysis(r);
-                                                }
-                                            }}
-                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-600 dark:text-emerald-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors select-none"
-                                            title="タップで表示 / 長押しで再分析"
-                                        >
-                                            {analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '📊 AI分析 (保存済)' : '📊 AI分析'}
-                                        </button>
 
                                         <button
                                             onClick={(e) => {
