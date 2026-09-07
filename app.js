@@ -98,55 +98,60 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     className="h-8 sm:h-9 object-contain object-left" 
                                     alt="yamashitamaru" 
                                 />
-                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 ${isDark ? 'text-sky-300' : 'text-sky-100'}`}>
+                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.4 }}>
                                     {record.date.replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 && `| ${record.weather1}`}
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <span className="text-xl sm:text-2xl font-black tracking-tight text-white">{record.targetFish}</span>
+                            <div className="text-right pb-1">
+                                <span className="text-xl sm:text-2xl font-black tracking-tight text-white inline-block" style={{ lineHeight: 1.3 }}>
+                                    {record.targetFish}
+                                </span>
                             </div>
                         </div>
 
-                        {/* 本日の釣果（中央揃え） ＋ 【左：匹数 / 右：竿頭＋名前（同等フォントサイズ）】 */}
+                        {/* 本日の釣果（中央揃え） ＋ 【左：匹数 / 右：竿頭＋名前】 */}
                         <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col justify-center gap-1.5 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {/* 本日の釣果：センター配置 */}
-                            <div className="text-center">
-                                <span className={`text-xs sm:text-sm font-black tracking-widest ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                            <div className="text-center pb-0.5">
+                                <span className={`text-xs sm:text-sm font-black tracking-widest inline-block ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.3 }}>
                                     — 本日の釣果 —
                                 </span>
                             </div>
 
-                            {/* 左：匹数 ／ 右：竿頭と名前（釣果と同じサイズ感に拡大） */}
+                            {/* 左：匹数 ／ 右：竿頭と名前 */}
                             <div className="flex justify-between items-center gap-2 pt-0.5">
-                                {/* 左側：匹数 */}
-                                <div className="flex items-baseline gap-1 shrink-0">
-                                    <span className={`text-2xl sm:text-3xl font-black leading-none ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                {/* 左側：匹数（下部文字切れ対策でパディングとlineHeightを確保） */}
+                                <div className="flex items-baseline gap-1 shrink-0 pb-1" style={{ lineHeight: 1.25 }}>
+                                    <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                         {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                     </span>
                                     <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
                                 </div>
 
-                                {/* 右側：竿頭と名前（釣果数字と同じ大きさに拡大） */}
-                                <div className="flex items-baseline justify-end gap-1 truncate pl-2" style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
-                                    <span className={`text-sm sm:text-base font-bold shrink-0 flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        <IconTrophy className="w-4 h-4 mr-0.5 inline-block shrink-0" />竿頭:
+                                {/* 右側：竿頭と名前（トロフィー位置をテキスト中央にガチッと固定、下部切れ防止） */}
+                                <div className="flex items-center justify-end gap-1.5 pl-2 pb-1" style={{ lineHeight: 1.4 }}>
+                                    <span className={`text-sm sm:text-base font-bold shrink-0 inline-flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                        <span className="inline-flex items-center justify-center mr-1" style={{ width: '18px', height: '18px', display: 'inline-flex', verticalAlign: 'middle' }}>
+                                            <IconTrophy className="w-4 h-4 text-amber-400" />
+                                        </span>
+                                        <span>竿頭:</span>
                                     </span>
-                                    <span className={`text-xl sm:text-2xl font-black truncate max-w-[170px] sm:max-w-[190px] ${isDark ? 'text-white' : 'text-white'}`}>
+                                    <span className="text-xl sm:text-2xl font-black text-white truncate max-w-[150px] sm:max-w-[180px] inline-block" style={{ paddingBottom: '3px' }}>
                                         {isAnonymous ? '非公開' : (record.topAnglerName || '-')}
                                     </span>
                                     {!isAnonymous && record.topAnglerName && (
-                                        <span className="text-xs sm:text-sm font-bold text-slate-300 shrink-0">さん</span>
+                                        <span className="text-xs sm:text-sm font-bold text-slate-300 shrink-0 inline-block pb-0.5">さん</span>
                                     )}
                                 </div>
                             </div>
                         </div>
 
-                        {/* 座席リスト */}
+                        {/* 座席リスト（名前の下部文字切れ対策 & トロフィー水平中央合わせ） */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
-                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`}>左舷</div>
-                                <div className={isCrowded ? 'space-y-0.5' : 'space-y-1'}>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.3 }}>左舷</div>
+                                <div className={isCrowded ? 'space-y-1' : 'space-y-1.5'}>
                                     {pSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
                                         const isTop = c === stats.max && c > 0;
@@ -157,14 +162,20 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs py-0.5' : 'text-sm py-1'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ lineHeight: 1.35, paddingBottom: '2px' }}>
-                                                <div className="truncate pr-1 flex-1">
-                                                    <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
-                                                    <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
+                                            <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '26px', paddingBottom: '3px', paddingTop: '1px' }}>
+                                                <div className="truncate pr-1 flex-1 flex items-baseline">
+                                                    <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
+                                                    <span className="truncate inline-block" style={{ lineHeight: 1.35 }}>
+                                                        {isAnonymous ? `座席${s.id}` : (s.name || '-')}
+                                                    </span>
                                                 </div>
-                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
-                                                    <span className="inline-block align-middle">{c}</span>
+                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
+                                                    {isTop && (
+                                                        <span className="inline-flex items-center justify-center" style={{ width: '14px', height: '14px', verticalAlign: 'middle' }}>
+                                                            <IconTrophy className="w-3.5 h-3.5 text-amber-400" />
+                                                        </span>
+                                                    )}
+                                                    <span className="inline-block" style={{ lineHeight: 1.2 }}>{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -173,8 +184,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                             {/* 右舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
-                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`}>右舷</div>
-                                <div className={isCrowded ? 'space-y-0.5' : 'space-y-1'}>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.3 }}>右舷</div>
+                                <div className={isCrowded ? 'space-y-1' : 'space-y-1.5'}>
                                     {sSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
                                         const isTop = c === stats.max && c > 0;
@@ -185,14 +196,20 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs py-0.5' : 'text-sm py-1'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ lineHeight: 1.35, paddingBottom: '2px' }}>
-                                                <div className="truncate pr-1 flex-1">
-                                                    <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
-                                                    <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
+                                            <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '26px', paddingBottom: '3px', paddingTop: '1px' }}>
+                                                <div className="truncate pr-1 flex-1 flex items-baseline">
+                                                    <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
+                                                    <span className="truncate inline-block" style={{ lineHeight: 1.35 }}>
+                                                        {isAnonymous ? `座席${s.id}` : (s.name || '-')}
+                                                    </span>
                                                 </div>
-                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
-                                                    <span className="inline-block align-middle">{c}</span>
+                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
+                                                    {isTop && (
+                                                        <span className="inline-flex items-center justify-center" style={{ width: '14px', height: '14px', verticalAlign: 'middle' }}>
+                                                            <IconTrophy className="w-3.5 h-3.5 text-amber-400" />
+                                                        </span>
+                                                    )}
+                                                    <span className="inline-block" style={{ lineHeight: 1.2 }}>{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -201,8 +218,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報（型の大きさを総計の左側に配置） */}
-                        <div className={`rounded-lg px-2.5 py-2 text-[11px] sm:text-xs flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`} style={{ lineHeight: 1.35, paddingBottom: '3px' }}>
+                        {/* フッター情報 */}
+                        <div className={`rounded-lg px-2.5 py-2 text-[11px] sm:text-xs flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`} style={{ lineHeight: 1.4, paddingBottom: '4px' }}>
                             <div className="flex items-center gap-2.5 flex-wrap">
                                 {/* 型（サイズ） */}
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
