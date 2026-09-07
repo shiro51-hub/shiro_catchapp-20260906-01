@@ -107,15 +107,17 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 本日の釣果（上） / 匹数（左） ＋ 竿頭（右） */}
-                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col justify-center gap-1 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
-                            <div>
-                                <span className={`text-[11px] sm:text-xs font-black tracking-wider ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                    本日の釣果
+                        {/* 本日の釣果（中央揃え） ＋ 【左：匹数 / 右：竿頭＋名前（同等フォントサイズ）】 */}
+                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col justify-center gap-1.5 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                            {/* 本日の釣果：センター配置 */}
+                            <div className="text-center">
+                                <span className={`text-xs sm:text-sm font-black tracking-widest ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                    — 本日の釣果 —
                                 </span>
                             </div>
 
-                            <div className="flex justify-between items-center gap-2">
+                            {/* 左：匹数 ／ 右：竿頭と名前（釣果と同じサイズ感に拡大） */}
+                            <div className="flex justify-between items-center gap-2 pt-0.5">
                                 {/* 左側：匹数 */}
                                 <div className="flex items-baseline gap-1 shrink-0">
                                     <span className={`text-2xl sm:text-3xl font-black leading-none ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
@@ -124,14 +126,17 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
                                 </div>
 
-                                {/* 右側：竿頭表示 */}
-                                <div className="flex items-center justify-end gap-1 text-xs sm:text-sm truncate pl-2" style={{ lineHeight: 1.4, paddingBottom: '2px' }}>
-                                    <span className={`font-bold shrink-0 flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        <IconTrophy className="w-3.5 h-3.5 mr-0.5 inline-block shrink-0" />竿頭:
+                                {/* 右側：竿頭と名前（釣果数字と同じ大きさに拡大） */}
+                                <div className="flex items-baseline justify-end gap-1 truncate pl-2" style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
+                                    <span className={`text-sm sm:text-base font-bold shrink-0 flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                        <IconTrophy className="w-4 h-4 mr-0.5 inline-block shrink-0" />竿頭:
                                     </span>
-                                    <span className="text-white font-black truncate">
-                                        {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
+                                    <span className={`text-xl sm:text-2xl font-black truncate max-w-[170px] sm:max-w-[190px] ${isDark ? 'text-white' : 'text-white'}`}>
+                                        {isAnonymous ? '非公開' : (record.topAnglerName || '-')}
                                     </span>
+                                    {!isAnonymous && record.topAnglerName && (
+                                        <span className="text-xs sm:text-sm font-bold text-slate-300 shrink-0">さん</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -762,7 +767,6 @@ function App() {
         const portAvg = portAnglers > 0 ? (portTotal / portAnglers).toFixed(1) : '0.0';
         const starboardAvg = starboardAnglers > 0 ? (starboardTotal / starboardAnglers).toFixed(1) : '0.0';
 
-        // 構文エラーを物理的に排除するため配列結合で安全にプロンプトを構築
         const promptLines = [
             "あなたはベテラン遊漁船「山下丸」の船長兼データアナリストです。以下の釣果・海況・座席メモデータを精査し、客観的カルテおよび公式HP/日報用のトータル文章を作成してください。",
             "【当日のデータ】",
