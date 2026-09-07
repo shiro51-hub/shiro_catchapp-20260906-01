@@ -10,7 +10,7 @@ const loadHtml2Canvas = () => {
             return;
         }
         const script = document.createElement('script');
-        script.src = '[https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js)';
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
         script.onload = () => resolve(window.html2canvas);
         script.onerror = () => reject(new Error('画像の生成に必要なツールの読み込みに失敗しました'));
         document.head.appendChild(script);
@@ -67,7 +67,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             const link = document.createElement('a');
             const safeDate = record.date.replace(/-/g, '');
             const safeTarget = record.targetFish || '釣果';
-            link.download = `山下丸_${safeDate}_${safeTarget}.png`;
+            link.download = '山下丸_' + safeDate + '_' + safeTarget + '.png';
             link.href = imgData;
             link.click();
             
@@ -127,7 +127,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 {/* 右側：竿頭表示 */}
                                 <div className="flex items-center justify-end gap-1 text-xs sm:text-sm truncate pl-2" style={{ lineHeight: 1.4, paddingBottom: '2px' }}>
                                     <span className={`font-bold shrink-0 flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        <IconTrophy className="w-3.5 h-3.5 mr-0.5 inline-block shrink-0"/>竿頭:
+                                        <IconTrophy className="w-3.5 h-3.5 mr-0.5 inline-block shrink-0" />竿頭:
                                     </span>
                                     <span className="text-white font-black truncate">
                                         {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
@@ -158,7 +158,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle"/>}
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
                                                     <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle"/>}
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
                                                     <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
@@ -259,7 +259,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     {isGenerating ? (
                         <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
                     ) : (
-                        <><IconCamera className="w-4 h-4"/> この画像をスマホに保存</>
+                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
                     )}
                 </button>
             </div>
@@ -732,7 +732,7 @@ function App() {
 
     const shareToLine = (record) => {
         const text = generateShareText(record);
-        window.open(`[https://line.me/R/msg/text/?$](https://line.me/R/msg/text/?$){encodeURIComponent(text)}`, '_blank');
+        window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
         setSharedRecordId(null);
     };
 
@@ -762,5 +762,715 @@ function App() {
         const portAvg = portAnglers > 0 ? (portTotal / portAnglers).toFixed(1) : '0.0';
         const starboardAvg = starboardAnglers > 0 ? (starboardTotal / starboardAnglers).toFixed(1) : '0.0';
 
-        const prompt = `あなたはベテラン遊漁船「山下丸」の船長兼データアナリストです。以下の釣果・海況・座席メモデータを精査し、客観的カルテおよび公式HP/日報用のトータル文章を作成してください。
-【当日のデータ】- 日付: ${record.date} (${getDayOfWeek(record.date)})- 上限釣果（トップ）: ${record.max} ${unit}- 竿頭: ${record.topAnglerName || 'なし'} (${record.max} ${unit})- ポイント: ${record.point || '久里浜沖周辺'} / 水深: ${record.waterDepth || '-'}m / 水温: ${record.waterTemp || '-'}℃
+        // 構文エラーを物理的に排除するため配列結合で安全にプロンプトを構築
+        const promptLines = [
+            "あなたはベテラン遊漁船「山下丸」の船長兼データアナリストです。以下の釣果・海況・座席メモデータを精査し、客観的カルテおよび公式HP/日報用のトータル文章を作成してください。",
+            "【当日のデータ】",
+            "- 日付: " + record.date + " (" + getDayOfWeek(record.date) + ")",
+            "- 上限釣果（トップ）: " + record.max + " " + unit,
+            "- 竿頭: " + (record.topAnglerName || 'なし') + " (" + record.max + " " + unit + ")",
+            "- ポイント: " + (record.point || '久里浜沖周辺') + " / 水深: " + (record.waterDepth || '-') + "m / 水温: " + (record.waterTemp || '-') + "℃",
+            "- 潮色: " + (record.tide || '-') + " / 潮回り: " + (record.tideState || '-'),
+            "- 天候・風波: 前半[" + (record.weather1 || '-') + ", 風:" + (record.windDir1 || '-') + (record.windSpeed1 || '-') + ", 波:" + (record.waveHeight1 || '-') + "] / 後半[" + (record.weather2 || '-') + ", 風:" + (record.windDir2 || '-') + (record.windSpeed2 || '-') + ", 波:" + (record.waveHeight2 || '-') + "]",
+            "- 船長メモ/詳細メモ: " + (record.detailedMemo || 'なし'),
+            "- 左舷状況: 乗船 " + portAnglers + "名 / 合計 " + portTotal + unit + " / 1人平均 " + portAvg + unit + "  座席詳細: " + pSeats.map(s => s.id + "番(" + (s.name || '-') + "):" + (s.count || 0) + unit + " [" + (s.memo || '') + "]").join(', '),
+            "- 右舷状況: 乗船 " + starboardAnglers + "名 / 合計 " + starboardTotal + unit + " / 1人平均 " + starboardAvg + unit + "  座席詳細: " + sSeats.map(s => s.id + "番(" + (s.name || '-') + "):" + (s.count || 0) + unit + " [" + (s.memo || '') + "]").join(', '),
+            "【指示事項】",
+            "1. totalSummaryReport（トータル状況日報）: 本日のポイント、天候、海況、メモを総合的に総括し、公式HPや日報にそのまま掲載できる400字程度の完成されたトータル状況日報を作成してください。",
+            "   【厳守ルール】",
+            "   ・出船内容の宣言（「本日は〇〇釣りで〜」など）は書かず、ポイントや現場の状況から書き出してください。",
+            "   ・釣果については「上限の釣果（トップの数）」のみを記載し、「〇〜〇」といった範囲表示や「平均釣果」は絶対に記載しないでください。",
+            "   ・サイズについて「〇cm」といった具体的な寸法数値は一切出さないでください（触れる場合は「良型」「中型主体」などの表現のみ）。",
+            "   ・文体は「です・ます調」で統一し、途中の不要な改行は避け、読みやすく温かみのある船長目線でまとめてください。",
+            "2. seatBiasAnalysis（座席バイアス分析）: 左右舷の比較において、単純な合計数だけでなく必ず「乗船人数」と「1人あたりの平均釣果」を基準にして、人数の偏りによる見かけの差と実際の釣況差を明確に区別して考察してください。",
+            "必ず以下のJSON形式のみで出力してください（Markdownコードブロックや余計な文字は一切不要）。",
+            '{"difficulty":"難易度評価","totalSummaryReport":"トータル状況日報","seatBiasAnalysis":"座席分析","environmentCorrelation":"海況相関","topAnglerFactors":"竿頭勝因","captainAdvice":"船長カルテ"}'
+        ];
+        const prompt = promptLines.join('\n');
+
+        try {
+            const text = await callGeminiApi(userApiKey, prompt, selectedAiModel, true);
+            let cleanJson = (text || '').replace(/```json/gi, '');
+            cleanJson = cleanJson.split('```').join('').trim();
+            const analysisData = JSON.parse(cleanJson);
+
+            setCurrentAnalysis({ record, data: analysisData });
+            setRecords(prev => {
+                const next = prev.map(r => r.id === record.id ? { ...r, aiAnalysisResult: analysisData } : r);
+                localStorage.setItem('fishing_records', JSON.stringify(next));
+                return next;
+            });
+            setShowAnalysisModal(true);
+        } catch (e) {
+            console.error("AI Analysis Error:", e);
+            setToastMessage(`AI分析に失敗しました: ${e.message}`);
+        } finally {
+            setAnalyzingRecordId(null);
+        }
+    };
+
+    const copyAnalysisText = () => {
+        if (!currentAnalysis?.data) return;
+        const d = currentAnalysis.data;
+        const r = currentAnalysis.record;
+        let text = `【山下丸 釣況AI多角分析カルテ】\n日付: ${r.date} (${r.targetFish || ''})\n\n■ 釣況難易度\n${d.difficulty}\n\n`;
+        if (d.totalSummaryReport) {
+            text += `■ トータル状況日報（総括）\n${d.totalSummaryReport}\n\n`;
+        }
+        text += `■ 釣り座・座席バイアス分析\n${d.seatBiasAnalysis}\n\n■ 海況・潮時相関\n${d.environmentCorrelation}\n\n■ 竿頭の勝因考察\n${d.topAnglerFactors}\n\n■ 次回攻略への提言・船長カルテ\n${d.captainAdvice}`;
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+            document.execCommand('copy');
+            setToastMessage('分析レポートをコピーしました！');
+        } catch (e) {}
+        document.body.removeChild(ta);
+    };
+
+    const filteredRecords = React.useMemo(() => {
+        return records.filter(r => {
+            if (!searchQuery) return true;
+            const q = searchQuery.toLowerCase();
+            const portNamesAndMemos = (r.port || []).map(s => `${s.name || ''} ${s.memo || ''}`).join(' ');
+            const starboardNamesAndMemos = (r.starboard || []).map(s => `${s.name || ''} ${s.memo || ''}`).join(' ');
+            
+            const targetText = [
+                r.date, r.date.replace(/-/g, '/'), r.targetFish, r.point,
+                r.topAnglerName, r.detailedMemo, portNamesAndMemos, starboardNamesAndMemos
+            ].join(' ').toLowerCase();
+
+            return targetText.includes(q);
+        }).sort((a, b) => {
+            if (sortOrder === 'top_desc') return (b.max || 0) - (a.max || 0);
+            if (sortOrder === 'top_asc') return (a.max || 0) - (b.max || 0);
+            return new Date(b.date) - new Date(a.date);
+        });
+    }, [records, searchQuery, sortOrder]);
+
+    return (
+        <div className="max-w-md mx-auto min-h-[100dvh] flex flex-col relative overflow-hidden transition-colors duration-300 bg-gray-100 dark:bg-slate-900">
+            {toastMessage && (
+                <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/60 p-4 animate-[fadeIn_0.15s_ease-out]" onClick={() => setToastMessage('')}>
+                    <div 
+                        className="relative bg-gradient-to-br from-blue-950 via-blue-900 to-slate-900 text-white p-5 rounded-2xl shadow-2xl border-2 border-blue-400/80 max-w-xs sm:max-w-sm w-full text-center flex flex-col items-center space-y-4 backdrop-blur-md" 
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button 
+                            onClick={() => setToastMessage('')} 
+                            className="absolute top-2.5 right-2.5 w-7 h-7 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-blue-200 font-bold text-sm"
+                            aria-label="閉じる"
+                        >
+                            ✕
+                        </button>
+                        <div className="text-sm sm:text-base font-bold leading-relaxed whitespace-pre-wrap pt-2 px-1 text-slate-100">
+                            {toastMessage}
+                        </div>
+                        <button 
+                            onClick={() => setToastMessage('')} 
+                            className="w-full bg-sky-500 hover:bg-sky-400 active:bg-sky-600 text-white font-black py-2.5 rounded-xl shadow-md transition-all text-sm"
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* 個別記録削除の確認モーダル */}
+            {recordToDelete && (
+                <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-[fadeIn_0.15s_ease-out]" onClick={() => setRecordToDelete(null)}>
+                    <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-2xl border-2 border-red-300 dark:border-red-800 w-full max-w-xs text-center space-y-4" onClick={(e) => e.stopPropagation()}>
+                        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center shadow-inner">
+                            <IconTrash className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-black text-gray-800 dark:text-slate-100">記録を削除しますか？</h3>
+                            <p className="text-xs font-bold text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
+                                {recordToDelete.date} {getDayOfWeek(recordToDelete.date)}<br/>
+                                {recordToDelete.targetFish ? `【${recordToDelete.targetFish}】` : ''}の釣果記録を削除します。<br/>
+                                <span className="text-red-500 text-[11px]">※この操作は元に戻せません</span>
+                            </p>
+                        </div>
+                        <div className="flex gap-2 pt-1">
+                            <button
+                                onClick={() => {
+                                    handleDeleteRecord(recordToDelete.id);
+                                    setRecordToDelete(null);
+                                }}
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-black py-2.5 rounded-xl text-xs shadow active:scale-95 transition-all"
+                            >
+                                削除する
+                            </button>
+                            <button
+                                onClick={() => setRecordToDelete(null)}
+                                className="flex-1 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 font-black py-2.5 rounded-xl text-xs border border-gray-200 dark:border-slate-600 transition-all"
+                            >
+                                キャンセル
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <SettingsPanel
+                isSettingsOpen={isSettingsOpen} setIsSettingsOpen={setIsSettingsOpen}
+                portCount={portSeatCount} starboardCount={starboardSeatCount} onCountChange={handleSeatCountChange}
+                point={point} setPoint={setPoint} waterTemp={waterTemp} setWaterTemp={setWaterTemp}
+                waterDepth={waterDepth} setWaterDepth={setWaterDepth} tide={tide} setTide={setTide}
+                tideState={tideState} setTideState={setTideState} highTide1={highTide1} setHighTide1={setHighTide1}
+                highTide2={highTide2} setHighTide2={setHighTide2} lowTide1={lowTide1} setLowTide1={setLowTide1}
+                lowTide2={lowTide2} setLowTide2={setLowTide2} weather1={weather1} setWeather1={setWeather1}
+                weather2={weather2} setWeather2={setWeather2} windDir1={windDir1} setWindDir1={setWindDir1}
+                windDir2={windDir2} setWindDir2={setWindDir2} windSpeed1={windSpeed1} setWindSpeed1={setWindSpeed1}
+                windSpeed2={windSpeed2} setWindSpeed2={setWindSpeed2} waveHeight1={waveHeight1} setWaveHeight1={setWaveHeight1}
+                waveHeight2={waveHeight2} setWaveHeight2={setWaveHeight2} theme={theme} setTheme={setTheme}
+                targetFish={targetFish} setTargetFish={setTargetFish} date={date} setToastMessage={setToastMessage}
+                onFactoryReset={() => { setRecords([]); localStorage.clear(); setToastMessage('初期化完了'); }}
+                records={records} setRecords={setRecords} userApiKey={userApiKey} setUserApiKey={setUserApiKey}
+                selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
+            />
+
+            {/* 詳細メモモーダル */}
+            <MemoModal
+                showMemoModal={showMemoModal}
+                setShowMemoModal={setShowMemoModal}
+                tempMemo={tempMemo}
+                setTempMemo={setTempMemo}
+                copyMemoToClipboard={copyMemoToClipboard}
+                saveMemo={saveMemo}
+            />
+
+            {/* AI日報入力ウィザードモーダル */}
+            <AiInputWizardModal
+                showAiInputModal={showAiInputModal}
+                setShowAiInputModal={setShowAiInputModal}
+                aiCurrentStep={aiCurrentStep}
+                setAiCurrentStep={setAiCurrentStep}
+                wizardSteps={wizardSteps}
+                aiInputData={aiInputData}
+                setAiInputData={setAiInputData}
+                targetRecordForAi={targetRecordForAi}
+                updateAiInputForRecord={updateAiInputForRecord}
+                userApiKey={userApiKey}
+                setUserApiKey={setUserApiKey}
+                handleAiGenerate={handleAiGenerate}
+            />
+
+            {/* AI日報表示モーダル */}
+            <AiResultModal
+                showAiModal={showAiModal}
+                setShowAiModal={setShowAiModal}
+                aiGeneratedPatterns={aiGeneratedPatterns}
+                aiGeneratedText={aiGeneratedText}
+                handleCopyPattern={handleCopyPattern}
+            />
+
+            {/* AI多角分析モーダル */}
+            <AiAnalysisModal
+                showAnalysisModal={showAnalysisModal}
+                setShowAnalysisModal={setShowAnalysisModal}
+                currentAnalysis={currentAnalysis}
+                handleRunAiAnalysis={handleRunAiAnalysis}
+                copyAnalysisText={copyAnalysisText}
+                handleCopyPattern={handleCopyPattern}
+            />
+
+            {/* 釣果ボード生成モーダル */}
+            <ShareImageModal
+                record={shareImageRecord}
+                onClose={() => setShareImageRecord(null)}
+                setToastMessage={setToastMessage}
+            />
+
+            {/* ヘッダー */}
+            <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white p-2.5 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
+                <div className="w-8"></div>
+                <div className="flex flex-col items-center justify-center">
+                    <h1
+                        style={{
+                            fontFamily: "'Yuji Boku', serif",
+                            fontSize: "2.0em",
+                            fontWeight: "900",
+                            lineHeight: "1.05",
+                            letterSpacing: "0.32em",
+                            paddingLeft: "0.32em",
+                            textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)"
+                        }}
+                    >
+                        山下丸
+                    </h1>
+                    <span
+                        style={{
+                            fontFamily: "'Permanent Marker', cursive",
+                            fontSize: "1.25em",
+                            letterSpacing: "0.28em",
+                            paddingLeft: "0.28em",
+                            color: "#93c5fd",
+                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.25)"
+                        }}
+                    >
+                        {activeTab === 'history' ? 'SeaNote Archive' : activeTab === 'counter' ? 'Count Fish' : 'CatchLog Pro'}
+                    </span>
+                </div>
+                <button onClick={() => setIsSettingsOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full active:bg-blue-800/50">
+                    <IconSettings className="w-6 h-6 text-blue-100" />
+                </button>
+            </div>
+
+            {/* メインスクロールエリア */}
+            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar">
+                {activeTab === 'input' && (
+                    <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
+                        <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 shadow border border-gray-100 dark:border-slate-700 flex flex-col gap-2.5">
+                            <div className="flex justify-between items-center">
+                                <input type="date" className="border rounded-lg px-3 py-1.5 text-base sm:text-lg font-black bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100" value={date} onChange={(e) => setDate(e.target.value)} />
+                                <span className="text-sm sm:text-base font-black text-sky-600 dark:text-sky-400">{targetFish || '釣り物未設定'}</span>
+                            </div>
+                            {(point || waterDepth || waterTemp || tide || tideState || weather1 || windDir1 || windSpeed1 || waveHeight1) && (
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 pt-2 border-t border-gray-100 dark:border-slate-700 leading-normal">
+                                    {point && <span className="font-black text-slate-800 dark:text-slate-100">{point}</span>}
+                                    {waterDepth && <span>{waterDepth}m</span>}
+                                    {waterTemp && <span>{waterTemp}℃</span>}
+                                    {tide && <span>{tide}</span>}
+                                    {tideState && <span>{tideState}</span>}
+                                    {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
+                                    {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                    {waveHeight1 && <span>{waveHeight1}</span>}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="flex bg-gray-200 dark:bg-slate-800 p-1 rounded-lg">
+                            {['port', 'both', 'starboard'].map((mode) => (
+                                <button key={mode} className={`flex-1 py-2 text-xs font-black rounded-md ${inputSide === mode ? 'bg-white dark:bg-slate-700 text-sky-600 shadow' : 'text-gray-500'}`} onClick={() => setInputSide(mode)}>
+                                    {mode === 'port' ? '左舷のみ' : mode === 'starboard' ? '右舷のみ' : '両舷'}
+                                </button>
+                            ))}
+                        </div>
+
+                        {inputSide === 'both' ? (
+                            <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <div className="text-center mb-1 text-sm font-black text-red-500 border-b pb-1">左舷</div>
+                                    {portSeats.map((s, i) => <SeatInput key={`p-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
+                                </div>
+                                <div>
+                                    <div className="text-center mb-1 text-sm font-black text-emerald-600 border-b pb-1">右舷</div>
+                                    {starboardSeats.map((s, i) => <SeatInput key={`s-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                {(inputSide === 'port' ? portSeats : starboardSeats).map((s, i) => <SeatInput key={`${inputSide}-${i}`} side={inputSide} seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="single" onToggleVisibility={handleToggleVisibility} />)}
+                            </div>
+                        )}
+                        <div className="h-16 shrink-0 pointer-events-none"></div>
+                    </div>
+                )}
+
+                {/* カウンタータブ */}
+                {activeTab === 'counter' && (
+                    <div className="flex flex-col flex-1 space-y-3 animate-[fadeIn_0.2s_ease-out]">
+                        {(() => {
+                            const stats = getTopAnglerDetails(portSeats, starboardSeats);
+                            const unit = getUnit(targetFish);
+
+                            return (
+                                <div className="bg-blue-100 dark:bg-slate-800 rounded-xl p-3 shadow-sm border border-blue-200 dark:border-slate-700 flex justify-between items-stretch min-h-[80px] shrink-0">
+                                    <div className="w-1/2 flex flex-col items-center justify-center border-r border-blue-200 dark:border-slate-700 px-2">
+                                        <span className="text-xs font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider">現在の釣果</span>
+                                        <div className="text-3xl sm:text-4xl font-black text-blue-900 dark:text-slate-100 mt-0.5">
+                                            {stats.anglers > 0 ? `${stats.min}〜${stats.max}` : '-'} <span className="text-sm font-normal">{unit}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="w-1/2 flex flex-col items-center justify-center px-2">
+                                        <span className="text-xs font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider flex items-center mb-0.5">
+                                            <IconTrophy className="w-4 h-4 mr-1 text-amber-500" /> 竿頭 {stats.max > 0 ? `(${stats.max}${unit})` : ''}
+                                        </span>
+                                        <div className="flex flex-wrap justify-center items-center gap-1 max-h-12 overflow-y-auto no-scrollbar w-full text-center">
+                                            {stats.topNames.length > 0 ? (
+                                                stats.topNames.map((name, idx) => {
+                                                    const nameSizeClass = stats.topNames.length === 1 
+                                                        ? 'text-xl sm:text-2xl' 
+                                                        : stats.topNames.length === 2 
+                                                            ? 'text-base sm:text-lg' 
+                                                            : 'text-xs sm:text-sm';
+                                                    return (
+                                                        <span key={idx} className={`${nameSizeClass} font-black text-blue-900 dark:text-slate-100 leading-tight`}>
+                                                            {name}{idx < stats.topNames.length - 1 ? '・' : ''}
+                                                        </span>
+                                                    );
+                                                })
+                                            ) : (
+                                                <span className="text-2xl font-black text-gray-400">-</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
+                        {/* 潮時リアルタイムアラートバー */}
+                        <TideAlertBanner
+                            tideState={tideState}
+                            highTide1={highTide1}
+                            highTide2={highTide2}
+                            lowTide1={lowTide1}
+                            lowTide2={lowTide2}
+                        />
+
+                        <div className="grid grid-cols-2 gap-2 flex-1">
+                            {counterMode === 'slide' ? (
+                                <>
+                                    <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterCardSlide key={`cp-${i}`} side="port" seat={s} index={i} onCountDelta={handleCountDelta} totalSeats={portSeats.length} />)}</div>
+                                    <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterCardSlide key={`cs-${i}`} side="starboard" seat={s} index={i} onCountDelta={handleCountDelta} totalSeats={starboardSeats.length} />)}</div>
+                                </>
+                            ) : counterMode === 'tap' ? (
+                                <>
+                                    <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterCardTap key={`ctp-${i}`} side="port" seat={s} index={i} onCountDelta={handleCountDelta} onClear={(s, idx) => handleSeatChange(s, idx, 'count', '')} totalSeats={portSeats.length} />)}</div>
+                                    <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterCardTap key={`cts-${i}`} side="starboard" seat={s} index={i} onCountDelta={handleCountDelta} onClear={(s, idx) => handleSeatChange(s, idx, 'count', '')} totalSeats={starboardSeats.length} />)}</div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterKeypadCard key={`kp-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} totalSeats={portSeats.length} />)}</div>
+                                    <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterKeypadCard key={`ks-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} totalSeats={starboardSeats.length} />)}</div>
+                                </>
+                            )}
+                        </div>
+
+                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-3 mt-2 shrink-0">
+                            <div className="text-xs font-black text-gray-500 dark:text-slate-400 mb-2 flex items-center">
+                                <IconRuler className="w-4 h-4 mr-1 text-sky-500 dark:text-sky-400" /> 魚のサイズ (cm)
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden">
+                                    <span className="pl-2.5 text-xs text-gray-500 dark:text-slate-400 font-bold shrink-0">最小</span>
+                                    <input type="number" className="w-full py-2 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none" placeholder="-" value={sizeMin} onChange={(e) => handleSizeChange('min', e.target.value)} />
+                                    <span className="pr-2 text-xs text-gray-400 shrink-0">cm</span>
+                                </div>
+                                <span className="text-gray-400 font-bold">〜</span>
+                                <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden">
+                                    <span className="pl-2.5 text-xs text-gray-500 dark:text-slate-400 font-bold shrink-0">最大</span>
+                                    <input type="number" className="w-full py-2 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none" placeholder="-" value={sizeMax} onChange={(e) => handleSizeChange('max', e.target.value)} />
+                                    <span className="pr-2 text-xs text-gray-400 shrink-0">cm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
+
+                        <div className="h-16 shrink-0 pointer-events-none"></div>
+                    </div>
+                )}
+
+                {/* 履歴タブ */}
+                {activeTab === 'history' && (
+                    <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
+                        <div className="space-y-2">
+                            <div className="relative">
+                                <input 
+                                    type="search" 
+                                    placeholder="日付・魚種・お名前・メモ・ポイントで検索" 
+                                    className="w-full border border-gray-200 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-200" 
+                                    value={searchQuery} 
+                                    onChange={(e) => setSearchQuery(e.target.value)} 
+                                />
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">🔍</span>
+                            </div>
+                            <div className="flex bg-gray-200 dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 text-xs font-black shadow-inner">
+                                <button 
+                                    onClick={() => setSortOrder('date_desc')} 
+                                    className={`flex-1 py-2 rounded-lg transition-all ${sortOrder === 'date_desc' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 active:bg-gray-100'}`}
+                                >
+                                    日付順
+                                </button>
+                                <button 
+                                    onClick={() => setSortOrder('top_desc')} 
+                                    className={`flex-1 py-2 rounded-lg transition-all ${sortOrder === 'top_desc' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 active:bg-gray-100'}`}
+                                >
+                                    釣果が多い順
+                                </button>
+                                <button 
+                                    onClick={() => setSortOrder('top_asc')} 
+                                    className={`flex-1 py-2 rounded-lg transition-all ${sortOrder === 'top_asc' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400 active:bg-gray-100'}`}
+                                >
+                                    釣果が少ない順
+                                </button>
+                            </div>
+                        </div>
+                        {filteredRecords.map(r => {
+                            const isExpanded = expandedRecordId === r.id;
+                            const unit = getUnit(r.targetFish);
+                            return (
+                                <div key={r.id} className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-100 dark:border-slate-700 overflow-hidden transition-all">
+                                    <div 
+                                        className="p-4 cursor-pointer active:bg-gray-50 dark:active:bg-slate-700/50 select-none"
+                                        onClick={() => setExpandedRecordId(isExpanded ? null : r.id)}
+                                    >
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="font-black text-base sm:text-lg text-gray-800 dark:text-slate-100">{r.date} {getDayOfWeek(r.date)}</span>
+                                            <div className="flex items-center gap-1.5">
+                                                {r.targetFish ? (
+                                                    <span 
+                                                        className="text-sm bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 px-3 py-1 rounded-lg font-black select-none cursor-pointer border border-sky-200 dark:border-sky-800 active:bg-sky-200 transition-all shadow-sm"
+                                                        title="長押しでAI日報作成"
+                                                        onPointerDown={(e) => {
+                                                            e.stopPropagation();
+                                                            if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+                                                            aiTimerRef.current = setTimeout(() => {
+                                                                if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+                                                                setTargetRecordForAi(r);
+                                                                setAiInputData({
+                                                                    condition: r.aiInput_condition || '',
+                                                                    scenery: r.aiInput_scenery || '',
+                                                                    tide: r.aiInput_tide || '',
+                                                                    activity: r.aiInput_activity || '',
+                                                                    episode: r.aiInput_episode || '',
+                                                                    size: r.aiInput_size || '',
+                                                                    topAngler: r.aiInput_topAngler || '',
+                                                                    patterns: r.aiInput_patterns || [1]
+                                                                });
+                                                                setAiCurrentStep(0);
+                                                                setShowAiInputModal(true);
+                                                            }, 1000);
+                                                        }}
+                                                        onPointerUp={() => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); }}
+                                                        onPointerLeave={() => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); }}
+                                                        onPointerCancel={() => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); }}
+                                                    >
+                                                        {r.targetFish}
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black">釣果</span>
+                                                )}
+                                                <span className="text-gray-400 dark:text-slate-500">
+                                                    {isExpanded ? <IconChevronUp className="w-5 h-5" /> : <IconChevronDown className="w-5 h-5" />}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {(r.point || r.waterDepth || r.waterTemp || r.tide || r.tideState || r.weather1 || r.windDir1 || r.windSpeed1 || r.waveHeight1) && (
+                                            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+                                                {r.point && <span className="font-black text-slate-800 dark:text-slate-100">{r.point}</span>}
+                                                {r.waterDepth && <span>{r.waterDepth}m</span>}
+                                                {r.waterTemp && <span>{r.waterTemp}℃</span>}
+                                                {r.tide && <span>{r.tide}</span>}
+                                                {r.tideState && <span>{r.tideState}</span>}
+                                                {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${weather2}` : ''}</span>}
+                                                {(r.windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                                {r.waveHeight1 && <span>{waveHeight1}</span>}
+                                            </div>
+                                        )}
+
+                                        <div className="bg-sky-50 dark:bg-slate-900/60 border border-sky-100 dark:border-slate-800 rounded-xl p-3 flex flex-wrap justify-between items-center gap-x-3 gap-y-1.5">
+                                            <div className="flex items-center flex-wrap gap-x-3.5 gap-y-1">
+                                                <div className="flex items-baseline text-slate-800 dark:text-slate-100">
+                                                    <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">釣果:</span>
+                                                    <span className="text-lg sm:text-xl font-black">{r.min}〜{r.max}</span>
+                                                    <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 ml-0.5">{unit}</span>
+                                                </div>
+                                                {(r.sizeMin || r.sizeMax) && (
+                                                    <div className="flex items-baseline text-slate-800 dark:text-slate-100">
+                                                        <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">型:</span>
+                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜{r.sizeMax || '?'}</span>
+                                                        <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 ml-0.5">cm</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex items-baseline text-slate-800 dark:text-slate-100 shrink-0">
+                                                <IconTrophy className="w-4 h-4 mr-0.5 text-amber-500 self-center" />
+                                                <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">竿頭:</span>
+                                                <span className="text-base sm:text-lg font-black">{r.topAnglerName || '-'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {isExpanded && (
+                                        <div className="p-3 bg-gray-50 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-700 animate-[fadeIn_0.15s_ease-out] space-y-3">
+                                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                                <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-red-100 dark:border-red-950/40">
+                                                    <div className="font-black text-red-500 border-b border-red-100 dark:border-red-900 pb-1 mb-1.5 flex justify-between items-center text-sm">
+                                                        <span>左舷</span>
+                                                        <span className="text-xs font-bold text-gray-600 dark:text-slate-400">{r.portTotal || 0}{unit}</span>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        {(r.port || []).filter(s => s && s.isVisible !== false).map((s, idx) => {
+                                                            const countVal = parseInt(s.count) || 0;
+                                                            const isTop = countVal === (r.max || 0) && countVal > 0;
+                                                            return (
+                                                                <div key={`p-detail-${idx}`} className={`flex justify-between items-baseline py-0.5 border-b border-gray-50 dark:border-slate-700/50 last:border-0 ${isTop ? 'font-black text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                                                                    <span className="truncate pr-1 text-sm">
+                                                                        <span className="font-bold mr-1 text-gray-400">{s.id}.</span>
+                                                                        <span>{s.name || '-'}</span>
+                                                                        {s.memo && <span className="text-xs text-gray-400 dark:text-slate-500 ml-1">({s.memo})</span>}
+                                                                    </span>
+                                                                    <span className="shrink-0 font-black flex items-center text-sm">
+                                                                        {isTop && <IconTrophy className="w-3.5 h-3.5 mr-0.5 text-amber-500" />}
+                                                                        {s.count || '0'}
+                                                                    </span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-950/40">
+                                                    <div className="font-black text-emerald-600 dark:text-emerald-400 border-b border-emerald-100 dark:border-emerald-900 pb-1 mb-1.5 flex justify-between items-center text-sm">
+                                                        <span>右舷</span>
+                                                        <span className="text-xs font-bold text-gray-600 dark:text-slate-400">{r.starboardTotal || 0}{unit}</span>
+                                                    </div>
+                                                    <div className="space-y-1.5">
+                                                        {(r.starboard || []).filter(s => s && s.isVisible !== false).map((s, idx) => {
+                                                            const countVal = parseInt(s.count) || 0;
+                                                            const isTop = countVal === (r.max || 0) && countVal > 0;
+                                                            return (
+                                                                <div key={`s-detail-${idx}`} className={`flex justify-between items-baseline py-0.5 border-b border-gray-50 dark:border-slate-700/50 last:border-0 ${isTop ? 'font-black text-red-600 dark:text-red-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                                                                    <span className="truncate pr-1 text-sm">
+                                                                        <span className="font-bold mr-1 text-gray-400">{s.id}.</span>
+                                                                        <span>{s.name || '-'}</span>
+                                                                        {s.memo && <span className="text-xs text-gray-400 dark:text-slate-500 ml-1">({s.memo})</span>}
+                                                                    </span>
+                                                                    <span className="shrink-0 font-black flex items-center text-sm">
+                                                                        {isTop && <IconTrophy className="w-3.5 h-3.5 mr-0.5 text-amber-500" />}
+                                                                        {s.count || '0'}
+                                                                    </span>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex justify-between text-sm font-bold text-gray-600 dark:text-slate-400 pt-1.5 px-1 border-t border-gray-200 dark:border-slate-700">
+                                                <span>総計: <span className="font-black text-gray-800 dark:text-slate-100">{r.total || 0}</span> {unit} ({r.anglers || 0}名)</span>
+                                                <span>平均: <span className="font-black text-gray-800 dark:text-slate-100">{r.avg || 0}</span> {unit}</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {sharedRecordId === r.id && (
+                                        <div className="w-full bg-gray-50 dark:bg-slate-900/80 p-3 border-t border-gray-200 dark:border-slate-700 shadow-inner space-y-2 animate-[fadeIn_0.15s_ease-out]">
+                                            <span className="text-xs font-bold text-gray-600 dark:text-slate-300 block">共有先を選択</span>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <button onClick={(e) => { e.stopPropagation(); shareToLine(r); }} className="bg-[#06C755] hover:bg-[#05b34c] text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow active:scale-95 transition-all">
+                                                    <IconLine /> LINEで共有
+                                                </button>
+                                                <button onClick={(e) => { e.stopPropagation(); shareToEmail(r); }} className="bg-sky-600 hover:bg-sky-700 text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow active:scale-95 transition-all">
+                                                    <IconMail /> メールで共有
+                                                </button>
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <button onClick={(e) => { e.stopPropagation(); setSharedRecordId(null); }} className="text-gray-500 hover:text-gray-700 text-xs px-3 py-1 font-bold">キャンセル</button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="p-3 border-t border-gray-100 dark:border-slate-700/60 flex gap-2 flex-wrap items-center">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-600 dark:text-sky-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
+                                        >
+                                            <IconCamera /> 釣果ボード
+                                        </button>
+                                        
+                                        {/* AI分析ボタン */}
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (r.aiAnalysisResult) {
+                                                    setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
+                                                    setShowAnalysisModal(true);
+                                                } else {
+                                                    handleRunAiAnalysis(r);
+                                                }
+                                            }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-600 dark:text-emerald-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors select-none"
+                                        >
+                                            {analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '📊 AI分析 (保存済)' : '📊 AI分析'}
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setSharedRecordId(sharedRecordId === r.id ? null : r.id); }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
+                                        >
+                                            <IconShare /> 共有
+                                        </button>
+
+                                        {generatingAiId === r.id ? (
+                                            <span className="text-amber-600 bg-gray-100 dark:bg-slate-800 dark:text-amber-400 text-xs px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg flex items-center font-bold">
+                                                <span className="animate-spin mr-1">↻</span>日報生成中...
+                                            </span>
+                                        ) : (r.aiGeneratedPatterns?.length > 0 || r.aiGeneratedText) ? (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setAiGeneratedPatterns(r.aiGeneratedPatterns || []);
+                                                    setAiGeneratedText(r.aiGeneratedText || '');
+                                                    setShowAiModal(true);
+                                                }}
+                                                className="text-amber-600 hover:text-amber-700 dark:text-amber-400 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-xs px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg flex items-center font-black shadow-sm active:bg-gray-200 transition-colors"
+                                            >
+                                                <IconStar className="w-3.5 h-3.5 mr-1" /> 保存済日報
+                                            </button>
+                                        ) : null}
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setRecordToDelete(r);
+                                            }}
+                                            className="ml-auto text-gray-600 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 p-1.5 px-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 active:bg-gray-200 transition-colors shadow-sm flex items-center gap-1 text-xs font-black"
+                                            title="この日の釣果記録を削除"
+                                        >
+                                            <IconTrash className="w-3.5 h-3.5" />
+                                            <span>削除</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                        <div className="h-16 shrink-0 pointer-events-none"></div>
+                    </div>
+                )}
+            </div>
+
+            {/* 下部固定ナビゲーション */}
+            <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2">
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    onClick={() => setActiveTab('input')}
+                >
+                    <IconAnchor className="w-5 h-5 mb-0.5" />
+                    <span className="text-xs tracking-tight">釣り座</span>
+                </button>
+
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors relative ${activeTab === 'counter' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    onClick={() => {
+                        if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
+                        else setActiveTab('counter');
+                    }}
+                >
+                    <div className="relative flex items-center justify-center mb-0.5">
+                        <span className="text-[11px] font-black leading-none px-1.5 py-0.5 bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 rounded-full h-5 flex items-center justify-center">
+                            {counterMode === 'tap' ? 'TAP' : counterMode === 'slide' ? 'SLIDE' : 'KEYPAD'}
+                        </span>
+                    </div>
+                    <span className="text-xs tracking-tight">カウンター</span>
+                </button>
+
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
+                    onClick={() => setActiveTab('history')}
+                >
+                    <IconCalendar className="w-5 h-5 mb-0.5" />
+                    <span className="text-xs tracking-tight">履歴</span>
+                </button>
+            </div>
+        </div>
+    );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
