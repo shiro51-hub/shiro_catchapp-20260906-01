@@ -5,7 +5,6 @@ on:
     branches:
       - main  # メインブランチ名が master の場合は master に変更してください
 
-# GitHub Pages へのデプロイ権限
 permissions:
   contents: read
   pages: write
@@ -40,24 +39,21 @@ jobs:
           # 公開用ディレクトリを作成
           mkdir -p dist
 
-          # 1. 5つのReact/JSファイルを結合して1つの bundle.js に事前コンパイル
+          # 1. JSファイルを結合してトランスパイル
           cat api.js counter.js settings.js report.js app.js > dist/temp_combined.jsx
           npx babel dist/temp_combined.jsx --out-file dist/bundle.js --presets=@babel/preset-react
           rm dist/temp_combined.jsx
 
-          # 2. 高速配信用にHTMLを調整（Babel本体と個別スクリプト読み込みを排除）
+          # 2. HTMLの調整（キャッシュバスター付与）
           sed '/<script src="https:\/\/unpkg.com\/@babel\/standalone/d' index.html > dist/index.html
-          
-          # ★キャッシュ対策：コミットIDをバージョン番号として付与（即時反映させる仕掛け）
           CACHE_BUST_TAG="<script src=\"bundle.js?v=${{ github.sha }}\"><\/script>"
           sed -i "/<script type=\"text\/babel\" src=\"api.js\"><\/script>/c\\$CACHE_BUST_TAG" dist/index.html
-          
           sed -i '/<script type="text\/babel" src="counter.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="settings.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="report.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="app.js"><\/script>/d' dist/index.html
 
-          # 3. 画像やPWA関連ファイルを公開用フォルダに漏れなくコピー
+          # 3. 画像やPWA関連ファイルをコピー
           cp *.png dist/ 2>/dev/null || true
           cp *.jpg dist/ 2>/dev/null || true
           cp *.jpeg dist/ 2>/dev/null || true
