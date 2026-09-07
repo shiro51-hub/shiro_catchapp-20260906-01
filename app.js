@@ -10,7 +10,7 @@ const loadHtml2Canvas = () => {
             return;
         }
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.src = '[https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js](https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js)';
         script.onload = () => resolve(window.html2canvas);
         script.onerror = () => reject(new Error('画像の生成に必要なツールの読み込みに失敗しました'));
         document.head.appendChild(script);
@@ -127,7 +127,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 {/* 右側：竿頭表示 */}
                                 <div className="flex items-center justify-end gap-1 text-xs sm:text-sm truncate pl-2" style={{ lineHeight: 1.4, paddingBottom: '2px' }}>
                                     <span className={`font-bold shrink-0 flex items-center ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                        <IconTrophy className="w-3.5 h-3.5 mr-0.5 inline-block shrink-0" />竿頭:
+                                        <IconTrophy className="w-3.5 h-3.5 mr-0.5 inline-block shrink-0"/>竿頭:
                                     </span>
                                     <span className="text-white font-black truncate">
                                         {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
@@ -158,7 +158,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle"/>}
                                                     <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
@@ -186,7 +186,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="inline-block">{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
-                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle"/>}
                                                     <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
@@ -259,7 +259,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     {isGenerating ? (
                         <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
                     ) : (
-                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
+                        <><IconCamera className="w-4 h-4"/> この画像をスマホに保存</>
                     )}
                 </button>
             </div>
@@ -732,7 +732,7 @@ function App() {
 
     const shareToLine = (record) => {
         const text = generateShareText(record);
-        window.open(`https://line.me/R/msg/text/?${encodeURIComponent(text)}`, '_blank');
+        window.open(`[https://line.me/R/msg/text/?$](https://line.me/R/msg/text/?$){encodeURIComponent(text)}`, '_blank');
         setSharedRecordId(null);
     };
 
@@ -763,10 +763,4 @@ function App() {
         const starboardAvg = starboardAnglers > 0 ? (starboardTotal / starboardAnglers).toFixed(1) : '0.0';
 
         const prompt = `あなたはベテラン遊漁船「山下丸」の船長兼データアナリストです。以下の釣果・海況・座席メモデータを精査し、客観的カルテおよび公式HP/日報用のトータル文章を作成してください。
-【当日のデータ】- 日付: ${record.date} (${getDayOfWeek(record.date)})- 上限釣果（トップ）: ${record.max} ${unit}- 竿頭: ${record.topAnglerName || 'なし'} (${record.max} ${unit})- ポイント: ${record.point || '久里浜沖周辺'} / 水深: ${record.waterDepth || '-'}m / 水温: ${record.waterTemp || '-'}℃- 潮色: ${record.tide || '-'} / 潮回り: ${record.tideState || '-'}- 天候・風波: 前半[${record.weather1 || '-'}, 風:${record.windDir1 || '-'}${record.windSpeed1 || '-'}, 波:${record.waveHeight1 || '-'}] / 後半[${record.weather2 || '-'}, 風:${record.windDir2 || '-'}${record.windSpeed2 || '-'}, 波:${record.waveHeight2 || '-'}]- 船長メモ/詳細メモ: ${record.detailedMemo || 'なし'}- 左舷状況: 乗船 ${portAnglers}名 / 合計 ${portTotal}${unit} / 1人平均 ${portAvg}${unit}  座席詳細: ${pSeats.map(s => `${s.id}番(${s.name || '-'}):${s.count || 0}${unit} [${s.memo || ''}]`).join(', ')}- 右舷状況: 乗船 ${starboardAnglers}名 / 合計 ${starboardTotal}${unit} / 1人平均 ${starboardAvg}${unit}  座席詳細: ${sSeats.map(s => `${s.id}番(${s.name || '-'}):${s.count || 0}${unit} [${s.memo || ''}]`).join(', ')}
-【指示事項】1. totalSummaryReport（トータル状況日報）:   本日のポイント、天候、海況、メモを総合的に総括し、公式HPや日報にそのまま掲載できる400字程度の完成されたトータル状況日報を作成してください。   【厳守ルール】   ・出船内容の宣言（「本日は〇〇釣りで〜」など）は書かず、ポイントや現場の状況から書き出してください。   ・釣果については「上限の釣果（トップの数）」のみを記載し、「〇〜〇」といった範囲表示や「平均釣果」は絶対に記載しないでください。   ・サイズについて「〇cm」といった具体的な寸法数値は一切出さないでください（触れる場合は「良型」「中型主体」などの表現のみ）。   ・文体は「です・ます調」で統一し、途中の不要な改行は避け、読みやすく温かみのある船長目線でまとめてください。
-2. seatBiasAnalysis（座席バイアス分析）:   左右舷の比較において、単純な合計数だけでなく必ず「乗船人数」と「1人あたりの平均釣果」を基準にして、人数の偏りによる見かけの差と実際の釣況差を明確に区別して考察してください。
-必ず以下のJSON形式のみで出力してください（Markdownコードブロックや余計な文字は一切不要）。{  "difficulty": "★1〜★5で難易度評価と一言(例: ★★★☆☆ テクニカルな拾い釣りデー)",  "totalSummaryReport": "指示ルールを厳守した400字程度の完成されたトータル状況日報文章",  "seatBiasAnalysis": "左右舷の人数差および1人あたり平均釣果を踏まえた左右差、トモ・ミヨシ・胴の間での釣果の偏り、風向き・潮の流れ（潮上・潮下）による座席バイアスの分析",  "environmentCorrelation": "水温・潮色・潮回り・天候変化が魚の食い気や活性にどう影響を与えていたかの相関分析",  "topAnglerFactors": "竿頭（トップ）や好成績者が釣果を伸ばした要因（誘い方、タナ、メモ情報、仕掛けの工夫など）の考察",  "captainAdvice": "次回同じような潮回り・海況になった時の推奨ポイント、流し方の工夫、お客様へのアドバイス"}`;
-        try {
-            const text = await callGeminiApi(userApiKey, prompt, selectedAiModel, true);
-            const cleanJson = (text || '').replace(/```json/gi, '').replace(/
+【当日のデータ】- 日付: ${record.date} (${getDayOfWeek(record.date)})- 上限釣果（トップ）: ${record.max} ${unit}- 竿頭: ${record.topAnglerName || 'なし'} (${record.max} ${unit})- ポイント: ${record.point || '久里浜沖周辺'} / 水深: ${record.waterDepth || '-'}m / 水温: ${record.waterTemp || '-'}℃
