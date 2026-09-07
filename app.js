@@ -1033,10 +1033,10 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（ロゴをもう一回り大きく・右ボタン分だけ視覚的にやや左寄りに補正） */}
+            {/* ヘッダー（ロゴ＋サブタイトルをセットでしっかり左方向へスライド配置） */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8 shrink-0"></div>
-                <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-1.5 sm:-translate-x-2">
+                <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-3.5 sm:-translate-x-5">
                     <img 
                         src="./text_logo.png" 
                         alt="山下丸" 
@@ -1303,7 +1303,7 @@ function App() {
                                                 {r.tide && <span>{r.tide}</span>}
                                                 {r.tideState && <span>{r.tideState}</span>}
                                                 {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
-                                                {(r.windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                                {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
                                                 {waveHeight1 && <span>{waveHeight1}</span>}
                                             </div>
                                         )}
