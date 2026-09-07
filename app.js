@@ -41,7 +41,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     const pSeats = (record.port || []).filter(s => s && s.isVisible !== false);
     const sSeats = (record.starboard || []).filter(s => s && s.isVisible !== false);
 
-    // 人数が多い（片舷8名以上）場合のコンパクト判定
     const maxSeatCount = Math.max(pSeats.length, sSeats.length);
     const isCrowded = maxSeatCount >= 8;
 
@@ -52,14 +51,16 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
     const handleDownload = async () => {
         setIsGenerating(true);
-        setToastMessage('カードを作成しています...');
+        setToastMessage('ボードを作成しています...');
         try {
             const html2canvas = await loadHtml2Canvas();
             const canvas = await html2canvas(cardRef.current, {
                 scale: 3,
                 backgroundColor: canvasBg,
                 useCORS: true,
-                logging: false
+                logging: false,
+                scrollY: 0,
+                scrollX: 0
             });
             const imgData = canvas.toDataURL('image/png');
             
@@ -70,7 +71,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             link.href = imgData;
             link.click();
             
-            setToastMessage('釣果カードを保存しました！\n写真アプリからSNSに投稿できます。');
+            setToastMessage('釣果ボードを保存しました！\n写真アプリからSNSに投稿できます。');
         } catch (e) {
             console.error(e);
             setToastMessage('画像の作成に失敗しました。電波の良い場所でお試しください。');
@@ -85,10 +86,11 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                 <div 
                     ref={cardRef} 
                     className={`${bgClass} ${textClass} relative flex flex-col border-[5px] shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
-                    style={{ width: '100%', maxWidth: '420px', minWidth: '330px' }}
+                    style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
-                    <div className="p-3.5 sm:p-4 flex flex-col gap-2.5 relative z-10">
-                        {/* ヘッダー：自作ロゴをそのまま配置 */}
+                    {/* 下部見切れ防止用の余白（pb-5）を確保 */}
+                    <div className="p-4 pb-5 flex flex-col gap-3 relative z-10">
+                        {/* ヘッダー */}
                         <div className={`flex justify-between items-center border-b pb-2 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col">
                                 <img 
@@ -108,16 +110,13 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
                         {/* 本日の釣果（中央） / 匹数(左)・サイズ(右) / 竿頭(中央) */}
                         <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col justify-center ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
-                            {/* 1段目：本日の釣果（センター） */}
                             <div className="text-center pb-1">
                                 <span className={`text-xs font-black tracking-widest ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                     — 本日の釣果 —
                                 </span>
                             </div>
 
-                            {/* 2段目：左側に匹数、右側にサイズ */}
                             <div className="flex justify-between items-baseline px-1 py-1">
-                                {/* 左側：匹数 */}
                                 <div className="flex items-baseline gap-1">
                                     <span className={`text-2xl sm:text-3xl font-black leading-none ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                         {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
@@ -125,7 +124,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
                                 </div>
 
-                                {/* 右側：サイズ */}
                                 <div className="text-right">
                                     {(record.sizeMin || record.sizeMax) ? (
                                         <span className="text-xs sm:text-sm font-bold text-slate-300">
@@ -137,10 +135,11 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
 
-                            {/* 3段目：竿頭の名前（センター） */}
-                            <div className={`text-center pt-2 mt-1.5 border-t text-xs sm:text-sm ${isDark ? 'border-slate-700/80' : 'border-white/15'}`}>
-                                <span className={`font-bold mr-1.5 ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>👑 本日の竿頭:</span>
-                                <span className="text-white font-black">
+                            <div className={`text-center pt-2 mt-1.5 border-t text-xs sm:text-sm flex items-center justify-center gap-1.5 ${isDark ? 'border-slate-700/80' : 'border-white/15'}`}>
+                                <span className={`font-bold flex items-center shrink-0 ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                    <IconTrophy className="w-3.5 h-3.5 mr-1 inline-block shrink-0" /> 本日の竿頭:
+                                </span>
+                                <span className="text-white font-black truncate max-w-[220px]">
                                     {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
                                 </span>
                             </div>
@@ -167,9 +166,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
                                                     <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
-                                                <div className="font-black flex items-center shrink-0">
-                                                    {isTop && <IconTrophy className="w-3 h-3 mr-0.5 text-amber-400 shrink-0" />}
-                                                    <span>{c}</span>
+                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
+                                                    <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -195,9 +194,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                     <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
                                                     <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
-                                                <div className="font-black flex items-center shrink-0">
-                                                    {isTop && <IconTrophy className="w-3 h-3 mr-0.5 text-amber-400 shrink-0" />}
-                                                    <span>{c}</span>
+                                                <div className="font-black flex items-center justify-end shrink-0 min-w-[28px]">
+                                                    {isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-400 shrink-0 inline-block align-middle" />}
+                                                    <span className="inline-block align-middle">{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -207,7 +206,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                         </div>
 
                         {/* フッター情報 */}
-                        <div className={`rounded-lg px-2.5 py-1.5 text-[11px] sm:text-xs flex flex-wrap gap-x-3 gap-y-1 justify-between border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`}>
+                        <div className={`rounded-lg px-2.5 py-2 text-[11px] sm:text-xs flex flex-wrap gap-x-3 gap-y-1 justify-between border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`}>
                             <div className="flex gap-3">
                                 <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>総計: <span className="font-bold text-white">{record.total || 0}</span> {unit}</div>
                                 <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>平均: <span className="font-bold text-white">{record.avg || 0}</span> {unit}</div>
@@ -956,7 +955,7 @@ function App() {
                 handleCopyPattern={handleCopyPattern}
             />
 
-            {/* SNS画像生成モーダル */}
+            {/* 釣果ボード生成モーダル */}
             <ShareImageModal
                 record={shareImageRecord}
                 onClose={() => setShareImageRecord(null)}
@@ -1348,11 +1347,12 @@ function App() {
                                     )}
 
                                     <div className="p-3 border-t border-gray-100 dark:border-slate-700/60 flex gap-2 flex-wrap items-center">
+                                        {/* ボタン名を「釣果ボード」に変更 */}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
                                             className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-600 dark:text-sky-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
                                         >
-                                            <IconCamera /> SNS画像
+                                            <IconCamera /> 釣果ボード
                                         </button>
                                         
                                         {/* AI分析ボタン */}
