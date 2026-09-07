@@ -47,6 +47,12 @@ jobs:
           sed -i '/<script type="text\/babel" src="report.js"><\/script>/d' dist/index.html
           sed -i '/<script type="text\/babel" src="app.js"><\/script>/d' dist/index.html
 
+          # 【追加】画像やPWA関連ファイルを公開用フォルダ(dist)に忘れずコピーする
+          cp *.png dist/ 2>/dev/null || true
+          cp *.jpg dist/ 2>/dev/null || true
+          cp manifest.json dist/ 2>/dev/null || true
+          cp sw.js dist/ 2>/dev/null || true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
