@@ -1033,14 +1033,14 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（ロゴ画像を二回り拡大：h-10 sm:h-12 に調整） */}
+            {/* ヘッダー（ロゴをもう一回り大きく・右ボタン分だけ視覚的にやや左寄りに補正） */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
-                <div className="w-8"></div>
-                <div className="flex flex-col items-center justify-center flex-1 max-w-[280px]">
+                <div className="w-8 shrink-0"></div>
+                <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-1.5 sm:-translate-x-2">
                     <img 
                         src="./text_logo.png" 
                         alt="山下丸" 
-                        className="h-10 sm:h-12 w-auto max-w-[220px] object-contain object-center drop-shadow-md transition-all"
+                        className="h-12 sm:h-14 w-auto max-w-[270px] object-contain object-center drop-shadow-md transition-all"
                         onError={(e) => {
                             e.target.style.display = 'none';
                             const fallback = document.getElementById('header-text-fallback');
@@ -1049,7 +1049,7 @@ function App() {
                     />
                     <span 
                         id="header-text-fallback" 
-                        style={{ display: 'none', fontFamily: "'Yuji Boku', serif", fontSize: "2.0em", fontWeight: "900", letterSpacing: "0.25em" }}
+                        style={{ display: 'none', fontFamily: "'Yuji Boku', serif", fontSize: "2.2em", fontWeight: "900", letterSpacing: "0.25em" }}
                     >
                         山下丸
                     </span>
@@ -1057,7 +1057,7 @@ function App() {
                         {activeTab === 'history' ? 'SeaNote Archive' : activeTab === 'counter' ? 'Count Fish' : 'CatchLog Pro'}
                     </span>
                 </div>
-                <button onClick={() => setIsSettingsOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full active:bg-blue-800/50">
+                <button onClick={() => setIsSettingsOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full active:bg-blue-800/50 shrink-0">
                     <IconSettings className="w-6 h-6 text-blue-100" />
                 </button>
             </div>
@@ -1302,8 +1302,8 @@ function App() {
                                                 {r.waterTemp && <span>{r.waterTemp}℃</span>}
                                                 {r.tide && <span>{r.tide}</span>}
                                                 {r.tideState && <span>{r.tideState}</span>}
-                                                {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${weather2}` : ''}</span>}
-                                                {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                                {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
+                                                {(r.windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
                                                 {waveHeight1 && <span>{waveHeight1}</span>}
                                             </div>
                                         )}
