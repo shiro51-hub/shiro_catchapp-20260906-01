@@ -109,7 +109,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 本日の釣果（中央揃え） ＋ 【左：匹数 / 右：竿頭＋名前】 */}
+                        {/* 本日の釣果（中央揃え） ＋ 【左：釣果: 匹数 / 右：👑 竿頭: 名前】 */}
                         <div className={`rounded-lg px-3.5 py-3 border shadow-sm flex flex-col justify-center gap-1.5 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {/* 本日の釣果：センター配置 */}
                             <div className="text-center pb-0.5">
@@ -118,22 +118,25 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </span>
                             </div>
 
-                            {/* 左：匹数 ／ 右：竿頭と名前 */}
+                            {/* 左：釣果: 5〜35 枚 ／ 右：👑 竿頭: 〇〇 さん */}
                             <div className="flex justify-between items-center gap-2 pt-1">
-                                {/* 左側：匹数 */}
-                                <div className="flex items-baseline gap-1 shrink-0 pb-1" style={{ lineHeight: 1.3 }}>
+                                {/* 左側：釣果: 匹数 */}
+                                <div className="flex items-baseline gap-1.5 shrink-0 pb-1" style={{ lineHeight: 1.3 }}>
+                                    <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                        釣果:
+                                    </span>
                                     <span className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                         {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                     </span>
                                     <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
                                 </div>
 
-                                {/* 右側：竿頭と名前（フォントと同じ王冠絵文字👑にしてズレを完全に排除） */}
+                                {/* 右側：👑 竿頭: 名前 */}
                                 <div className="flex items-baseline justify-end gap-1 pl-2 pb-1" style={{ lineHeight: 1.4 }}>
                                     <span className={`text-sm sm:text-base font-bold shrink-0 ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
                                         👑 竿頭:
                                     </span>
-                                    <span className="text-xl sm:text-2xl font-black text-white truncate max-w-[150px] sm:max-w-[180px] inline-block" style={{ lineHeight: 1.4, paddingBottom: '4px' }}>
+                                    <span className="text-xl sm:text-2xl font-black text-white truncate max-w-[140px] sm:max-w-[170px] inline-block" style={{ lineHeight: 1.4, paddingBottom: '4px' }}>
                                         {isAnonymous ? '非公開' : (record.topAnglerName || '-')}
                                     </span>
                                     {!isAnonymous && record.topAnglerName && (
@@ -143,7 +146,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 座席リスト（line-height 1.6 ＋ パディング下部に十分な高さを設けて下部欠けを物理的に阻止） */}
+                        {/* 座席リスト */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
@@ -1301,7 +1304,7 @@ function App() {
                                         <div className="p-3 bg-gray-50 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-700 animate-[fadeIn_0.15s_ease-out] space-y-3">
                                             <div className="grid grid-cols-2 gap-2 text-sm">
                                                 <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-red-100 dark:border-red-950/40">
-                                                    <div className="font-black text-red-500 border-b border-red-100 dark:border-red-900 pb-1 mb-1.5 flex justify-between items-center text-sm">
+                                                    <div className="font-black text-red-500 border-b border-red-100 dark:border-red-900 pb-1 mb-2 flex justify-between items-center text-sm">
                                                         <span>左舷</span>
                                                         <span className="text-xs font-bold text-gray-600 dark:text-slate-400">{r.portTotal || 0}{unit}</span>
                                                     </div>
@@ -1317,7 +1320,7 @@ function App() {
                                                                         {s.memo && <span className="text-xs text-gray-400 dark:text-slate-500 ml-1">({s.memo})</span>}
                                                                     </span>
                                                                     <span className="shrink-0 font-black flex items-center text-sm">
-                                                                        {isTop && <IconTrophy className="w-3.5 h-3.5 mr-0.5 text-amber-500" />}
+                                                                        {isTop && <span className="text-xs mr-0.5">👑</span>}
                                                                         {s.count || '0'}
                                                                     </span>
                                                                 </div>
@@ -1327,7 +1330,7 @@ function App() {
                                                 </div>
 
                                                 <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-emerald-100 dark:border-emerald-950/40">
-                                                    <div className="font-black text-emerald-600 dark:text-emerald-400 border-b border-emerald-100 dark:border-emerald-900 pb-1 mb-1.5 flex justify-between items-center text-sm">
+                                                    <div className="font-black text-emerald-600 dark:text-emerald-400 border-b border-emerald-100 dark:border-emerald-900 pb-1 mb-2 flex justify-between items-center text-sm">
                                                         <span>右舷</span>
                                                         <span className="text-xs font-bold text-gray-600 dark:text-slate-400">{r.starboardTotal || 0}{unit}</span>
                                                     </div>
@@ -1343,7 +1346,7 @@ function App() {
                                                                         {s.memo && <span className="text-xs text-gray-400 dark:text-slate-500 ml-1">({s.memo})</span>}
                                                                     </span>
                                                                     <span className="shrink-0 font-black flex items-center text-sm">
-                                                                        {isTop && <IconTrophy className="w-3.5 h-3.5 mr-0.5 text-amber-500" />}
+                                                                        {isTop && <span className="text-xs mr-0.5">👑</span>}
                                                                         {s.count || '0'}
                                                                     </span>
                                                                 </div>
