@@ -49,7 +49,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     const textClass = isDark ? 'text-slate-100' : 'text-white';
     const canvasBg = isDark ? '#0f172a' : '#0369a1';
 
-    // 竿頭の人数の取得（複数人対応）
     const topCount = stats.topNames ? stats.topNames.length : (record.topAnglerName ? 1 : 0);
 
     const handleDownload = async () => {
@@ -1034,14 +1033,14 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（ロゴ画像＋ゴシック体サブタイトルに刷新） */}
-            <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white p-2.5 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
+            {/* ヘッダー（ロゴ画像を二回り拡大：h-10 sm:h-12 に調整） */}
+            <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8"></div>
-                <div className="flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center flex-1 max-w-[280px]">
                     <img 
                         src="./text_logo.png" 
                         alt="山下丸" 
-                        className="h-7 sm:h-8 object-contain object-center drop-shadow-md"
+                        className="h-10 sm:h-12 w-auto max-w-[220px] object-contain object-center drop-shadow-md transition-all"
                         onError={(e) => {
                             e.target.style.display = 'none';
                             const fallback = document.getElementById('header-text-fallback');
@@ -1050,7 +1049,7 @@ function App() {
                     />
                     <span 
                         id="header-text-fallback" 
-                        style={{ display: 'none', fontFamily: "'Yuji Boku', serif", fontSize: "1.8em", fontWeight: "900", letterSpacing: "0.25em" }}
+                        style={{ display: 'none', fontFamily: "'Yuji Boku', serif", fontSize: "2.0em", fontWeight: "900", letterSpacing: "0.25em" }}
                     >
                         山下丸
                     </span>
@@ -1304,8 +1303,8 @@ function App() {
                                                 {r.tide && <span>{r.tide}</span>}
                                                 {r.tideState && <span>{r.tideState}</span>}
                                                 {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${weather2}` : ''}</span>}
-                                                {(r.windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
-                                                {r.waveHeight1 && <span>{waveHeight1}</span>}
+                                                {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                                {waveHeight1 && <span>{waveHeight1}</span>}
                                             </div>
                                         )}
 
