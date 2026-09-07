@@ -112,12 +112,10 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 新レイアウト：【左：釣果＋数】 / 【右：竿頭＋橙色名前＋末尾に小さく「さん」】 */}
+                        {/* 【左：釣果＋数】 / 【右：竿頭＋橙色名前＋末尾に小さく「さん」】 */}
                         <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
-                                /* 竿頭が1〜2名の場合：横並び2分割レイアウト */
                                 <div className="flex justify-between items-end gap-2">
-                                    {/* 左側：釣果（上：グレー、下：橙色数字） */}
                                     <div className="flex flex-col items-start shrink-0">
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             釣果
@@ -130,7 +128,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         </div>
                                     </div>
 
-                                    {/* 右側：竿頭（上：グレー、下：橙色お名前、末尾に1つだけ「さん」） */}
                                     <div className="flex flex-col items-end text-right flex-1 min-w-0 pl-2">
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider flex items-center ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             <span className="mr-0.5 text-xs">👑</span>竿頭
@@ -154,7 +151,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </div>
                                 </div>
                             ) : (
-                                /* 竿頭が3名以上（3〜5名など）の場合：上下2段展開で全員のお名前をゆったり表示 */
                                 <div className="flex flex-col gap-1.5">
                                     <div className="flex justify-between items-baseline border-b border-white/10 pb-1">
                                         <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>釣果</span>
@@ -1038,33 +1034,27 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー */}
+            {/* ヘッダー（ロゴ画像＋ゴシック体サブタイトルに刷新） */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white p-2.5 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8"></div>
                 <div className="flex flex-col items-center justify-center">
-                    <h1
-                        style={{
-                            fontFamily: "'Yuji Boku', serif",
-                            fontSize: "2.0em",
-                            fontWeight: "900",
-                            lineHeight: "1.05",
-                            letterSpacing: "0.32em",
-                            paddingLeft: "0.32em",
-                            textShadow: "0 2px 4px rgba(0, 0, 0, 0.3)"
+                    <img 
+                        src="./text_logo.png" 
+                        alt="山下丸" 
+                        className="h-7 sm:h-8 object-contain object-center drop-shadow-md"
+                        onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fallback = document.getElementById('header-text-fallback');
+                            if (fallback) fallback.style.display = 'block';
                         }}
+                    />
+                    <span 
+                        id="header-text-fallback" 
+                        style={{ display: 'none', fontFamily: "'Yuji Boku', serif", fontSize: "1.8em", fontWeight: "900", letterSpacing: "0.25em" }}
                     >
                         山下丸
-                    </h1>
-                    <span
-                        style={{
-                            fontFamily: "'Permanent Marker', cursive",
-                            fontSize: "1.25em",
-                            letterSpacing: "0.28em",
-                            paddingLeft: "0.28em",
-                            color: "#93c5fd",
-                            textShadow: "0 1px 2px rgba(0, 0, 0, 0.25)"
-                        }}
-                    >
+                    </span>
+                    <span className="font-sans font-bold text-[10px] sm:text-[11px] tracking-widest text-sky-300 drop-shadow-sm mt-0.5 uppercase">
                         {activeTab === 'history' ? 'SeaNote Archive' : activeTab === 'counter' ? 'Count Fish' : 'CatchLog Pro'}
                     </span>
                 </div>
