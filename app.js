@@ -27,8 +27,7 @@ const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
 function ShareImageModal({ record, onClose, setToastMessage }) {
     const [isAnonymous, setIsAnonymous] = React.useState(false);
     const [isGenerating, setIsGenerating] = React.useState(false);
-    const [cardTheme, setCardTheme] = React.useState('light'); // 初期をマリンブルーに
-    const [useImageLogo, setUseImageLogo] = React.useState(false); // 画像ロゴ使用スイッチ
+    const [cardTheme, setCardTheme] = React.useState('dark'); // 'dark' or 'light'
     const cardRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -42,11 +41,14 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     const pSeats = (record.port || []).filter(s => s && s.isVisible !== false);
     const sSeats = (record.starboard || []).filter(s => s && s.isVisible !== false);
 
-    // マリンブルー(light) と ダークナイト(dark) のカラー設定
+    // 人数が多い（片舷8名以上）場合のコンパクト判定
+    const maxSeatCount = Math.max(pSeats.length, sSeats.length);
+    const isCrowded = maxSeatCount >= 8;
+
     const isDark = cardTheme === 'dark';
-    const bgClass = isDark ? 'bg-slate-900 border-slate-950' : 'bg-gradient-to-br from-sky-500 to-blue-700 border-blue-900';
+    const bgClass = isDark ? 'bg-slate-900 border-slate-950' : 'bg-gradient-to-br from-sky-600 to-blue-800 border-blue-950';
     const textClass = isDark ? 'text-slate-100' : 'text-white';
-    const canvasBg = isDark ? '#0f172a' : '#0284c7';
+    const canvasBg = isDark ? '#0f172a' : '#0369a1';
 
     const handleDownload = async () => {
         setIsGenerating(true);
@@ -79,96 +81,70 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
     return (
         <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/80 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]">
-            <div className="flex-1 w-full overflow-y-auto pb-[320px] pt-8 px-4 flex justify-center items-start no-scrollbar">
+            <div className="flex-1 w-full overflow-y-auto pb-[240px] pt-6 px-3 flex justify-center items-start no-scrollbar">
                 <div 
                     ref={cardRef} 
-                    className={`${bgClass} ${textClass} relative flex flex-col border-[6px] shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
-                    style={{ width: '100%', maxWidth: '420px', minWidth: '340px' }}
+                    className={`${bgClass} ${textClass} relative flex flex-col border-[5px] shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
+                    style={{ width: '100%', maxWidth: '420px', minWidth: '330px' }}
                 >
-                    {/* 背景透かし (画像を使うか、内蔵の透かしを使うか分岐) */}
-                    {useImageLogo ? (
-                        <img 
-                            src="./fish_logo.png" 
-                            onError={(e) => e.target.style.display='none'} 
-                            className={`absolute inset-0 m-auto w-[85%] h-[85%] object-contain pointer-events-none transition-all duration-300 ${isDark ? 'opacity-[0.12]' : 'opacity-[0.25]'}`} 
-                            alt="" 
-                        />
-                    ) : (
-                        <div className={`absolute inset-0 m-auto flex items-center justify-center pointer-events-none overflow-hidden transition-all duration-300 ${isDark ? 'opacity-[0.03]' : 'opacity-[0.08]'}`}>
-                            <div className="font-black text-white text-[70px] sm:text-[85px] leading-none transform -rotate-12 select-none tracking-tighter whitespace-nowrap">
-                                YAMASHITAMARU
-                            </div>
-                        </div>
-                    )}
-                    
-                    <div className="p-4 sm:p-5 flex flex-col gap-4 relative z-10">
-                        {/* ヘッダー */}
-                        <div className={`flex justify-between items-start border-b pb-3 ${isDark ? 'border-slate-700/80' : 'border-blue-400/50'}`}>
-                            <div className="flex flex-col gap-1.5">
-                                {/* テキストロゴ分岐 */}
-                                {useImageLogo ? (
-                                    <img 
-                                        src="./text_logo.png" 
-                                        onError={(e) => e.target.style.display='none'} 
-                                        className="h-8 sm:h-10 object-contain object-left mb-1 transition-all duration-300" 
-                                        alt="yamashitamaru" 
-                                    />
-                                ) : (
-                                    <div className="flex flex-col items-start mb-1 select-none">
-                                        <div className="font-black text-[24px] sm:text-[28px] tracking-tighter text-white leading-none mb-0.5" style={{ transform: 'scaleX(1.15)', transformOrigin: 'left' }}>
-                                            yamashitamaru
-                                        </div>
-                                        <div className="font-bold text-[10px] sm:text-[11px] tracking-[0.25em] text-white/90">
-                                            kawahagi spirit
-                                        </div>
-                                        <div className="w-full h-1.5 bg-yellow-400 mt-1 rounded-full shadow-sm"></div>
-                                    </div>
-                                )}
-
-                                <div className={`text-xs sm:text-sm font-bold tracking-widest ${isDark ? 'text-sky-300' : 'text-sky-100'}`}>
+                    <div className="p-3.5 sm:p-4 flex flex-col gap-2.5 relative z-10">
+                        {/* ヘッダー：自作ロゴをそのまま配置 */}
+                        <div className={`flex justify-between items-center border-b pb-2 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
+                            <div className="flex flex-col">
+                                <img 
+                                    src="./text_logo.png" 
+                                    onError={(e) => { e.target.style.display='none'; }} 
+                                    className="h-8 sm:h-9 object-contain object-left" 
+                                    alt="yamashitamaru" 
+                                />
+                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 ${isDark ? 'text-sky-300' : 'text-sky-100'}`}>
                                     {record.date.replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 && `| ${record.weather1}`}
                                 </div>
                             </div>
-                            <div className="text-right mt-1">
-                                <div className="text-2xl sm:text-3xl font-black tracking-tight text-white">{record.targetFish}</div>
+                            <div className="text-right">
+                                <span className="text-xl sm:text-2xl font-black tracking-tight text-white">{record.targetFish}</span>
                             </div>
                         </div>
 
-                        {/* 本日の釣果（下限〜上限）と竿頭 */}
-                        <div className={`rounded-xl p-4 border flex flex-col items-center justify-center shadow-md relative overflow-hidden backdrop-blur-sm ${isDark ? 'bg-gradient-to-b from-slate-800/90 to-slate-800/40 border-amber-500/30' : 'bg-white/10 border-white/30'}`}>
-                            <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-amber-500 via-amber-300 to-amber-500"></div>
-                            
-                            <div className={`text-xs sm:text-sm font-black mb-1.5 flex items-center tracking-widest ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
-                                <IconTrophy className="w-4 h-4 mr-1" /> 本日の釣果
-                            </div>
-                            
-                            <div className="flex items-end justify-center gap-1.5 mb-3">
-                                <div className={`text-4xl sm:text-5xl font-black leading-none ${isDark ? 'text-amber-500' : 'text-yellow-300'}`}>
-                                    {stats.min}<span className="text-2xl sm:text-3xl mx-1 font-bold opacity-70">〜</span>{stats.max}
-                                </div>
-                                <div className={`text-lg sm:text-xl font-black mb-0.5 ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</div>
-                            </div>
-
-                            <div className={`w-full pt-3 mt-1 border-t flex flex-col items-center ${isDark ? 'border-slate-600/50' : 'border-white/30'}`}>
-                                <span className={`text-[10px] sm:text-xs font-bold mb-0.5 ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>👑 本日の竿頭</span>
-                                <span className="text-lg sm:text-xl font-black truncate max-w-[280px] text-white">
-                                    {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
+                        {/* 本日の釣果・型・竿頭（スリム＆コンパクト設計） */}
+                        <div className={`rounded-lg px-3 py-2 border shadow-sm flex flex-col justify-center ${isDark ? 'bg-slate-800/80 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                            {/* 1行目：釣果幅 */}
+                            <div className="flex justify-between items-baseline">
+                                <span className={`text-xs font-black tracking-wider ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                    本日の釣果
                                 </span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className={`text-2xl sm:text-3xl font-black leading-none ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>
+                                        {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
+                                    </span>
+                                    <span className={`text-xs sm:text-sm font-bold ${isDark ? 'text-amber-200' : 'text-yellow-100'}`}>{unit}</span>
+                                </div>
                             </div>
 
-                            {(record.sizeMin || record.sizeMax) && (
-                                <div className={`text-xs font-bold mt-4 px-3 py-1 rounded-full ${isDark ? 'bg-slate-900/60 text-slate-300' : 'bg-black/20 text-white'}`}>
-                                    型: {record.sizeMin || '?'}〜{record.sizeMax || '?'} cm
+                            {/* 2行目：型と竿頭を1行に凝縮 */}
+                            <div className={`flex justify-between items-center pt-1.5 mt-1 border-t text-[11px] sm:text-xs ${isDark ? 'border-slate-700' : 'border-white/15'}`}>
+                                <div className="text-slate-300 font-bold truncate pr-2">
+                                    {(record.sizeMin || record.sizeMax) ? (
+                                        <span>型: <span className="text-white font-black">{record.sizeMin || '?'}〜{record.sizeMax || '?'}</span> cm</span>
+                                    ) : (
+                                        <span className="opacity-70">型: -</span>
+                                    )}
                                 </div>
-                            )}
+                                <div className="flex items-center gap-1 font-bold shrink-0">
+                                    <span className={isDark ? 'text-amber-400' : 'text-yellow-300'}>👑 竿頭:</span>
+                                    <span className="text-white font-black truncate max-w-[130px] sm:max-w-[160px]">
+                                        {isAnonymous ? '非公開' : (record.topAnglerName || '-')} {(!isAnonymous && record.topAnglerName) ? 'さん' : ''}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
-                        {/* 座席リスト */}
-                        <div className="flex gap-2.5 w-full mt-1">
+                        {/* 座席リスト（人数が多い時は自動で高さを詰め、文字を最適化） */}
+                        <div className="flex gap-2 w-full">
                             {/* 左舷 */}
-                            <div className={`flex-1 rounded-lg p-3 border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/50' : 'bg-black/10 border-white/20'}`}>
-                                <div className={`font-black text-xs sm:text-sm tracking-widest border-b pb-1.5 mb-2.5 text-center ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/40'}`}>左舷</div>
-                                <div className="space-y-1.5">
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`}>左舷</div>
+                                <div className={isCrowded ? 'space-y-0.5' : 'space-y-1'}>
                                     {pSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
                                         const isTop = c === stats.max && c > 0;
@@ -179,21 +155,24 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`p-${i}`} className={`flex justify-between items-center text-sm sm:text-base py-0.5 border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`}>
+                                            <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs py-0.5' : 'text-sm py-1'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`}>
                                                 <div className="truncate pr-1 flex-1">
-                                                    <span className="opacity-50 mr-1.5 text-xs sm:text-sm">{s.id}.</span>
+                                                    <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
                                                     <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
-                                                <div className="font-black flex items-center">{isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-500" />}{c}</div>
+                                                <div className="font-black flex items-center shrink-0">
+                                                    {isTop && <IconTrophy className="w-3 h-3 mr-0.5 text-amber-400 shrink-0" />}
+                                                    <span>{c}</span>
+                                                </div>
                                             </div>
                                         );
                                     })}
                                 </div>
                             </div>
                             {/* 右舷 */}
-                            <div className={`flex-1 rounded-lg p-3 border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/50' : 'bg-black/10 border-white/20'}`}>
-                                <div className={`font-black text-xs sm:text-sm tracking-widest border-b pb-1.5 mb-2.5 text-center ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/40'}`}>右舷</div>
-                                <div className="space-y-1.5">
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-1.5 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`}>右舷</div>
+                                <div className={isCrowded ? 'space-y-0.5' : 'space-y-1'}>
                                     {sSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
                                         const isTop = c === stats.max && c > 0;
@@ -204,12 +183,15 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`s-${i}`} className={`flex justify-between items-center text-sm sm:text-base py-0.5 border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`}>
+                                            <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs py-0.5' : 'text-sm py-1'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`}>
                                                 <div className="truncate pr-1 flex-1">
-                                                    <span className="opacity-50 mr-1.5 text-xs sm:text-sm">{s.id}.</span>
+                                                    <span className="opacity-50 mr-1 text-[11px]">{s.id}.</span>
                                                     <span>{isAnonymous ? `座席${s.id}` : (s.name || '-')}</span>
                                                 </div>
-                                                <div className="font-black flex items-center">{isTop && <IconTrophy className="w-3.5 h-3.5 mr-1 text-amber-500" />}{c}</div>
+                                                <div className="font-black flex items-center shrink-0">
+                                                    {isTop && <IconTrophy className="w-3 h-3 mr-0.5 text-amber-400 shrink-0" />}
+                                                    <span>{c}</span>
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -218,12 +200,12 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                         </div>
 
                         {/* フッター情報 */}
-                        <div className={`rounded-lg p-3 text-xs sm:text-sm flex flex-wrap gap-x-4 gap-y-2 justify-between border mt-2 ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`}>
-                            <div className="flex gap-4">
+                        <div className={`rounded-lg px-2.5 py-1.5 text-[11px] sm:text-xs flex flex-wrap gap-x-3 gap-y-1 justify-between border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-transparent'}`}>
+                            <div className="flex gap-3">
                                 <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>総計: <span className="font-bold text-white">{record.total || 0}</span> {unit}</div>
                                 <div className={isDark ? 'text-slate-400' : 'text-sky-100'}>平均: <span className="font-bold text-white">{record.avg || 0}</span> {unit}</div>
                             </div>
-                            <div className={`flex gap-3 ${isDark ? 'text-slate-500' : 'text-sky-200'}`}>
+                            <div className={`flex gap-2.5 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                 {record.waterTemp && <span>水温: {record.waterTemp}℃</span>}
                                 {record.tideState && <span>潮: {record.tideState}</span>}
                                 {record.point && <span>{record.point}</span>}
@@ -234,53 +216,45 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             </div>
 
             {/* コントロールパネル */}
-            <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-4 flex flex-col gap-2.5 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
+            <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-3.5 flex flex-col gap-2 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
                 <div className="flex justify-between items-center mb-0.5">
-                    <span className="font-black text-gray-800 dark:text-slate-100 text-base sm:text-lg">釣果ボードを作成</span>
-                    <button onClick={onClose} className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300">✕</button>
+                    <span className="font-black text-gray-800 dark:text-slate-100 text-base">釣果ボードを作成</span>
+                    <button onClick={onClose} className="w-7 h-7 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300 text-xs">✕</button>
                 </div>
                 
-                {/* テーマ切り替えボタン */}
+                {/* テーマ切り替え */}
                 <div className="flex gap-2 p-1 bg-gray-100 dark:bg-slate-700/50 rounded-xl">
                     <button 
-                        onClick={() => setCardTheme('light')} 
-                        className={`flex-1 py-2 text-sm font-black rounded-lg transition-all ${cardTheme === 'light' ? 'bg-sky-500 shadow text-white' : 'text-gray-500 dark:text-slate-400 active:bg-gray-200'}`}
+                        onClick={() => setCardTheme('dark')} 
+                        className={`flex-1 py-1.5 text-xs font-black rounded-lg transition-all ${cardTheme === 'dark' ? 'bg-slate-800 shadow text-amber-400' : 'text-gray-500 dark:text-slate-400 active:bg-gray-200'}`}
                     >
-                        🌊 マリンブルー
+                        🌙 ナイト
                     </button>
                     <button 
-                        onClick={() => setCardTheme('dark')} 
-                        className={`flex-1 py-2 text-sm font-black rounded-lg transition-all ${cardTheme === 'dark' ? 'bg-slate-800 shadow text-amber-400' : 'text-gray-500 dark:text-slate-400 active:bg-gray-200'}`}
+                        onClick={() => setCardTheme('light')} 
+                        className={`flex-1 py-1.5 text-xs font-black rounded-lg transition-all ${cardTheme === 'light' ? 'bg-sky-600 shadow text-white' : 'text-gray-500 dark:text-slate-400 active:bg-gray-200'}`}
                     >
-                        🌙 ダークナイト
+                        🌊 マリン
                     </button>
                 </div>
 
-                <label className="flex items-center justify-between p-2.5 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
-                    <span className="text-sm font-bold text-gray-700 dark:text-slate-200">
+                {/* 匿名化スイッチ */}
+                <label className="flex items-center justify-between p-2 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
+                    <span className="text-xs font-bold text-gray-700 dark:text-slate-200">
                         お名前を隠す（匿名化）
                     </span>
-                    <input type="checkbox" className="w-5 h-5 text-sky-500 rounded border-gray-300" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
-                </label>
-
-                {/* 画像ロゴのオンオフスイッチ（新機能） */}
-                <label className="flex items-center justify-between p-2.5 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
-                    <span className="text-sm font-bold text-gray-700 dark:text-slate-200">
-                        アップロードした画像を使う
-                        <div className="text-[10px] text-gray-500 dark:text-slate-400 mt-0.5 leading-tight">※背景が白くなる場合はオフにしてください</div>
-                    </span>
-                    <input type="checkbox" className="w-5 h-5 text-sky-500 rounded border-gray-300" checked={useImageLogo} onChange={(e) => setUseImageLogo(e.target.checked)} />
+                    <input type="checkbox" className="w-4 h-4 text-sky-500 rounded border-gray-300" checked={isAnonymous} onChange={(e) => setIsAnonymous(e.target.checked)} />
                 </label>
 
                 <button 
                     onClick={handleDownload}
                     disabled={isGenerating}
-                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3.5 rounded-xl text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-2 mt-1"
+                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3 rounded-xl text-xs sm:text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-1.5 mt-0.5"
                 >
                     {isGenerating ? (
-                        <><span className="animate-spin text-lg leading-none mb-1">↻</span> キャプチャ中...</>
+                        <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
                     ) : (
-                        <><IconCamera className="w-5 h-5" /> この画像をスマホに保存</>
+                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
                     )}
                 </button>
             </div>
