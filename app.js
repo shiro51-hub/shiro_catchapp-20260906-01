@@ -111,7 +111,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 【左：釣果＋数】 / 【右：竿頭＋橙色名前＋末尾に小さく「さん」】 */}
+                        {/* 【左：釣果＋数】 / 【右：竿頭＋純白名前＋末尾に小さく「さん」】 */}
                         <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -133,15 +133,15 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         </span>
                                         <div className="mt-0.5 w-full flex justify-end items-baseline truncate">
                                             {isAnonymous ? (
-                                                <span className={`text-lg sm:text-xl font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>非公開</span>
+                                                <span className="text-lg sm:text-xl font-black text-white">非公開</span>
                                             ) : topCount === 0 ? (
                                                 <span className={`text-lg font-black ${isDark ? 'text-slate-500' : 'text-white/60'}`}>-</span>
                                             ) : (
                                                 <div className="flex items-baseline justify-end truncate max-w-full">
-                                                    <span className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black truncate ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
+                                                    <span className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black text-white truncate drop-shadow-sm`} style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
                                                         {stats.topNames.join('・')}
                                                     </span>
-                                                    <span className={`text-[11px] sm:text-xs font-bold ml-1 shrink-0 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-1 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`}>
                                                         さん
                                                     </span>
                                                 </div>
@@ -166,13 +166,13 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         </span>
                                         <div className="flex flex-wrap items-baseline gap-1">
                                             {isAnonymous ? (
-                                                <span className={`text-sm font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`}>非公開</span>
+                                                <span className="text-sm font-black text-white">非公開</span>
                                             ) : (
                                                 <div className="flex flex-wrap items-baseline gap-x-1">
-                                                    <span className={`text-sm sm:text-base font-black ${isDark ? 'text-amber-400' : 'text-yellow-300'}`} style={{ lineHeight: 1.4 }}>
+                                                    <span className="text-sm sm:text-base font-black text-white drop-shadow-sm" style={{ lineHeight: 1.4 }}>
                                                         {stats.topNames.join('・')}
                                                     </span>
-                                                    <span className={`text-[11px] sm:text-xs font-bold ml-0.5 shrink-0 ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-0.5 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`}>
                                                         さん
                                                     </span>
                                                 </div>
@@ -183,7 +183,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             )}
                         </div>
 
-                        {/* 座席リスト */}
+                        {/* 座席リスト（平均以上：白文字、その他：薄いグレー） */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
@@ -194,9 +194,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         const isTop = c === stats.max && c > 0;
                                         const isAvg = c >= stats.avg && c > 0 && !isTop;
                                         
-                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100';
-                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black';
-                                        else if (isAvg) textColor = 'text-white font-bold';
+                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100'; // その他：薄いグレー
+                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black'; // 竿頭：山吹色
+                                        else if (isAvg) textColor = 'text-white font-bold'; // 平均以上：白
 
                                         return (
                                             <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
@@ -224,9 +224,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         const isTop = c === stats.max && c > 0;
                                         const isAvg = c >= stats.avg && c > 0 && !isTop;
 
-                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100';
-                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black';
-                                        else if (isAvg) textColor = 'text-white font-bold';
+                                        let textColor = isDark ? 'text-slate-400' : 'text-sky-100'; // その他：薄いグレー
+                                        if (isTop) textColor = isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black'; // 竿頭：山吹色
+                                        else if (isAvg) textColor = 'text-white font-bold'; // 平均以上：白
 
                                         return (
                                             <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
@@ -1033,7 +1033,7 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（サブタイトルをもう一回り大きく text-xs sm:text-sm に調整） */}
+            {/* ヘッダー */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8 shrink-0"></div>
                 <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-3.5 sm:-translate-x-5">
