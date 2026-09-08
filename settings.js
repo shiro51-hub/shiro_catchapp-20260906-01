@@ -452,8 +452,22 @@ function SettingsPanel({
                             {/* 基本海況・ポイント */}
                             <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2.5">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">基本海況・ポイント設定</span>
+                                
+                                {/* 1段目：釣り物（最優先・横幅いっぱい） */}
+                                <div>
+                                    <label className="text-xs font-bold text-sky-700 dark:text-sky-300 block mb-1">🎣 釣り物 (候補・手入力)</label>
+                                    <input
+                                        type="text"
+                                        list="target-fish-options"
+                                        className="w-full border rounded-lg px-3 py-2 font-black text-sm bg-white dark:bg-slate-800"
+                                        value={targetFish}
+                                        onChange={(e) => setTargetFish(e.target.value)}
+                                        placeholder="選択または入力（例: カワハギ / アジ）"
+                                    />
+                                </div>
+
+                                {/* 2段目：ポイント ＋ 水深 */}
                                 <div className="grid grid-cols-2 gap-2">
-                                    {/* ポイント */}
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">ポイント (候補・手入力)</label>
                                         <input
@@ -465,21 +479,6 @@ function SettingsPanel({
                                             placeholder="選択または入力"
                                         />
                                     </div>
-
-                                    {/* 釣り物 */}
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">釣り物 (候補・手入力)</label>
-                                        <input
-                                            type="text"
-                                            list="target-fish-options"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
-                                            value={targetFish}
-                                            onChange={(e) => setTargetFish(e.target.value)}
-                                            placeholder="選択または入力"
-                                        />
-                                    </div>
-
-                                    {/* 水深 */}
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水深 (m)</label>
                                         <input
@@ -490,8 +489,10 @@ function SettingsPanel({
                                             placeholder="例: 45"
                                         />
                                     </div>
+                                </div>
 
-                                    {/* 水温 */}
+                                {/* 3段目：水温 ＋ 潮色 */}
+                                <div className="grid grid-cols-2 gap-2">
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水温 (℃)</label>
                                         <input
@@ -502,9 +503,7 @@ function SettingsPanel({
                                             placeholder="例: 18.5"
                                         />
                                     </div>
-
-                                    {/* 潮色 */}
-                                    <div className="col-span-2">
+                                    <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">潮色 (候補・手入力)</label>
                                         <input
                                             type="text"
@@ -512,7 +511,7 @@ function SettingsPanel({
                                             className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={tide}
                                             onChange={(e) => setTide(e.target.value)}
-                                            placeholder="選択または入力（例: 澄み / 薄濁り）"
+                                            placeholder="例: 澄み / 薄濁り"
                                         />
                                     </div>
                                 </div>
