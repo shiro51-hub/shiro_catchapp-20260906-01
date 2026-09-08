@@ -1,5 +1,5 @@
 // ==========================================
-// settings.js : 設定・海況・データ管理パネル（タブ切り替え＆個別画像解析版）
+// settings.js : 設定・海況・システム管理パネル
 // ==========================================
 
 function SettingsPanel({
@@ -18,12 +18,14 @@ function SettingsPanel({
     onFactoryReset, records, setRecords,
     userApiKey, setUserApiKey, selectedAiModel, setSelectedAiModel
 }) {
-    const [activeSettingsTab, setActiveSettingsTab] = React.useState('seats'); // 'seats', 'weather', 'data'
+    const [activeSettingsTab, setActiveSettingsTab] = React.useState('basic'); // 'basic', 'weather', 'system'
     const tideImageInputRef = React.useRef(null);
     const weatherImageInputRef = React.useRef(null);
     const fileInputRef = React.useRef(null);
     const [tempKey, setTempKey] = React.useState(userApiKey || '');
     const [showKey, setShowKey] = React.useState(false);
+    const [showTextInput, setShowTextInput] = React.useState(false);
+    const [pasteText, setPasteText] = React.useState('');
     const [isAnalyzingTide, setIsAnalyzingTide] = React.useState(false);
     const [isAnalyzingWeather, setIsAnalyzingWeather] = React.useState(false);
 
@@ -33,14 +35,27 @@ function SettingsPanel({
 
     if (!isSettingsOpen) return null;
 
-    // Base64変換ユーティリティ
+    // AIモデルの表示名とAPI識別子のマップ
+    const aiModelOptions = [
+        { label: "Gemini 2.5 Flash（推奨・高速）", value: "Gemini 2.5 Flash", id: "gemini-2.5-flash" },
+        { label: "Gemini 2.5 Pro（深層考察・高精度）", value: "Gemini 2.5 Pro", id: "gemini-2.5-pro" },
+        { label: "Gemini 3.5 Flash", value: "Gemini 3.5 Flash", id: "gemini-3.5-flash" },
+        { label: "Gemini 3.6 Flash", value: "Gemini 3.6 Flash", id: "gemini-3.6-flash" },
+        { label: "Gemini 3.7 Flash", value: "Gemini 3.7 Flash", id: "gemini-3.7-flash" },
+        { label: "Gemini 3.8 Flash", value: "Gemini 3.8 Flash", id: "gemini-3.8-flash" },
+        { label: "Gemini 3.1 Pro", value: "Gemini 3.1 Pro", id: "gemini-3.1-pro" }
+    ];
+
+    const getModelApiId = (modelName) => {
+        const found = aiModelOptions.find(m => m.value === modelName);
+        return found ? found.id : "gemini-2.5-flash";
+    };
+
+    // Base64変換
     const fileToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => {
-                const res = reader.result;
-                resolve(res.split(',')[1]);
-            };
+            reader.onload = () => resolve(reader.result.split(',')[1]);
             reader.onerror = reject;
             reader.readAsDataURL(file);
         });
@@ -50,10 +65,11 @@ function SettingsPanel({
     const callVisionApi = async (file, prompt) => {
         const activeKey = (userApiKey || '').trim();
         if (!activeKey) {
-            throw new Error('APIキーが設定されていません。「データ・AI」タブでGemini APIキーを登録してください。');
+            throw new Error('APIキーが設定されていません。「システム」タブでGemini APIキーを入力して保存してください。');
         }
 
         const base64Data = await fileToBase64(file);
+        // 画像解析はマルチモーダルが最も安定しているFlashモデルで実行
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeKey}`;
         const payload = {
             contents: [{
@@ -99,7 +115,7 @@ function SettingsPanel({
         if (!file) return;
 
         setIsAnalyzingTide(true);
-        setToastMessage('潮時表を解析中...');
+        setToastMessage('潮時表をAI解析中...');
 
         try {
             const prompt = `この画像は潮時表（タイドグラフ）のスクリーンショットです。
@@ -114,7 +130,7 @@ function SettingsPanel({
             if (parsed.lowTide1) { setLowTide1(parsed.lowTide1); count++; }
             if (parsed.lowTide2) { setLowTide2(parsed.lowTide2); count++; }
 
-            setToastMessage(`潮時表の解析完了！\n${count}項目の潮時データを反映しました`);
+            setToastMessage(`潮時表の解析完了！\n${count}項目の潮時データを自動入力しました`);
         } catch (err) {
             console.error(err);
             setToastMessage(`潮時表の解析に失敗しました: ${err.message}`);
@@ -132,7 +148,7 @@ function SettingsPanel({
         if (!file) return;
 
         setIsAnalyzingWeather(true);
-        setToastMessage('気象予報を解析中...');
+        setToastMessage('気象予報をAI解析中...');
 
         try {
             const prompt = `この画像は海の天気・風・波の気象予報スクリーンショットです。
@@ -150,7 +166,7 @@ function SettingsPanel({
             if (parsed.waveHeight1) { setWaveHeight1(parsed.waveHeight1); count++; }
             if (parsed.waveHeight2) { setWaveHeight2(parsed.waveHeight2); count++; }
 
-            setToastMessage(`気象予報の解析完了！\n${count}項目の気象データを反映しました`);
+            setToastMessage(`気象予報の解析完了！\n${count}項目の気象データを自動入力しました`);
         } catch (err) {
             console.error(err);
             setToastMessage(`気象予報の解析に失敗しました: ${err.message}`);
@@ -199,9 +215,33 @@ function SettingsPanel({
         }
     };
 
-    // ==========================================
-    // バックアップ復元（インポート）
-    // ==========================================
+    // 共通復元ロジック
+    const applyRestoreData = (textData) => {
+        if (!textData || !textData.trim()) throw new Error('データが空です');
+        const parsed = JSON.parse(textData);
+        let importedList = [];
+
+        if (Array.isArray(parsed)) {
+            importedList = parsed;
+        } else if (parsed && Array.isArray(parsed.records)) {
+            importedList = parsed.records;
+        } else {
+            throw new Error('データ形式が認識できません');
+        }
+
+        if (importedList.length === 0) {
+            setToastMessage('復元できる釣果データが見つかりませんでした');
+            return false;
+        }
+
+        localStorage.setItem('fishing_records', JSON.stringify(importedList));
+        setRecords(importedList);
+        setToastMessage(`復元完了：${importedList.length}件の釣果データを復元しました`);
+        setIsSettingsOpen(false);
+        return true;
+    };
+
+    // ファイル復元
     const handleFileImport = (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
@@ -209,28 +249,7 @@ function SettingsPanel({
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const text = event.target.result;
-                if (!text || !text.trim()) throw new Error('データが空です');
-                const parsed = JSON.parse(text);
-                let importedList = [];
-
-                if (Array.isArray(parsed)) {
-                    importedList = parsed;
-                } else if (parsed && Array.isArray(parsed.records)) {
-                    importedList = parsed.records;
-                } else {
-                    throw new Error('データ形式が認識できません');
-                }
-
-                if (importedList.length === 0) {
-                    setToastMessage('復元できる釣果データが見つかりませんでした');
-                    return;
-                }
-
-                localStorage.setItem('fishing_records', JSON.stringify(importedList));
-                setRecords(importedList);
-                setToastMessage(`復元完了：${importedList.length}件の釣果データを復元しました`);
-                setIsSettingsOpen(false);
+                applyRestoreData(event.target.result);
             } catch (err) {
                 console.error(err);
                 setToastMessage('復元に失敗しました。正しいファイルかご確認ください。');
@@ -238,20 +257,27 @@ function SettingsPanel({
                 if (fileInputRef.current) fileInputRef.current.value = '';
             }
         };
-
         reader.onerror = () => {
             setToastMessage('ファイルの読み込み中にエラーが発生しました');
             if (fileInputRef.current) fileInputRef.current.value = '';
         };
-
         reader.readAsText(file, 'UTF-8');
     };
 
-    // ==========================================
+    // テキスト貼り付け復元
+    const handlePasteRestore = () => {
+        try {
+            applyRestoreData(pasteText);
+            setPasteText('');
+            setShowTextInput(false);
+        } catch (err) {
+            setToastMessage('データの読み取りに失敗しました。コピーした文字列が正しいかご確認ください。');
+        }
+    };
+
     // 完全初期化
-    // ==========================================
     const handleFullReset = () => {
-        const confirm1 = window.confirm('【警告】すべての釣果記録と設定を初期化しますか？\nこの操作は元に戻せません。');
+        const confirm1 = window.confirm('【警告】すべての釣果記録と設定を初期化しますか？\nこの操作は絶対に取り消せません。');
         if (!confirm1) return;
         const confirm2 = window.confirm('本当によろしいですか？');
         if (!confirm2) return;
@@ -263,7 +289,7 @@ function SettingsPanel({
             } else {
                 setRecords([]);
             }
-            setToastMessage('アプリを初期化しました');
+            setToastMessage('すべてのデータを完全初期化しました');
             setIsSettingsOpen(false);
         } catch (e) {
             setToastMessage('初期化に失敗しました');
@@ -281,7 +307,7 @@ function SettingsPanel({
         const val = e.target.value;
         setSelectedAiModel(val);
         localStorage.setItem('fishing_ai_model', val);
-        setToastMessage(`AIモデルを「${val}」に変更しました`);
+        setToastMessage(`使用モデルを「${val}」に設定しました`);
     };
 
     return (
@@ -297,13 +323,13 @@ function SettingsPanel({
                     </button>
                 </div>
 
-                {/* 上部タブ切り替えバー */}
+                {/* 3タブ切り替えバー */}
                 <div className="flex bg-gray-100 dark:bg-slate-900 p-1.5 gap-1 border-b border-gray-200 dark:border-slate-700 text-xs font-black shrink-0">
                     <button
-                        onClick={() => setActiveSettingsTab('seats')}
-                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'seats' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        onClick={() => setActiveSettingsTab('basic')}
+                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
-                        釣り座
+                        釣り座・基本海況
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('weather')}
@@ -312,47 +338,143 @@ function SettingsPanel({
                         気象・潮時
                     </button>
                     <button
-                        onClick={() => setActiveSettingsTab('data')}
-                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'data' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        onClick={() => setActiveSettingsTab('system')}
+                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'system' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
-                        データ・AI
+                        システム
                     </button>
                 </div>
 
-                {/* スクロール可能コンテンツ */}
+                {/* プルダウン候補リスト（datalist） */}
+                <datalist id="point-options">
+                    <option value="久里浜沖" />
+                    <option value="鴨居沖" />
+                    <option value="走水沖" />
+                    <option value="観音崎沖" />
+                    <option value="下浦沖" />
+                    <option value="竹岡沖" />
+                    <option value="剣崎沖" />
+                </datalist>
+
+                <datalist id="target-fish-options">
+                    <option value="カワハギ" />
+                    <option value="アジ" />
+                    <option value="アマダイ" />
+                    <option value="マダイ" />
+                    <option value="タチウオ" />
+                    <option value="スミイカ" />
+                    <option value="アオリイカ" />
+                    <option value="マルイカ" />
+                </datalist>
+
+                <datalist id="tide-color-options">
+                    <option value="澄み" />
+                    <option value="薄濁り" />
+                    <option value="濁り" />
+                    <option value="笹濁り" />
+                    <option value="激濁り" />
+                    <option value="暗濁り" />
+                </datalist>
+
+                {/* スクロールコンテンツ */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs sm:text-sm no-scrollbar">
 
                     {/* ========================================== */}
-                    {/* タブ 1: 釣り座設定 */}
+                    {/* タブ 1: 釣り座・基本海況ポイント */}
                     {/* ========================================== */}
-                    {activeSettingsTab === 'seats' && (
+                    {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-gray-200 dark:border-slate-700 space-y-3">
-                                <div>
-                                    <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">釣り座の席数設定（0〜15席）</span>
-                                    <p className="text-[11px] text-gray-500 dark:text-slate-400 mt-0.5">
-                                        左右それぞれの乗船定員・座席数を入力してください。
-                                    </p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3 pt-1">
-                                    <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-red-200 dark:border-red-900/40 shadow-sm">
-                                        <label className="text-xs font-black text-red-500 block mb-1">左舷 席数</label>
+                            {/* 釣り座席数設定 */}
+                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">釣り座の席数設定（0〜15席）</span>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <label className="text-[11px] font-bold text-red-500 block mb-1">左舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black text-lg bg-gray-50 dark:bg-slate-900 text-center"
+                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black bg-white dark:bg-slate-800 text-center text-base"
                                             value={portCount}
                                             onChange={(e) => onCountChange('port', e.target.value)}
                                             placeholder="0"
                                         />
                                     </div>
-                                    <div className="bg-white dark:bg-slate-800 p-2.5 rounded-xl border border-emerald-200 dark:border-emerald-900/40 shadow-sm">
-                                        <label className="text-xs font-black text-emerald-600 block mb-1">右舷 席数</label>
+                                    <div>
+                                        <label className="text-[11px] font-bold text-emerald-600 block mb-1">右舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black text-lg bg-gray-50 dark:bg-slate-900 text-center"
+                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black bg-white dark:bg-slate-800 text-center text-base"
                                             value={starboardCount}
                                             onChange={(e) => onCountChange('starboard', e.target.value)}
                                             placeholder="0"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 基本海況・ポイント（ハイブリッド入力式） */}
+                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2.5">
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">基本海況・ポイント設定</span>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {/* ポイント */}
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">ポイント (候補・手入力)</label>
+                                        <input
+                                            type="text"
+                                            list="point-options"
+                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            value={point}
+                                            onChange={(e) => setPoint(e.target.value)}
+                                            placeholder="選択または入力"
+                                        />
+                                    </div>
+
+                                    {/* 釣り物 */}
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">釣り物 (候補・手入力)</label>
+                                        <input
+                                            type="text"
+                                            list="target-fish-options"
+                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            value={targetFish}
+                                            onChange={(e) => setTargetFish(e.target.value)}
+                                            placeholder="選択または入力"
+                                        />
+                                    </div>
+
+                                    {/* 水深 */}
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水深 (m)</label>
+                                        <input
+                                            type="number"
+                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            value={waterDepth}
+                                            onChange={(e) => setWaterDepth(e.target.value)}
+                                            placeholder="例: 45"
+                                        />
+                                    </div>
+
+                                    {/* 水温 */}
+                                    <div>
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水温 (℃)</label>
+                                        <input
+                                            type="number" step="0.1"
+                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            value={waterTemp}
+                                            onChange={(e) => setWaterTemp(e.target.value)}
+                                            placeholder="例: 18.5"
+                                        />
+                                    </div>
+
+                                    {/* 潮色（ハイブリッド式） */}
+                                    <div className="col-span-2">
+                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">潮色 (候補・手入力)</label>
+                                        <input
+                                            type="text"
+                                            list="tide-color-options"
+                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            value={tide}
+                                            onChange={(e) => setTide(e.target.value)}
+                                            placeholder="選択または入力（例: 澄み / 薄濁り）"
                                         />
                                     </div>
                                 </div>
@@ -361,100 +483,80 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 2: 気象・潮時設定（個別AI解析つき） */}
+                    {/* タブ 2: 気象・潮時（個別解析ボタン付き） */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'weather' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             
-                            {/* 📷 AI画像解析（潮時・気象の個別ボタン） */}
-                            <div className="bg-gradient-to-r from-blue-50 to-sky-100 dark:from-slate-900 dark:to-blue-950 p-3.5 rounded-xl border border-sky-200 dark:border-blue-800 space-y-2.5">
-                                <span className="font-black text-sky-900 dark:text-sky-300 block text-xs">
-                                    📷 画像からAI自動読み取り
-                                </span>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {/* 潮時表解析ボタン */}
-                                    <button
-                                        onClick={() => tideImageInputRef.current && tideImageInputRef.current.click()}
-                                        disabled={isAnalyzingTide || isAnalyzingWeather}
-                                        className="bg-white dark:bg-slate-800 border border-sky-300 dark:border-slate-600 hover:bg-sky-50 text-sky-700 dark:text-sky-300 font-black py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
-                                    >
-                                        {isAnalyzingTide ? <span className="animate-spin">↻</span> : <span>🌊</span>}
-                                        <span>潮時表を読取</span>
-                                    </button>
-
-                                    {/* 気象予報解析ボタン */}
-                                    <button
-                                        onClick={() => weatherImageInputRef.current && weatherImageInputRef.current.click()}
-                                        disabled={isAnalyzingTide || isAnalyzingWeather}
-                                        className="bg-white dark:bg-slate-800 border border-sky-300 dark:border-slate-600 hover:bg-sky-50 text-sky-700 dark:text-sky-300 font-black py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
-                                    >
-                                        {isAnalyzingWeather ? <span className="animate-spin">↻</span> : <span>☀️</span>}
-                                        <span>天気予報を読取</span>
-                                    </button>
-
-                                    <input ref={tideImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleTideImageAnalysis} />
-                                    <input ref={weatherImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleWeatherImageAnalysis} />
+                            {/* 上段：潮時ブロック */}
+                            <div className="bg-sky-50 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-black text-sky-900 dark:text-sky-300 block text-xs">🌊 潮時データ</span>
+                                    <span className="text-[11px] text-gray-400">カウンターのアラート連動</span>
                                 </div>
-                            </div>
 
-                            {/* 基本海況・ポイント */}
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">基本海況・ポイント</span>
-                                <div className="grid grid-cols-2 gap-2">
+                                {/* 潮時表画像解析ボタン */}
+                                <button
+                                    onClick={() => tideImageInputRef.current && tideImageInputRef.current.click()}
+                                    disabled={isAnalyzingTide}
+                                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-2 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                >
+                                    {isAnalyzingTide ? <span className="animate-spin">↻</span> : <span>📷</span>}
+                                    <span>潮時表の画像を自動読み取り</span>
+                                </button>
+                                <input ref={tideImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleTideImageAnalysis} />
+
+                                <div className="pt-1 space-y-2">
+                                    {/* 潮回り（基本海況から移動） */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">ポイント</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={point} onChange={(e) => setPoint(e.target.value)} placeholder="例: 久里浜沖" />
+                                        <label className="text-[11px] font-bold text-sky-700 dark:text-sky-300 block mb-0.5">潮回り（大潮・中潮など）</label>
+                                        <input
+                                            type="text"
+                                            className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800"
+                                            value={tideState}
+                                            onChange={(e) => setTideState(e.target.value)}
+                                            placeholder="例: 中潮"
+                                        />
                                     </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">釣り物</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={targetFish} onChange={(e) => setTargetFish(e.target.value)} placeholder="例: カワハギ" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水深 (m)</label>
-                                        <input type="number" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={waterDepth} onChange={(e) => setWaterDepth(e.target.value)} placeholder="例: 45" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水温 (℃)</label>
-                                        <input type="number" step="0.1" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={waterTemp} onChange={(e) => setWaterTemp(e.target.value)} placeholder="例: 18.5" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">潮色</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={tide} onChange={(e) => setTide(e.target.value)} placeholder="例: 澄み / 薄濁り" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">潮回り</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={tideState} onChange={(e) => setTideState(e.target.value)} placeholder="例: 中潮 / 大潮" />
+
+                                    {/* 満潮・干潮時刻 */}
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (1)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (2)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (1)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
+                                        </div>
+                                        <div>
+                                            <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (2)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* 潮時時刻 */}
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">潮時時刻</span>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (1)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="例: 05:30" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (2)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="例: 17:45" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (1)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="例: 11:20" />
-                                    </div>
-                                    <div>
-                                        <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (2)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="例: 23:50" />
-                                    </div>
-                                </div>
-                            </div>
+                            {/* 下段：気象・風波ブロック */}
+                            <div className="bg-amber-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-amber-100 dark:border-slate-700 space-y-2.5">
+                                <span className="font-black text-amber-900 dark:text-amber-300 block text-xs">☀️ 気象・風・波データ</span>
 
-                            {/* 天候・気象詳細（前半・後半） */}
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">天候・気象（前半／後半）</span>
-                                <div className="grid grid-cols-2 gap-2">
+                                {/* 天気予報画像解析ボタン */}
+                                <button
+                                    onClick={() => weatherImageInputRef.current && weatherImageInputRef.current.click()}
+                                    disabled={isAnalyzingWeather}
+                                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-2 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                >
+                                    {isAnalyzingWeather ? <span className="animate-spin">↻</span> : <span>📷</span>}
+                                    <span>天気予報の画像を自動読み取り</span>
+                                </button>
+                                <input ref={weatherImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleWeatherImageAnalysis} />
+
+                                <div className="grid grid-cols-2 gap-2 pt-1">
                                     <div>
                                         <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">天候 (前半)</label>
                                         <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
@@ -493,15 +595,15 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 3: データ管理・AI設定 */}
+                    {/* タブ 3: システム（管理・AI・設定） */}
                     {/* ========================================== */}
-                    {activeSettingsTab === 'data' && (
+                    {activeSettingsTab === 'system' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
-                            {/* データ管理 */}
+                            {/* データ管理・バックアップ */}
                             <div className="bg-sky-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
                                 <span className="font-black text-sky-800 dark:text-sky-300 block text-xs">データ管理・バックアップ</span>
                                 <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
-                                    釣果記録を端末にファイルとして保存・復元できます。
+                                    釣果記録を端末に保存、またはバックアップから復元します。
                                 </p>
                                 
                                 <div className="grid grid-cols-2 gap-2 pt-1">
@@ -526,9 +628,38 @@ function SettingsPanel({
                                         onChange={handleFileImport}
                                     />
                                 </div>
+
+                                {/* テキスト貼り付け枠 */}
+                                <div className="pt-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowTextInput(!showTextInput)}
+                                        className="text-[11px] text-sky-600 dark:text-sky-400 underline font-bold"
+                                    >
+                                        {showTextInput ? '▲ 貼り付け入力を閉じる' : '▼ ファイルが選べない時はこちら（文字貼り付けで復元）'}
+                                    </button>
+
+                                    {showTextInput && (
+                                        <div className="mt-2 space-y-2 animate-[fadeIn_0.15s_ease-out]">
+                                            <textarea
+                                                rows="3"
+                                                className="w-full border rounded-lg p-2 text-[11px] font-mono bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                                placeholder="バックアップファイルの中身をコピーしてここに貼り付け"
+                                                value={pasteText}
+                                                onChange={(e) => setPasteText(e.target.value)}
+                                            />
+                                            <button
+                                                onClick={handlePasteRestore}
+                                                className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-xs transition-all"
+                                            >
+                                                貼り付けた内容から復元する
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
-                            {/* Gemini AI設定 */}
+                            {/* Gemini AI設定（APIキー & 7モデル選択） */}
                             <div className="bg-gray-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-gray-200 dark:border-slate-700 space-y-3">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">Gemini AI設定</span>
                                 
@@ -559,18 +690,19 @@ function SettingsPanel({
                                     </button>
                                 </div>
 
-                                {/* モデル選択 */}
-                                <div className="pt-1 border-t border-gray-200 dark:border-slate-700">
-                                    <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-1">使用AIモデル</label>
+                                {/* モデル選択（7モデル拡張） */}
+                                <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
+                                    <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-1">使用AIモデル（日報・多角分析用）</label>
                                     <select
                                         className="w-full border rounded-lg px-2.5 py-1.5 font-bold text-xs bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
                                         value={selectedAiModel}
                                         onChange={handleModelChange}
                                     >
-                                        <option value="Gemini 2.5 Flash">Gemini 2.5 Flash（推奨・最速・高精度）</option>
-                                        <option value="Gemini 2.5 Pro">Gemini 2.5 Pro（深層考察・高精度）</option>
-                                        <option value="Gemini 1.5 Flash">Gemini 1.5 Flash（旧標準）</option>
-                                        <option value="Gemini 1.5 Pro">Gemini 1.5 Pro（旧プロ）</option>
+                                        {aiModelOptions.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>
