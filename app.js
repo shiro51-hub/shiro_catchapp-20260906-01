@@ -1,5 +1,5 @@
 // ==========================================
-// app.js : メイン司令塔・画面遷移・全体レンダリング（完全復旧版）
+// app.js : メイン司令塔・画面遷移・全体レンダリング
 // ==========================================
 
 // 画像キャプチャ用のライブラリを動的に読み込む機能
@@ -16,6 +16,10 @@ const loadHtml2Canvas = () => {
         document.head.appendChild(script);
     });
 };
+
+const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+);
 
 // ==========================================
 // 船長リアルタイム釣行メモモーダル（タイムスタンプ・音声認識対応）
@@ -56,6 +60,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
 
     if (!show) return null;
 
+    // 現在時刻（HH:MM）の自動挿入
     const insertTimestamp = () => {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -76,6 +81,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
         }, 50);
     };
 
+    // 定型タグ挿入
     const insertTag = (tagText) => {
         setMemoText(prev => {
             const spacer = prev && !prev.endsWith('\n') && !prev.endsWith(' ') ? ' ' : '';
@@ -83,6 +89,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
         });
     };
 
+    // 音声認識のトグル
     const toggleSpeech = () => {
         if (!recognitionRef.current) {
             setToastMessage('お使いのブラウザは音声入力に対応していません。キーボードのマイク機能をご利用ください。');
@@ -116,6 +123,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
     return (
         <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 animate-[fadeIn_0.15s_ease-out]" onClick={onClose}>
             <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border-2 border-sky-400 dark:border-sky-600 w-full max-w-md flex flex-col overflow-hidden text-gray-800 dark:text-slate-100" onClick={(e) => e.stopPropagation()}>
+                {/* ヘッダー */}
                 <div className="px-4 py-3 bg-gradient-to-r from-sky-600 to-blue-700 text-white flex justify-between items-center shrink-0">
                     <span className="font-black text-base flex items-center gap-1.5">
                         <span>📝</span> 船長釣行メモ・状況記録
@@ -126,6 +134,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
                 </div>
 
                 <div className="p-3.5 space-y-3 flex-1 overflow-y-auto">
+                    {/* 入力サポートツールバー */}
                     <div className="flex items-center gap-2">
                         <button
                             type="button"
@@ -145,11 +154,13 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
                             type="button"
                             onClick={handleCopy}
                             className="bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 font-black py-2 px-3 rounded-xl text-xs border border-gray-200 dark:border-slate-600 shadow-sm active:scale-95 transition-all"
+                            title="コピー"
                         >
                             コピー
                         </button>
                     </div>
 
+                    {/* クイック状況タグ */}
                     <div className="flex flex-wrap gap-1.5 pt-0.5">
                         {['良型交じり', '時合い連発', '食い渋り', '底でアタリ', 'バラシ多め', '外道活発'].map((tag) => (
                             <button
@@ -163,6 +174,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
                         ))}
                     </div>
 
+                    {/* メモ本文入力 */}
                     <div className="relative">
                         <textarea
                             ref={textareaRef}
@@ -178,6 +190,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
                     </div>
                 </div>
 
+                {/* フッター */}
                 <div className="p-3 bg-gray-50 dark:bg-slate-900/60 border-t border-gray-200 dark:border-slate-700 flex gap-2 shrink-0">
                     <button
                         type="button"
@@ -205,7 +218,7 @@ function CaptainMemoModal({ show, onClose, memoText, setMemoText, onSave, setToa
 function ShareImageModal({ record, onClose, setToastMessage }) {
     const [isAnonymous, setIsAnonymous] = React.useState(false);
     const [isGenerating, setIsGenerating] = React.useState(false);
-    const [cardTheme, setCardTheme] = React.useState('dark');
+    const [cardTheme, setCardTheme] = React.useState('dark'); // 'dark' or 'light'
     const cardRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -274,6 +287,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
+                        {/* ヘッダー：日付をロゴの真ん中直下に配置 */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -293,6 +307,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
+                        {/* 【左：釣果＋純白数字】 / 【右：竿頭＋純白名前＋末尾に「さん」】 */}
                         <div className={`rounded-lg px-3.5 py-3 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -367,7 +382,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             )}
                         </div>
 
+                        {/* 座席リスト */}
                         <div className="flex gap-2 w-full">
+                            {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>左舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
@@ -397,7 +414,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     })}
                                 </div>
                             </div>
-
+                            {/* 右舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>右舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
@@ -429,7 +446,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
+                        {/* フッター情報（最下段レイアウト） */}
                         <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
+                            {/* 上段：型・総計・平均 */}
                             <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
                                     型: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
@@ -442,7 +461,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
 
+                            {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
                             <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
+                                {/* 1. ポイント + 水深 */}
                                 <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">{record.point || 'ポイント未設定'}</span>
                                     {record.waterDepth ? (
@@ -450,6 +471,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     ) : null}
                                 </div>
 
+                                {/* 2. 水温 */}
                                 <div className="px-2 shrink-0 flex items-center gap-1 text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className={isDark ? 'text-slate-400 font-bold inline-block' : 'text-sky-200/80 font-bold inline-block'}>水温</span>
                                     <span className="text-white font-black inline-block">
@@ -457,6 +479,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </span>
                                 </div>
 
+                                {/* 3. 潮回り */}
                                 <div className="shrink-0 font-black text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">
                                         {getSafeTideDisplay(record.tideState)}
@@ -468,6 +491,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                 </div>
             </div>
 
+            {/* コントロールパネル */}
             <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-3.5 flex flex-col gap-2 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
                 <div className="flex justify-between items-center mb-0.5">
                     <span className="font-black text-gray-800 dark:text-slate-100 text-base">釣果ボードを作成</span>
@@ -504,7 +528,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     {isGenerating ? (
                         <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
                     ) : (
-                        <><span className="mr-1">📷</span> この画像をスマホに保存</>
+                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
                     )}
                 </button>
             </div>
@@ -568,7 +592,7 @@ function App() {
     
     const [shareImageRecord, setShareImageRecord] = React.useState(null);
 
-    // 船長メモ用ステート
+    // 船長リアルタイム釣行メモ用ステート
     const [showMemoModal, setShowMemoModal] = React.useState(false);
     const [activeMemoRecordId, setActiveMemoRecordId] = React.useState(null);
     const [tempMemo, setTempMemo] = React.useState('');
@@ -802,6 +826,7 @@ function App() {
         setToastMessage('釣果記録を削除しました（画面表示もリセットされました）');
     };
 
+    // カウンター画面・履歴画面共通のメモモーダル起動
     const openMemoForCurrentDay = () => {
         setActiveMemoRecordId(null);
         setTempMemo(detailedMemo || '');
@@ -1140,11 +1165,12 @@ function App() {
                 </div>
             )}
 
+            {/* 個別記録削除の確認モーダル */}
             {recordToDelete && (
                 <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-[fadeIn_0.15s_ease-out]" onClick={() => setRecordToDelete(null)}>
                     <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-2xl border-2 border-red-300 dark:border-red-800 w-full max-w-xs text-center space-y-4" onClick={(e) => e.stopPropagation()}>
-                        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center shadow-inner text-xl">
-                            🗑️
+                        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 mx-auto flex items-center justify-center shadow-inner">
+                            <IconTrash className="w-6 h-6" />
                         </div>
                         <div>
                             <h3 className="text-base font-black text-gray-800 dark:text-slate-100">記録を削除しますか？</h3>
@@ -1175,26 +1201,25 @@ function App() {
                 </div>
             )}
 
-            {typeof SettingsPanel !== 'undefined' && (
-                <SettingsPanel
-                    isSettingsOpen={isSettingsOpen} setIsSettingsOpen={setIsSettingsOpen}
-                    portCount={portSeatCount} starboardCount={starboardSeatCount} onCountChange={handleSeatCountChange}
-                    point={point} setPoint={setPoint} waterTemp={waterTemp} setWaterTemp={setWaterTemp}
-                    waterDepth={waterDepth} setWaterDepth={setWaterDepth} tide={tide} setTide={setTide}
-                    tideState={tideState} setTideState={setTideState} highTide1={highTide1} setHighTide1={setHighTide1}
-                    highTide2={highTide2} setHighTide2={setHighTide2} lowTide1={lowTide1} setLowTide1={setLowTide1}
-                    lowTide2={lowTide2} setLowTide2={setLowTide2} weather1={weather1} setWeather1={setWeather1}
-                    weather2={weather2} setWeather2={setWeather2} windDir1={windDir1} setWindDir1={setWindDir1}
-                    windDir2={windDir2} setWindDir2={setWindDir2} windSpeed1={windSpeed1} setWindSpeed1={setWindSpeed1}
-                    windSpeed2={windSpeed2} setWindSpeed2={setWindSpeed2} waveHeight1={waveHeight1} setWaveHeight1={setWaveHeight1}
-                    waveHeight2={waveHeight2} setWaveHeight2={setWaveHeight2} theme={theme} setTheme={setTheme}
-                    targetFish={targetFish} setTargetFish={setTargetFish} date={date} setToastMessage={setToastMessage}
-                    onFactoryReset={() => { setRecords([]); localStorage.clear(); setToastMessage('初期化完了'); }}
-                    records={records} setRecords={setRecords} userApiKey={userApiKey} setUserApiKey={setUserApiKey}
-                    selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
-                />
-            )}
+            <SettingsPanel
+                isSettingsOpen={isSettingsOpen} setIsSettingsOpen={setIsSettingsOpen}
+                portCount={portSeatCount} starboardCount={starboardSeatCount} onCountChange={handleSeatCountChange}
+                point={point} setPoint={setPoint} waterTemp={waterTemp} setWaterTemp={setWaterTemp}
+                waterDepth={waterDepth} setWaterDepth={setWaterDepth} tide={tide} setTide={setTide}
+                tideState={tideState} setTideState={setTideState} highTide1={highTide1} setHighTide1={setHighTide1}
+                highTide2={highTide2} setHighTide2={setHighTide2} lowTide1={lowTide1} setLowTide1={setLowTide1}
+                lowTide2={lowTide2} setLowTide2={setLowTide2} weather1={weather1} setWeather1={setWeather1}
+                weather2={weather2} setWeather2={setWeather2} windDir1={windDir1} setWindDir1={setWindDir1}
+                windDir2={windDir2} setWindDir2={setWindDir2} windSpeed1={windSpeed1} setWindSpeed1={setWindSpeed1}
+                windSpeed2={windSpeed2} setWindSpeed2={setWindSpeed2} waveHeight1={waveHeight1} setWaveHeight1={setWaveHeight1}
+                waveHeight2={waveHeight2} setWaveHeight2={setWaveHeight2} theme={theme} setTheme={setTheme}
+                targetFish={targetFish} setTargetFish={setTargetFish} date={date} setToastMessage={setToastMessage}
+                onFactoryReset={() => { setRecords([]); localStorage.clear(); setToastMessage('初期化完了'); }}
+                records={records} setRecords={setRecords} userApiKey={userApiKey} setUserApiKey={setUserApiKey}
+                selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
+            />
 
+            {/* 船長釣行メモモーダル（高機能版） */}
             <CaptainMemoModal
                 show={showMemoModal}
                 onClose={() => setShowMemoModal(false)}
@@ -1204,50 +1229,49 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {typeof AiInputWizardModal !== 'undefined' && (
-                <AiInputWizardModal
-                    showAiInputModal={showAiInputModal}
-                    setShowAiInputModal={setShowAiInputModal}
-                    aiCurrentStep={aiCurrentStep}
-                    setAiCurrentStep={setAiCurrentStep}
-                    wizardSteps={wizardSteps}
-                    aiInputData={aiInputData}
-                    setAiInputData={setAiInputData}
-                    targetRecordForAi={targetRecordForAi}
-                    updateAiInputForRecord={updateAiInputForRecord}
-                    userApiKey={userApiKey}
-                    setUserApiKey={setUserApiKey}
-                    handleAiGenerate={handleAiGenerate}
-                />
-            )}
+            {/* AI日報入力ウィザードモーダル */}
+            <AiInputWizardModal
+                showAiInputModal={showAiInputModal}
+                setShowAiInputModal={setShowAiInputModal}
+                aiCurrentStep={aiCurrentStep}
+                setAiCurrentStep={setAiCurrentStep}
+                wizardSteps={wizardSteps}
+                aiInputData={aiInputData}
+                setAiInputData={setAiInputData}
+                targetRecordForAi={targetRecordForAi}
+                updateAiInputForRecord={updateAiInputForRecord}
+                userApiKey={userApiKey}
+                setUserApiKey={setUserApiKey}
+                handleAiGenerate={handleAiGenerate}
+            />
 
-            {typeof AiResultModal !== 'undefined' && (
-                <AiResultModal
-                    showAiModal={showAiModal}
-                    setShowAiModal={setShowAiModal}
-                    aiGeneratedPatterns={aiGeneratedPatterns}
-                    aiGeneratedText={aiGeneratedText}
-                    handleCopyPattern={handleCopyPattern}
-                />
-            )}
+            {/* AI日報表示モーダル */}
+            <AiResultModal
+                showAiModal={showAiModal}
+                setShowAiModal={setShowAiModal}
+                aiGeneratedPatterns={aiGeneratedPatterns}
+                aiGeneratedText={aiGeneratedText}
+                handleCopyPattern={handleCopyPattern}
+            />
 
-            {typeof AiAnalysisModal !== 'undefined' && (
-                <AiAnalysisModal
-                    showAnalysisModal={showAnalysisModal}
-                    setShowAnalysisModal={setShowAnalysisModal}
-                    currentAnalysis={currentAnalysis}
-                    handleRunAiAnalysis={handleRunAiAnalysis}
-                    copyAnalysisText={copyAnalysisText}
-                    handleCopyPattern={handleCopyPattern}
-                />
-            )}
+            {/* AI多角分析モーダル */}
+            <AiAnalysisModal
+                showAnalysisModal={showAnalysisModal}
+                setShowAnalysisModal={setShowAnalysisModal}
+                currentAnalysis={currentAnalysis}
+                handleRunAiAnalysis={handleRunAiAnalysis}
+                copyAnalysisText={copyAnalysisText}
+                handleCopyPattern={handleCopyPattern}
+            />
 
+            {/* 釣果ボード生成モーダル */}
             <ShareImageModal
                 record={shareImageRecord}
                 onClose={() => setShareImageRecord(null)}
                 setToastMessage={setToastMessage}
             />
 
+            {/* ヘッダー */}
             <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
                 <div className="w-8 shrink-0"></div>
                 <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-3.5 sm:-translate-x-5">
@@ -1272,10 +1296,11 @@ function App() {
                     </span>
                 </div>
                 <button onClick={() => setIsSettingsOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full active:bg-blue-800/50 shrink-0">
-                    <span className="text-lg">⚙️</span>
+                    <IconSettings className="w-6 h-6 text-blue-100" />
                 </button>
             </div>
 
+            {/* メインスクロールエリア */}
             <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
@@ -1306,28 +1331,27 @@ function App() {
                             ))}
                         </div>
 
-                        {typeof SeatInput !== 'undefined' && (
-                            inputSide === 'both' ? (
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div>
-                                        <div className="text-center mb-1 text-sm font-black text-red-500 border-b pb-1">左舷</div>
-                                        {portSeats.map((s, i) => <SeatInput key={`p-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
-                                    </div>
-                                    <div>
-                                        <div className="text-center mb-1 text-sm font-black text-emerald-600 border-b pb-1">右舷</div>
-                                        {starboardSeats.map((s, i) => <SeatInput key={`s-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
-                                    </div>
-                                </div>
-                            ) : (
+                        {inputSide === 'both' ? (
+                            <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    {(inputSide === 'port' ? portSeats : starboardSeats).map((s, i) => <SeatInput key={`${inputSide}-${i}`} side={inputSide} seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="single" onToggleVisibility={handleToggleVisibility} />)}
+                                    <div className="text-center mb-1 text-sm font-black text-red-500 border-b pb-1">左舷</div>
+                                    {portSeats.map((s, i) => <SeatInput key={`p-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
                                 </div>
-                            )
+                                <div>
+                                    <div className="text-center mb-1 text-sm font-black text-emerald-600 border-b pb-1">右舷</div>
+                                    {starboardSeats.map((s, i) => <SeatInput key={`s-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>
+                                {(inputSide === 'port' ? portSeats : starboardSeats).map((s, i) => <SeatInput key={`${inputSide}-${i}`} side={inputSide} seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="single" onToggleVisibility={handleToggleVisibility} />)}
+                            </div>
                         )}
                         <div className="h-16 shrink-0 pointer-events-none"></div>
                     </div>
                 )}
 
+                {/* カウンタータブ */}
                 {activeTab === 'counter' && (
                     <div className="flex flex-col flex-1 space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         {(() => {
@@ -1345,7 +1369,7 @@ function App() {
 
                                     <div className="w-1/2 flex flex-col items-center justify-center px-2">
                                         <span className="text-xs font-bold text-blue-600 dark:text-sky-400 uppercase tracking-wider flex items-center mb-0.5">
-                                            <span className="text-amber-500 mr-1">👑</span> 竿頭 {stats.max > 0 ? `(${stats.max}${unit})` : ''}
+                                            <IconTrophy className="w-4 h-4 mr-1 text-amber-500" /> 竿頭 {stats.max > 0 ? `(${stats.max}${unit})` : ''}
                                         </span>
                                         <div className="flex flex-wrap justify-center items-center gap-1 max-h-12 overflow-y-auto no-scrollbar w-full text-center">
                                             {stats.topNames.length > 0 ? (
@@ -1370,40 +1394,41 @@ function App() {
                             );
                         })()}
 
-                        {typeof TideAlertBanner !== 'undefined' && (
-                            <TideAlertBanner
-                                tideState={tideState}
-                                highTide1={highTide1}
-                                highTide2={highTide2}
-                                lowTide1={lowTide1}
-                                lowTide2={lowTide2}
-                            />
-                        )}
+                        {/* 潮時リアルタイムアラートバー */}
+                        <TideAlertBanner
+                            tideState={tideState}
+                            highTide1={highTide1}
+                            highTide2={highTide2}
+                            lowTide1={lowTide1}
+                            lowTide2={lowTide2}
+                        />
 
                         <div className="grid grid-cols-2 gap-2 flex-1">
-                            {counterMode === 'slide' && typeof CounterCardSlide !== 'undefined' ? (
+                            {counterMode === 'slide' ? (
                                 <>
                                     <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterCardSlide key={`cp-${i}`} side="port" seat={s} index={i} onCountDelta={handleCountDelta} totalSeats={portSeats.length} />)}</div>
                                     <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterCardSlide key={`cs-${i}`} side="starboard" seat={s} index={i} onCountDelta={handleCountDelta} totalSeats={starboardSeats.length} />)}</div>
                                 </>
-                            ) : counterMode === 'tap' && typeof CounterCardTap !== 'undefined' ? (
+                            ) : counterMode === 'tap' ? (
                                 <>
                                     <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterCardTap key={`ctp-${i}`} side="port" seat={s} index={i} onCountDelta={handleCountDelta} onClear={(s, idx) => handleSeatChange(s, idx, 'count', '')} totalSeats={portSeats.length} />)}</div>
                                     <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterCardTap key={`cts-${i}`} side="starboard" seat={s} index={i} onCountDelta={handleCountDelta} onClear={(s, idx) => handleSeatChange(s, idx, 'count', '')} totalSeats={starboardSeats.length} />)}</div>
                                 </>
-                            ) : typeof CounterKeypadCard !== 'undefined' ? (
+                            ) : (
                                 <>
                                     <div className="flex flex-col gap-1.5">{portSeats.map((s, i) => <CounterKeypadCard key={`kp-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} totalSeats={portSeats.length} />)}</div>
                                     <div className="flex flex-col gap-1.5">{starboardSeats.map((s, i) => <CounterKeypadCard key={`ks-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} totalSeats={starboardSeats.length} />)}</div>
                                 </>
-                            ) : null}
+                            )}
                         </div>
 
+                        {/* 【魚のサイズ ＋ 船長メモボタン】横並びレイアウト */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-2.5 mt-2 shrink-0">
                             <div className="flex items-center gap-2">
+                                {/* 左側：サイズ入力枠（最小〜最大） */}
                                 <div className="flex-[3] flex flex-col justify-center">
                                     <div className="text-[11px] font-black text-gray-500 dark:text-slate-400 mb-1 flex items-center">
-                                        <span className="mr-1">📏</span> サイズ (cm)
+                                        <IconRuler className="w-3.5 h-3.5 mr-1 text-sky-500 dark:text-sky-400" /> サイズ (cm)
                                     </div>
                                     <div className="flex items-center space-x-1.5">
                                         <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 overflow-hidden h-9">
@@ -1416,6 +1441,7 @@ function App() {
                                     </div>
                                 </div>
 
+                                {/* 右側：船長メモボタン（タイムスタンプ・音声連動） */}
                                 <div className="flex-[2] flex flex-col justify-end pt-4">
                                     <button
                                         type="button"
@@ -1431,14 +1457,13 @@ function App() {
                             </div>
                         </div>
 
-                        {typeof ResetButton !== 'undefined' && (
-                            <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
-                        )}
+                        <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
 
                         <div className="h-16 shrink-0 pointer-events-none"></div>
                     </div>
                 )}
 
+                {/* 履歴タブ */}
                 {activeTab === 'history' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         <div className="space-y-2">
@@ -1518,8 +1543,8 @@ function App() {
                                                 ) : (
                                                     <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black">釣果</span>
                                                 )}
-                                                <span className="text-gray-400 dark:text-slate-500 font-bold text-sm">
-                                                    {isExpanded ? '▲' : '▼'}
+                                                <span className="text-gray-400 dark:text-slate-500">
+                                                    {isExpanded ? <IconChevronUp className="w-5 h-5" /> : <IconChevronDown className="w-5 h-5" />}
                                                 </span>
                                             </div>
                                         </div>
@@ -1553,7 +1578,7 @@ function App() {
                                                 )}
                                             </div>
                                             <div className="flex items-baseline text-slate-800 dark:text-slate-100 shrink-0">
-                                                <span className="mr-1 text-amber-500">👑</span>
+                                                <IconTrophy className="w-4 h-4 mr-0.5 text-amber-500 self-center" />
                                                 <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">竿頭:</span>
                                                 <span className="text-base sm:text-lg font-black">{r.topAnglerName || '-'}</span>
                                             </div>
@@ -1616,6 +1641,7 @@ function App() {
                                                 </div>
                                             </div>
 
+                                            {/* 保存された船長メモの表示 */}
                                             {r.detailedMemo && r.detailedMemo.trim() !== '' && (
                                                 <div className="bg-amber-50 dark:bg-slate-800/80 p-2.5 rounded-lg border border-amber-200 dark:border-amber-900/40 text-xs text-gray-800 dark:text-slate-200 space-y-1">
                                                     <div className="font-black text-amber-800 dark:text-amber-400 flex items-center gap-1">
@@ -1639,10 +1665,10 @@ function App() {
                                             <span className="text-xs font-bold text-gray-600 dark:text-slate-300 block">共有先を選択</span>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <button onClick={(e) => { e.stopPropagation(); shareToLine(r); }} className="bg-[#06C755] hover:bg-[#05b34c] text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow active:scale-95 transition-all">
-                                                    LINEで共有
+                                                    <IconLine /> LINEで共有
                                                 </button>
                                                 <button onClick={(e) => { e.stopPropagation(); shareToEmail(r); }} className="bg-sky-600 hover:bg-sky-700 text-white py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 shadow active:scale-95 transition-all">
-                                                    メールで共有
+                                                    <IconMail /> メールで共有
                                                 </button>
                                             </div>
                                             <div className="flex justify-end">
@@ -1656,9 +1682,10 @@ function App() {
                                             onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
                                             className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-600 dark:text-sky-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
                                         >
-                                            <span className="mr-1">📷</span> 釣果ボード
+                                            <IconCamera /> 釣果ボード
                                         </button>
                                         
+                                        {/* 履歴から開くメモボタン */}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); openMemoForRecord(r); }}
                                             className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-amber-600 dark:text-amber-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
@@ -1666,6 +1693,7 @@ function App() {
                                             <span>📝</span> {r.detailedMemo ? 'メモ確認' : 'メモ追記'}
                                         </button>
 
+                                        {/* AI分析ボタン */}
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -1685,7 +1713,7 @@ function App() {
                                             onClick={(e) => { e.stopPropagation(); setSharedRecordId(sharedRecordId === r.id ? null : r.id); }}
                                             className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
                                         >
-                                            共有
+                                            <IconShare /> 共有
                                         </button>
 
                                         {generatingAiId === r.id ? (
@@ -1702,7 +1730,7 @@ function App() {
                                                 }}
                                                 className="text-amber-600 hover:text-amber-700 dark:text-amber-400 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-xs px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg flex items-center font-black shadow-sm active:bg-gray-200 transition-colors"
                                             >
-                                                保存済日報
+                                                <IconStar className="w-3.5 h-3.5 mr-1" /> 保存済日報
                                             </button>
                                         ) : null}
 
@@ -1714,7 +1742,8 @@ function App() {
                                             className="ml-auto text-gray-600 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 p-1.5 px-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 active:bg-gray-200 transition-colors shadow-sm flex items-center gap-1 text-xs font-black"
                                             title="この日の釣果記録を削除"
                                         >
-                                            <span>🗑️ 削除</span>
+                                            <IconTrash className="w-3.5 h-3.5" />
+                                            <span>削除</span>
                                         </button>
                                     </div>
                                 </div>
@@ -1725,12 +1754,13 @@ function App() {
                 )}
             </div>
 
+            {/* 下部固定ナビゲーション */}
             <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2">
                 <button
                     className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('input')}
                 >
-                    <span className="text-lg leading-none mb-0.5">⚓</span>
+                    <IconAnchor className="w-5 h-5 mb-0.5" />
                     <span className="text-xs tracking-tight">釣り座</span>
                 </button>
 
@@ -1753,7 +1783,7 @@ function App() {
                     className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'history' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('history')}
                 >
-                    <span className="text-lg leading-none mb-0.5">📅</span>
+                    <IconCalendar className="w-5 h-5 mb-0.5" />
                     <span className="text-xs tracking-tight">履歴</span>
                 </button>
             </div>
