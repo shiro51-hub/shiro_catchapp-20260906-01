@@ -98,7 +98,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
                         {/* ヘッダー：日付をロゴの真ん中直下に配置 */}
-                        <div className={`flex justify-between items-center border-b pb-2 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
+                        <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
                                     src="./text_logo.png" 
@@ -106,27 +106,27 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     className="h-8 sm:h-9 object-contain" 
                                     alt="yamashitamaru" 
                                 />
-                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-0.5 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.5 }}>
+                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-1 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
                                     {(record.date || '').replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 ? `| ${record.weather1}` : ''}
                                 </div>
                             </div>
                             <div className="text-right pb-1">
-                                <span className="text-xl sm:text-2xl font-black tracking-tight text-white inline-block" style={{ lineHeight: 1.4 }}>
+                                <span className="text-xl sm:text-2xl font-black tracking-tight text-white inline-block" style={{ lineHeight: 1.5, paddingBottom: '3px' }}>
                                     {record.targetFish || ''}
                                 </span>
                             </div>
                         </div>
 
                         {/* 【左：釣果＋純白数字】 / 【右：竿頭＋純白名前＋末尾に「さん」】 */}
-                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                        <div className={`rounded-lg px-3.5 py-3 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
                                     <div className="flex flex-col items-start shrink-0">
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             釣果
                                         </span>
-                                        <div className="flex items-baseline gap-1 mt-0.5" style={{ lineHeight: 1.25 }}>
-                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm">
+                                        <div className="flex items-baseline gap-1 mt-1" style={{ lineHeight: 1.4 }}>
+                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm inline-block" style={{ paddingBottom: '2px' }}>
                                                 {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                             </span>
                                             <span className="text-xs sm:text-sm font-bold text-slate-200">{unit}</span>
@@ -137,17 +137,21 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider flex items-center ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             <span className="mr-0.5 text-xs">👑</span>竿頭
                                         </span>
-                                        <div className="mt-0.5 w-full flex justify-end items-baseline truncate">
+                                        <div className="mt-1 w-full flex justify-end items-baseline">
                                             {isAnonymous ? (
-                                                <span className="text-lg sm:text-xl font-black text-white">非公開</span>
+                                                <span className="text-lg sm:text-xl font-black text-white inline-block" style={{ lineHeight: 1.5, paddingBottom: '3px' }}>非公開</span>
                                             ) : topCount === 0 ? (
                                                 <span className={`text-lg font-black ${isDark ? 'text-slate-500' : 'text-white/60'}`}>-</span>
                                             ) : (
-                                                <div className="flex items-baseline justify-end truncate max-w-full">
-                                                    <span className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black text-white truncate drop-shadow-sm`} style={{ lineHeight: 1.3, paddingBottom: '2px' }}>
+                                                <div className="flex items-baseline justify-end max-w-full">
+                                                    {/* 竿頭の名前下部切れ対策：lineHeightを1.5、paddingBottomを4px確保 */}
+                                                    <span 
+                                                        className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black text-white truncate drop-shadow-sm inline-block`} 
+                                                        style={{ lineHeight: 1.5, paddingBottom: '4px' }}
+                                                    >
                                                         {stats.topNames.join('・')}
                                                     </span>
-                                                    <span className={`text-[11px] sm:text-xs font-bold ml-1 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`}>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-1 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`} style={{ paddingBottom: '4px' }}>
                                                         さん
                                                     </span>
                                                 </div>
@@ -156,29 +160,29 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex flex-col gap-1.5">
-                                    <div className="flex justify-between items-baseline border-b border-white/10 pb-1">
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex justify-between items-baseline border-b border-white/10 pb-1.5">
                                         <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>釣果</span>
-                                        <div className="flex items-baseline gap-1">
-                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm">
+                                        <div className="flex items-baseline gap-1" style={{ lineHeight: 1.4 }}>
+                                            <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm inline-block" style={{ paddingBottom: '2px' }}>
                                                 {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                             </span>
                                             <span className="text-xs sm:text-sm font-bold text-slate-200">{unit}</span>
                                         </div>
                                     </div>
                                     <div className="flex flex-col pt-0.5">
-                                        <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'} mb-0.5`}>
+                                        <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'} mb-1`}>
                                             👑 竿頭 ({topCount}名)
                                         </span>
                                         <div className="flex flex-wrap items-baseline gap-1">
                                             {isAnonymous ? (
-                                                <span className="text-sm font-black text-white">非公開</span>
+                                                <span className="text-sm font-black text-white inline-block" style={{ lineHeight: 1.5, paddingBottom: '3px' }}>非公開</span>
                                             ) : (
                                                 <div className="flex flex-wrap items-baseline gap-x-1">
-                                                    <span className="text-sm sm:text-base font-black text-white drop-shadow-sm" style={{ lineHeight: 1.4 }}>
+                                                    <span className="text-sm sm:text-base font-black text-white drop-shadow-sm inline-block" style={{ lineHeight: 1.5, paddingBottom: '4px' }}>
                                                         {stats.topNames.join('・')}
                                                     </span>
-                                                    <span className={`text-[11px] sm:text-xs font-bold ml-0.5 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`}>
+                                                    <span className={`text-[11px] sm:text-xs font-bold ml-0.5 shrink-0 ${isDark ? 'text-slate-300' : 'text-sky-200'}`} style={{ paddingBottom: '4px' }}>
                                                         さん
                                                     </span>
                                                 </div>
@@ -193,7 +197,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
-                                <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.4 }}>左舷</div>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>左舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {pSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
@@ -205,16 +209,17 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
+                                            <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '32px', paddingBottom: '6px', paddingTop: '3px' }}>
                                                 <div className="truncate pr-1 flex-1 flex items-baseline">
                                                     <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
-                                                    <span className="truncate inline-block" style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
+                                                    {/* 釣り人の名前下部切れ対策：lineHeight 1.7、paddingBottom 4px */}
+                                                    <span className="truncate inline-block" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                                         {isAnonymous ? `座席${s.id}` : (s.name || '-')}
                                                     </span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
                                                     {isTop && <span className="text-xs mr-0.5">👑</span>}
-                                                    <span className="inline-block" style={{ lineHeight: 1.4 }}>{c}</span>
+                                                    <span className="inline-block" style={{ lineHeight: 1.5, paddingBottom: '2px' }}>{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -223,7 +228,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                             {/* 右舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
-                                <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.4 }}>右舷</div>
+                                <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>右舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {sSeats.map((s, i) => {
                                         const c = parseInt(s.count) || 0;
@@ -235,16 +240,17 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         else if (isAvg) textColor = 'text-white font-bold';
 
                                         return (
-                                            <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '30px', paddingBottom: '6px', paddingTop: '2px' }}>
+                                            <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '32px', paddingBottom: '6px', paddingTop: '3px' }}>
                                                 <div className="truncate pr-1 flex-1 flex items-baseline">
                                                     <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
-                                                    <span className="truncate inline-block" style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
+                                                    {/* 釣り人の名前下部切れ対策：lineHeight 1.7、paddingBottom 4px */}
+                                                    <span className="truncate inline-block" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                                         {isAnonymous ? `座席${s.id}` : (s.name || '-')}
                                                     </span>
                                                 </div>
                                                 <div className="font-black flex items-center justify-end shrink-0 min-w-[32px] gap-1">
                                                     {isTop && <span className="text-xs mr-0.5">👑</span>}
-                                                    <span className="inline-block" style={{ lineHeight: 1.4 }}>{c}</span>
+                                                    <span className="inline-block" style={{ lineHeight: 1.5, paddingBottom: '2px' }}>{c}</span>
                                                 </div>
                                             </div>
                                         );
@@ -253,42 +259,45 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報（最下段レイアウト） */}
-                        <div className={`rounded-lg px-3 py-2 text-xs sm:text-sm flex flex-col gap-1.5 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`} style={{ lineHeight: 1.5 }}>
+                        {/* フッター情報（最下段レイアウト：底切れ対策で pb-3.5 を確保） */}
+                        <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
                             {/* 上段：型・総計・平均 */}
-                            <div className="flex items-center justify-between font-bold border-b pb-1.5 border-white/10">
+                            <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
-                                    型: <span className="font-black text-white">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
+                                    型: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
                                 </div>
                                 <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
-                                    総計: <span className="font-black text-white">{record.total || 0}</span> {unit}
+                                    総計: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{record.total || 0}</span> {unit}
                                 </div>
                                 <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
-                                    平均: <span className="font-black text-white">{record.avg || 0}</span> {unit}
+                                    平均: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{record.avg || 0}</span> {unit}
                                 </div>
                             </div>
 
                             {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
-                            <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm">
-                                {/* 1. ポイント + 水深（同フォントサイズ・純白） */}
-                                <div className="flex items-center gap-1.5 truncate text-white">
-                                    <span>{record.point || 'ポイント未設定'}</span>
+                            {/* 最下段文字切れ対策：lineHeight 1.7、paddingBottom 4px を各ブロックに適用 */}
+                            <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
+                                {/* 1. ポイント + 水深（同フォントサイズ・純白・下切れ防止） */}
+                                <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
+                                    <span className="inline-block">{record.point || 'ポイント未設定'}</span>
                                     {record.waterDepth ? (
-                                        <span className="text-white font-black">{record.waterDepth}m</span>
+                                        <span className="text-white font-black inline-block">{record.waterDepth}m</span>
                                     ) : null}
                                 </div>
 
-                                {/* 2. 水温（「水温」は薄いグレー、数字は純白・同サイズ） */}
-                                <div className="px-2 shrink-0 flex items-center gap-1">
-                                    <span className={isDark ? 'text-slate-400 font-bold' : 'text-sky-200/80 font-bold'}>水温</span>
-                                    <span className="text-white font-black">
+                                {/* 2. 水温（「水温」は薄いグレー、数字は純白・同サイズ・下切れ防止） */}
+                                <div className="px-2 shrink-0 flex items-center gap-1 text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
+                                    <span className={isDark ? 'text-slate-400 font-bold inline-block' : 'text-sky-200/80 font-bold inline-block'}>水温</span>
+                                    <span className="text-white font-black inline-block">
                                         {record.waterTemp ? `${record.waterTemp}℃` : '―'}
                                     </span>
                                 </div>
 
-                                {/* 3. 潮回り（純白・同サイズ） */}
-                                <div className="shrink-0 font-black text-white">
-                                    {getSafeTideDisplay(record.tideState)}
+                                {/* 3. 潮回り（純白・同サイズ・下切れ防止） */}
+                                <div className="shrink-0 font-black text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
+                                    <span className="inline-block">
+                                        {getSafeTideDisplay(record.tideState)}
+                                    </span>
                                 </div>
                             </div>
                         </div>
