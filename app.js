@@ -270,24 +270,24 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
                             {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
                             <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm">
-                                {/* 1. ポイント + 水深（「水深」の文字は省略し、直後に m 表示） */}
+                                {/* 1. ポイント + 水深（同フォントサイズ・純白） */}
                                 <div className="flex items-center gap-1.5 truncate text-white">
                                     <span>{record.point || 'ポイント未設定'}</span>
                                     {record.waterDepth ? (
-                                        <span className={isDark ? 'text-sky-400 font-black' : 'text-sky-200 font-black'}>{record.waterDepth}m</span>
+                                        <span className="text-white font-black">{record.waterDepth}m</span>
                                     ) : null}
                                 </div>
 
-                                {/* 2. 水温（「水温」の漢字 ＋ 数字℃） */}
-                                <div className="px-2 shrink-0 text-white">
-                                    <span>水温</span>{' '}
-                                    <span className={isDark ? 'text-amber-400 font-black' : 'text-yellow-300 font-black'}>
+                                {/* 2. 水温（「水温」は薄いグレー、数字は純白・同サイズ） */}
+                                <div className="px-2 shrink-0 flex items-center gap-1">
+                                    <span className={isDark ? 'text-slate-400 font-bold' : 'text-sky-200/80 font-bold'}>水温</span>
+                                    <span className="text-white font-black">
                                         {record.waterTemp ? `${record.waterTemp}℃` : '―'}
                                     </span>
                                 </div>
 
-                                {/* 3. 潮回り（「潮」の重複を防ぎ、大潮・中潮など名称のみ表示） */}
-                                <div className={`shrink-0 font-black ${isDark ? 'text-sky-300' : 'text-sky-100'}`}>
+                                {/* 3. 潮回り（純白・同サイズ） */}
+                                <div className="shrink-0 font-black text-white">
                                     {getSafeTideDisplay(record.tideState)}
                                 </div>
                             </div>
@@ -1342,7 +1342,7 @@ function App() {
                                                 {(r.sizeMin || r.sizeMax) && (
                                                     <div className="flex items-baseline text-slate-800 dark:text-slate-100">
                                                         <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">型:</span>
-                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜${r.sizeMax || '?'}</span>
+                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜{r.sizeMax || '?'}</span>
                                                         <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 ml-0.5">cm</span>
                                                     </div>
                                                 )}
