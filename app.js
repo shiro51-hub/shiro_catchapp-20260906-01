@@ -144,7 +144,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                                 <span className={`text-lg font-black ${isDark ? 'text-slate-500' : 'text-white/60'}`}>-</span>
                                             ) : (
                                                 <div className="flex items-baseline justify-end max-w-full">
-                                                    {/* 竿頭の名前下部切れ対策：lineHeightを1.5、paddingBottomを4px確保 */}
                                                     <span 
                                                         className={`${topCount === 1 ? 'text-xl sm:text-2xl' : 'text-base sm:text-lg'} font-black text-white truncate drop-shadow-sm inline-block`} 
                                                         style={{ lineHeight: 1.5, paddingBottom: '4px' }}
@@ -212,7 +211,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                             <div key={`p-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '32px', paddingBottom: '6px', paddingTop: '3px' }}>
                                                 <div className="truncate pr-1 flex-1 flex items-baseline">
                                                     <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
-                                                    {/* 釣り人の名前下部切れ対策：lineHeight 1.7、paddingBottom 4px */}
                                                     <span className="truncate inline-block" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                                         {isAnonymous ? `座席${s.id}` : (s.name || '-')}
                                                     </span>
@@ -243,7 +241,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                             <div key={`s-${i}`} className={`flex justify-between items-center ${isCrowded ? 'text-xs' : 'text-sm'} border-b last:border-0 ${textColor} ${isDark ? 'border-slate-700/30' : 'border-white/10'}`} style={{ minHeight: '32px', paddingBottom: '6px', paddingTop: '3px' }}>
                                                 <div className="truncate pr-1 flex-1 flex items-baseline">
                                                     <span className="opacity-50 mr-1 text-[11px] shrink-0">{s.id}.</span>
-                                                    {/* 釣り人の名前下部切れ対策：lineHeight 1.7、paddingBottom 4px */}
                                                     <span className="truncate inline-block" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                                         {isAnonymous ? `座席${s.id}` : (s.name || '-')}
                                                     </span>
@@ -259,7 +256,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報（最下段レイアウト：底切れ対策で pb-3.5 を確保） */}
+                        {/* フッター情報（最下段レイアウト） */}
                         <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
                             {/* 上段：型・総計・平均 */}
                             <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
@@ -275,9 +272,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
 
                             {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
-                            {/* 最下段文字切れ対策：lineHeight 1.7、paddingBottom 4px を各ブロックに適用 */}
                             <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
-                                {/* 1. ポイント + 水深（同フォントサイズ・純白・下切れ防止） */}
+                                {/* 1. ポイント + 水深 */}
                                 <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">{record.point || 'ポイント未設定'}</span>
                                     {record.waterDepth ? (
@@ -285,7 +281,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     ) : null}
                                 </div>
 
-                                {/* 2. 水温（「水温」は薄いグレー、数字は純白・同サイズ・下切れ防止） */}
+                                {/* 2. 水温 */}
                                 <div className="px-2 shrink-0 flex items-center gap-1 text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className={isDark ? 'text-slate-400 font-bold inline-block' : 'text-sky-200/80 font-bold inline-block'}>水温</span>
                                     <span className="text-white font-black inline-block">
@@ -293,7 +289,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </span>
                                 </div>
 
-                                {/* 3. 潮回り（純白・同サイズ・下切れ防止） */}
+                                {/* 3. 潮回り */}
                                 <div className="shrink-0 font-black text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">
                                         {getSafeTideDisplay(record.tideState)}
@@ -616,13 +612,34 @@ function App() {
         setToastMessage('釣果数をリセットしました（サイズ・お名前は保持）');
     };
 
+    // ==========================================
+    // 履歴からの個別削除処理（当日画面も即座にリセット）
+    // ==========================================
     const handleDeleteRecord = (recordId) => {
+        const target = records.find(r => r.id === recordId);
+        
+        // 削除対象の日付が現在選択されている日付と同じ場合、画面ステートも完全リセット
+        if (target && target.date === date) {
+            setPortSeatCount('');
+            setStarboardSeatCount('');
+            localStorage.removeItem('port_seat_count');
+            localStorage.removeItem('starboard_seat_count');
+            setPortSeats([]);
+            setStarboardSeats([]);
+            setTargetFish(''); setSizeMin(''); setSizeMax('');
+            setPoint(''); setWaterTemp(''); setWaterDepth(''); setTide('');
+            setTideState(''); setHighTide1(''); setHighTide2(''); setLowTide1(''); setLowTide2('');
+            setWeather1(''); setWeather2(''); setWindDir1(''); setWindDir2('');
+            setWindSpeed1(''); setWindSpeed2(''); setWaveHeight1(''); setWaveHeight2('');
+            setDetailedMemo('');
+        }
+
         setRecords(prev => {
             const updated = prev.filter(r => r.id !== recordId);
             localStorage.setItem('fishing_records', JSON.stringify(updated));
             return updated;
         });
-        setToastMessage('釣果記録を削除しました');
+        setToastMessage('釣果記録を削除しました（画面表示もリセットされました）');
     };
 
     const openMemoModal = (record) => {
@@ -828,7 +845,7 @@ function App() {
     };
 
     // ==========================================
-    // AI分析 実行処理（モデル名自動変換＆エラー防止強化）
+    // AI分析 実行処理
     // ==========================================
     const handleRunAiAnalysis = async (record) => {
         const activeApiKey = (userApiKey || '').replace(/[\s\r\n ]/g, '');
@@ -876,7 +893,6 @@ function App() {
         const prompt = promptLines.join('\n');
 
         try {
-            // モデル名を表示用名称からAPI識別子へ変換（未定義時は gemini-2.5-flash）
             const modelName = typeof getActualModelName === 'function' 
                 ? getActualModelName(selectedAiModel) 
                 : 'gemini-2.5-flash';
