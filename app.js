@@ -684,7 +684,7 @@ function App() {
         setGeneratingAiId(record.id);
         const activeApiKey = (customKey || userApiKey || '').replace(/[\s\r\n ]/g, '');
         if (!activeApiKey) {
-            setToastMessage('APIキーが入力されていません。設定画面の「データ管理」からGeminiのAPIキーを入力してください。');
+            setToastMessage('APIキーが入力されていません。設定画面の「基本設定」または「システム」からGeminiのAPIキーを入力してください。');
             setGeneratingAiId(null);
             return;
         }
@@ -694,7 +694,7 @@ function App() {
             return;
         }
 
-        const modelName = getActualModelName(selectedAiModel);
+        const modelName = typeof getActualModelName === 'function' ? getActualModelName(selectedAiModel) : 'gemini-2.5-flash';
         const formatPrompt = selectedPatterns.map(id => getPatternPrompt(id)).join("\n\n");
         const systemPrompt = `※あなたはベテラン釣り船「山下丸」の船長です。海の男らしく、媚びないけれどお客様への温かみがある性格として、以下の釣行記録を作成してください。■ 絶対厳守のルール・文体：「です・ます調」で統一する。簡潔な「〜です」「〜でした」という表現にする（「〜ですね」「〜ですよ」などの甘い語尾、丁寧すぎる表現禁止、「だぜ」「だな」などの友達や後輩にしゃべるような表現は禁止）。・敬称のルール：竿頭などお客様のお名前を紹介する際は、かしこまりすぎた「様」ではなく、必ず「さん」付けに統一すること（例: 〇〇さん）。・表現：「混じる」は「交じる」に、「潮周り」は「潮回り」に統一。・速度：潮や流れは「速い」を使用（「早い」は不可）。・日付：「今日は」「本日は」を使用（「この日は」「当日は」は使用不可）。・禁止：絵文字、太文字、装飾記号（★、◆など）は一切使用しない。・段落と改行の禁止：途中で絶対に改行を行わず、すべての文章を隙間なく繋げて、ひと続きの1つの段落として出力してください。＃ハルシネーション防止の対策・捏造の禁止：提供された【釣果データ】および【船長からの追加情報】にある事実のみを使用してください。書いていない出来事、釣れていない魚種などを勝手に想像して創作（捏造）することは絶対に禁止です。・推測の禁止：情報が不足している項目について、無理に推測で文章を膨らませないでください。情報がない場合はその話題には触れず、ある事実だけを使って簡潔に構成してください。・誇張の禁止：釣果やサイズについて、データ以上の大げさな表現はしないでください。・トーンの合わせ方：指定された「船全体の調子（絶好調/好調/普通/食い渋り/厳しい）」に100%合わせて文章のテンションを調整してください。■ 記載内容のルール1. 冒頭：必ず「〇〇沖へと出船しました。」から開始し、次に「海上では…」と天候や海況（風・波・水温・潮色）を伝える。海況を伝える際は情景が目に浮かぶような表現を1文交え、潮回り、海水温、潮色を簡潔に一連の流れで記載してください。特に指示がない限り"水深〇〇mでした"は不要です。2. 状況：潮の流れの強さや変化、魚の活性、印象的なエピソードを組み込む。3. 竿頭の釣果とお名前（敬称は「さん」）、二番手は釣果だけを紹介する：名前を出すのは「竿頭」のみ。単位（匹、尾、枚、杯など）は魚によって変更すること。4. サイズ：数字（〇cm）は絶対に出さず、「良型」「中型主体」などの言葉のみで表現する。5. 分析：竿頭の釣り方や好釣果の要因、決め手、コツ、工夫した点などを分析して書く。6. 締め：釣れた人・釣れなかった人双方に配慮し、「またのご乗船お待ちしております」と前向きに締める。■ 出力フォーマット必ず以下の■■■タイトル■■■という区切り文字で区切って、それぞれ明確に切り口やトーンを変えた指定パターンの文章を出力してください。余計な挨拶やマークダウン(\`\`\`など)は含めないでください。${formatPrompt}`;
 
@@ -818,17 +818,21 @@ function App() {
         setSharedRecordId(null);
     };
 
+    // ==========================================
+    // AI分析 実行処理（モデル名自動変換＆エラー防止強化）
+    // ==========================================
     const handleRunAiAnalysis = async (record) => {
-        if (!userApiKey) {
-            setToastMessage('APIキーが未入力です。「データ管理」でGemini APIキーを設定してください。');
+        const activeApiKey = (userApiKey || '').replace(/[\s\r\n ]/g, '');
+        if (!activeApiKey) {
+            setToastMessage('APIキーが未入力です。「基本設定」または「システム」でGemini APIキーを設定してください。');
             return;
         }
         setAnalyzingRecordId(record.id);
         setToastMessage(`AI (${selectedAiModel}) が釣況・釣り座を多角分析中...`);
 
         const unit = getUnit(record.targetFish);
-        const pSeats = (record.port || []).filter(s => s.isVisible !== false);
-        const sSeats = (record.starboard || []).filter(s => s.isVisible !== false);
+        const pSeats = (record.port || []).filter(s => s && s.isVisible !== false);
+        const sSeats = (record.starboard || []).filter(s => s && s.isVisible !== false);
 
         const portAnglers = pSeats.length;
         const starboardAnglers = sSeats.length;
@@ -863,8 +867,17 @@ function App() {
         const prompt = promptLines.join('\n');
 
         try {
-            const text = await callGeminiApi(userApiKey, prompt, selectedAiModel, true);
-            let cleanJson = (text || '').replace(/```json/gi, '');
+            // モデル名を表示用名称からAPI識別子へ変換（未定義時は gemini-2.5-flash）
+            const modelName = typeof getActualModelName === 'function' 
+                ? getActualModelName(selectedAiModel) 
+                : 'gemini-2.5-flash';
+
+            const text = await callGeminiApi(activeApiKey, prompt, modelName, true);
+            if (!text) {
+                throw new Error('AIからの応答が得られませんでした');
+            }
+
+            let cleanJson = text.replace(/```json/gi, '');
             cleanJson = cleanJson.split('```').join('').trim();
             const analysisData = JSON.parse(cleanJson);
 
