@@ -109,7 +109,6 @@ function SettingsPanel({
         const text = resData.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) throw new Error('解析結果が得られませんでした');
         
-        // バッククォートのパースエラーを防止する安全な正規表現クリーン処理
         const clean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
         return JSON.parse(clean);
     };
@@ -148,7 +147,7 @@ function SettingsPanel({
     };
 
     // ==========================================
-    // 気象予報 画像解析
+    // 気象予報 画像解析（Windy等の風向反転防止＆8方位限定）
     // ==========================================
     const handleWeatherImageAnalysis = async (e) => {
         const file = e.target.files && e.target.files[0];
@@ -158,12 +157,27 @@ function SettingsPanel({
         setToastMessage('気象予報をAI解析中...');
 
         try {
-            const prompt = `この画像は海の天気・風・波の気象予報スクリーンショットです。
+            const prompt = `この画像は海の天気・風・波の気象予報スクリーンショット（Windyなど）です。
 午前・午後の予報を読み取り、JSON形式のみで出力してください。
-波高（waveHeight1, waveHeight2）は可能な限り以下の選択肢のいずれかに分類して出力してください:
-["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
+
+【厳守：風向の判定ルール】
+・Windy等の風向矢印は「風が流れていく向き（風下）」を指しています。
+・風向は「風が吹いてくる方角（矢印の根本）」を採用してください。
+  例：下向き矢印(↓)は北から吹いているため「北」
+  例：上向き矢印(↑)は南から吹いているため「南」
+  例：右向き矢印(→)は西から吹いているため「西」
+  例：左向き矢印(←)は東から吹いているため「東」
+  例：右下向き矢印(↘)は北西から吹いているため「北西」
+  例：左上向き矢印(↖)は南東から吹いているため「南東」
+・風向（windDir1, windDir2）は必ず以下の8方位のいずれか1つのみを出力してください：
+  ["北", "北東", "東", "南東", "南", "南西", "西", "北西"]
+
+【波高の判定ルール】
+・波高（waveHeight1, waveHeight2）は可能な限り以下の選択肢のいずれかに分類してください：
+  ["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
+
 不明な項目は空文字 "" にしてください。
-{"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(北,北東など)","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
+{"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(8方位のみ)","windDir2":"後半風向(8方位のみ)","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
 
             const parsed = await callVisionApi(file, prompt);
             let count = 0;
@@ -333,13 +347,13 @@ function SettingsPanel({
                     </button>
                 </div>
 
-                {/* 3タブ切り替えバー */}
+                {/* 3タブ切り替えバー（「基本設定」へ変更） */}
                 <div className="flex bg-gray-100 dark:bg-slate-900 p-1.5 gap-1 border-b border-gray-200 dark:border-slate-700 text-xs font-black shrink-0">
                     <button
                         onClick={() => setActiveSettingsTab('basic')}
                         className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
-                        釣り座・基本海況
+                        基本設定
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('weather')}
@@ -390,7 +404,7 @@ function SettingsPanel({
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs sm:text-sm no-scrollbar">
 
                     {/* ========================================== */}
-                    {/* タブ 1: 釣り座・基本海況ポイント */}
+                    {/* タブ 1: 基本設定 */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
