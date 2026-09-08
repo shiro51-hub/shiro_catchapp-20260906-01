@@ -147,7 +147,7 @@ function SettingsPanel({
     };
 
     // ==========================================
-    // 気象予報 画像解析（Windy等の風向反転防止＆8方位限定）
+    // 気象予報 画像解析
     // ==========================================
     const handleWeatherImageAnalysis = async (e) => {
         const file = e.target.files && e.target.files[0];
@@ -177,7 +177,7 @@ function SettingsPanel({
   ["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
 
 不明な項目は空文字 "" にしてください。
-{"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(8方位のみ)","windDir2":"後半風向(8方位のみ)","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
+{"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(8方位のみ)","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
 
             const parsed = await callVisionApi(file, prompt);
             let count = 0;
@@ -338,32 +338,32 @@ function SettingsPanel({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 animate-[fadeIn_0.15s_ease-out]">
             <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-md max-h-[92dvh] flex flex-col overflow-hidden text-gray-800 dark:text-slate-100">
                 {/* ヘッダー */}
-                <div className="px-4 py-3 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900/50 shrink-0">
-                    <span className="font-black text-base flex items-center gap-1.5">
+                <div className="px-4 py-3.5 border-b border-gray-200 dark:border-slate-700 flex justify-between items-center bg-gray-50 dark:bg-slate-900/50 shrink-0">
+                    <span className="font-black text-lg flex items-center gap-2">
                         <IconSettings className="w-5 h-5 text-sky-600 dark:text-sky-400" /> 設定・海況管理
                     </span>
-                    <button onClick={() => setIsSettingsOpen(false)} className="w-7 h-7 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-xs hover:bg-gray-300 active:scale-95">
+                    <button onClick={() => setIsSettingsOpen(false)} className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-sm hover:bg-gray-300 active:scale-95">
                         ✕
                     </button>
                 </div>
 
-                {/* 3タブ切り替えバー（「基本設定」へ変更） */}
-                <div className="flex bg-gray-100 dark:bg-slate-900 p-1.5 gap-1 border-b border-gray-200 dark:border-slate-700 text-xs font-black shrink-0">
+                {/* 3タブ切り替えバー */}
+                <div className="flex bg-gray-100 dark:bg-slate-900 p-1.5 gap-1 border-b border-gray-200 dark:border-slate-700 font-black shrink-0">
                     <button
                         onClick={() => setActiveSettingsTab('basic')}
-                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
                         基本設定
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('weather')}
-                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'weather' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'weather' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
                         気象・潮時
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('system')}
-                        className={`flex-1 py-2 rounded-xl transition-all ${activeSettingsTab === 'system' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'system' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                     >
                         システム
                     </button>
@@ -401,7 +401,7 @@ function SettingsPanel({
                 </datalist>
 
                 {/* スクロールコンテンツ */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs sm:text-sm no-scrollbar">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 text-sm sm:text-base no-scrollbar">
 
                     {/* ========================================== */}
                     {/* タブ 1: 基本設定 */}
@@ -411,12 +411,12 @@ function SettingsPanel({
                             {/* 画面テーマ切り替えスイッチ */}
                             <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-slate-900/60 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                                 <div>
-                                    <span className="font-black text-xs block text-gray-800 dark:text-slate-100">画面テーマ</span>
-                                    <span className="text-[11px] text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
+                                    <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
+                                    <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
                                 </div>
                                 <button
                                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg font-black text-xs shadow-sm active:scale-95 transition-all flex items-center gap-1"
+                                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg font-black text-sm shadow-sm active:scale-95 transition-all flex items-center gap-1"
                                 >
                                     {theme === 'dark' ? '🌙 ダークモード' : '☀️ 日中モード'}
                                 </button>
@@ -424,23 +424,23 @@ function SettingsPanel({
 
                             {/* 釣り座席数設定 */}
                             <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">釣り座の席数設定（0〜15席）</span>
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">釣り座の席数設定（0〜15席）</span>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label className="text-[11px] font-bold text-red-500 block mb-1">左舷 席数</label>
+                                        <label className="text-xs font-bold text-red-500 block mb-1">左舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black bg-white dark:bg-slate-800 text-center text-base"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-center text-lg"
                                             value={portCount}
                                             onChange={(e) => onCountChange('port', e.target.value)}
                                             placeholder="0"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-emerald-600 block mb-1">右舷 席数</label>
+                                        <label className="text-xs font-bold text-emerald-600 block mb-1">右舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-1.5 font-black bg-white dark:bg-slate-800 text-center text-base"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-center text-lg"
                                             value={starboardCount}
                                             onChange={(e) => onCountChange('starboard', e.target.value)}
                                             placeholder="0"
@@ -449,17 +449,17 @@ function SettingsPanel({
                                 </div>
                             </div>
 
-                            {/* 基本海況・ポイント（ハイブリッド入力式） */}
+                            {/* 基本海況・ポイント */}
                             <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2.5">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">基本海況・ポイント設定</span>
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">基本海況・ポイント設定</span>
                                 <div className="grid grid-cols-2 gap-2">
                                     {/* ポイント */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">ポイント (候補・手入力)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">ポイント (候補・手入力)</label>
                                         <input
                                             type="text"
                                             list="point-options"
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={point}
                                             onChange={(e) => setPoint(e.target.value)}
                                             placeholder="選択または入力"
@@ -468,11 +468,11 @@ function SettingsPanel({
 
                                     {/* 釣り物 */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">釣り物 (候補・手入力)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">釣り物 (候補・手入力)</label>
                                         <input
                                             type="text"
                                             list="target-fish-options"
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={targetFish}
                                             onChange={(e) => setTargetFish(e.target.value)}
                                             placeholder="選択または入力"
@@ -481,10 +481,10 @@ function SettingsPanel({
 
                                     {/* 水深 */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水深 (m)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水深 (m)</label>
                                         <input
                                             type="number"
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={waterDepth}
                                             onChange={(e) => setWaterDepth(e.target.value)}
                                             placeholder="例: 45"
@@ -493,23 +493,23 @@ function SettingsPanel({
 
                                     {/* 水温 */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">水温 (℃)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水温 (℃)</label>
                                         <input
                                             type="number" step="0.1"
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={waterTemp}
                                             onChange={(e) => setWaterTemp(e.target.value)}
                                             placeholder="例: 18.5"
                                         />
                                     </div>
 
-                                    {/* 潮色（ハイブリッド式） */}
+                                    {/* 潮色 */}
                                     <div className="col-span-2">
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">潮色 (候補・手入力)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">潮色 (候補・手入力)</label>
                                         <input
                                             type="text"
                                             list="tide-color-options"
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={tide}
                                             onChange={(e) => setTide(e.target.value)}
                                             placeholder="選択または入力（例: 澄み / 薄濁り）"
@@ -521,7 +521,7 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 2: 気象・潮時（個別解析ボタン付き） */}
+                    {/* タブ 2: 気象・潮時 */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'weather' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
@@ -529,15 +529,15 @@ function SettingsPanel({
                             {/* 上段：潮時ブロック */}
                             <div className="bg-sky-50 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
                                 <div className="flex justify-between items-center">
-                                    <span className="font-black text-sky-900 dark:text-sky-300 block text-xs">🌊 潮時データ</span>
-                                    <span className="text-[11px] text-gray-400">カウンターのアラート連動</span>
+                                    <span className="font-black text-sky-900 dark:text-sky-300 block text-sm">🌊 潮時データ</span>
+                                    <span className="text-xs text-gray-400">カウンターのアラート連動</span>
                                 </div>
 
                                 {/* 潮時表画像解析ボタン */}
                                 <button
                                     onClick={() => tideImageInputRef.current && tideImageInputRef.current.click()}
                                     disabled={isAnalyzingTide}
-                                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-2 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
                                 >
                                     {isAnalyzingTide ? <span className="animate-spin">↻</span> : <span>📷</span>}
                                     <span>潮時表の画像を自動読み取り</span>
@@ -547,10 +547,10 @@ function SettingsPanel({
                                 <div className="pt-1 space-y-2">
                                     {/* 潮回り */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-sky-700 dark:text-sky-300 block mb-0.5">潮回り（大潮・中潮など）</label>
+                                        <label className="text-xs font-bold text-sky-700 dark:text-sky-300 block mb-1">潮回り（大潮・中潮など）</label>
                                         <input
                                             type="text"
-                                            className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
                                             value={tideState}
                                             onChange={(e) => setTideState(e.target.value)}
                                             placeholder="例: 中潮"
@@ -560,20 +560,20 @@ function SettingsPanel({
                                     {/* 満潮・干潮時刻 */}
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                            <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (1)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
+                                            <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (1)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
                                         </div>
                                         <div>
-                                            <label className="text-[11px] font-bold text-sky-600 dark:text-sky-400 block mb-0.5">満潮 (2)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
+                                            <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (2)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
                                         </div>
                                         <div>
-                                            <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (1)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
+                                            <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (1)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
                                         </div>
                                         <div>
-                                            <label className="text-[11px] font-bold text-amber-600 dark:text-amber-400 block mb-0.5">干潮 (2)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800 text-center" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
+                                            <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (2)</label>
+                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
                                         </div>
                                     </div>
                                 </div>
@@ -581,13 +581,13 @@ function SettingsPanel({
 
                             {/* 下段：気象・風波ブロック */}
                             <div className="bg-amber-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-amber-100 dark:border-slate-700 space-y-2.5">
-                                <span className="font-black text-amber-900 dark:text-amber-300 block text-xs">☀️ 気象・風・波データ</span>
+                                <span className="font-black text-amber-900 dark:text-amber-300 block text-sm">☀️ 気象・風・波データ</span>
 
                                 {/* 天気予報画像解析ボタン */}
                                 <button
                                     onClick={() => weatherImageInputRef.current && weatherImageInputRef.current.click()}
                                     disabled={isAnalyzingWeather}
-                                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-2 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
                                 >
                                     {isAnalyzingWeather ? <span className="animate-spin">↻</span> : <span>📷</span>}
                                     <span>天気予報の画像を自動読み取り</span>
@@ -596,35 +596,35 @@ function SettingsPanel({
 
                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">天候 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (前半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">天候 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={weather2} onChange={(e) => setWeather2(e.target.value)} placeholder="例: 曇り" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (後半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={weather2} onChange={(e) => setWeather2(e.target.value)} placeholder="例: 曇り" />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">風向 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={windDir1} onChange={(e) => setWindDir1(e.target.value)} placeholder="例: 北東" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (前半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windDir1} onChange={(e) => setWindDir1(e.target.value)} placeholder="例: 北東" />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">風向 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={windDir2} onChange={(e) => setWindDir2(e.target.value)} placeholder="例: 南西" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (後半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windDir2} onChange={(e) => setWindDir2(e.target.value)} placeholder="例: 南西" />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">風速 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={windSpeed1} onChange={(e) => setWindSpeed1(e.target.value)} placeholder="例: 3m" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (前半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windSpeed1} onChange={(e) => setWindSpeed1(e.target.value)} placeholder="例: 3m" />
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">風速 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2 py-1 font-bold bg-white dark:bg-slate-800" value={windSpeed2} onChange={(e) => setWindSpeed2(e.target.value)} placeholder="例: 6m" />
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (後半)</label>
+                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windSpeed2} onChange={(e) => setWindSpeed2(e.target.value)} placeholder="例: 6m" />
                                     </div>
 
-                                    {/* 波高プルダウン（前半／後半） */}
+                                    {/* 波高プルダウン */}
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">波高 (前半)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (前半)</label>
                                         <select
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold text-xs bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
                                             value={waveHeight1}
                                             onChange={(e) => setWaveHeight1(e.target.value)}
                                         >
@@ -635,9 +635,9 @@ function SettingsPanel({
                                         </select>
                                     </div>
                                     <div>
-                                        <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-0.5">波高 (後半)</label>
+                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (後半)</label>
                                         <select
-                                            className="w-full border rounded-lg px-2 py-1.5 font-bold text-xs bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
                                             value={waveHeight2}
                                             onChange={(e) => setWaveHeight2(e.target.value)}
                                         >
@@ -653,28 +653,28 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 3: システム（管理・AI・設定） */}
+                    {/* タブ 3: システム */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'system' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             {/* データ管理・バックアップ */}
                             <div className="bg-sky-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
-                                <span className="font-black text-sky-800 dark:text-sky-300 block text-xs">データ管理・バックアップ</span>
-                                <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
+                                <span className="font-black text-sky-800 dark:text-sky-300 block text-sm">データ管理・バックアップ</span>
+                                <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
                                     釣果記録を端末に保存、またはバックアップから復元します。
                                 </p>
                                 
                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                     <button
                                         onClick={handleExportData}
-                                        className="w-full bg-sky-600 hover:bg-sky-700 text-white font-black py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                        className="w-full bg-sky-600 hover:bg-sky-700 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
                                     >
                                         <span>📥</span> データを保存
                                     </button>
 
                                     <button
                                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                                        className="w-full bg-white dark:bg-slate-800 border border-sky-300 dark:border-slate-600 text-sky-700 dark:text-sky-300 font-black py-2.5 rounded-xl shadow-sm text-xs flex items-center justify-center gap-1 active:scale-95 transition-all hover:bg-sky-50"
+                                        className="w-full bg-white dark:bg-slate-800 border border-sky-300 dark:border-slate-600 text-sky-700 dark:text-sky-300 font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all hover:bg-sky-50"
                                     >
                                         <span>📤</span> データを復元
                                     </button>
@@ -692,7 +692,7 @@ function SettingsPanel({
                                     <button
                                         type="button"
                                         onClick={() => setShowTextInput(!showTextInput)}
-                                        className="text-[11px] text-sky-600 dark:text-sky-400 underline font-bold"
+                                        className="text-xs text-sky-600 dark:text-sky-400 underline font-bold"
                                     >
                                         {showTextInput ? '▲ 貼り付け入力を閉じる' : '▼ ファイルが選べない時はこちら（文字貼り付けで復元）'}
                                     </button>
@@ -701,14 +701,14 @@ function SettingsPanel({
                                         <div className="mt-2 space-y-2 animate-[fadeIn_0.15s_ease-out]">
                                             <textarea
                                                 rows="3"
-                                                className="w-full border rounded-lg p-2 text-[11px] font-mono bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                                className="w-full border rounded-lg p-2.5 text-xs font-mono bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
                                                 placeholder="バックアップファイルの中身をコピーしてここに貼り付け"
                                                 value={pasteText}
                                                 onChange={(e) => setPasteText(e.target.value)}
                                             />
                                             <button
                                                 onClick={handlePasteRestore}
-                                                className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-xs transition-all"
+                                                className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-sm transition-all"
                                             >
                                                 貼り付けた内容から復元する
                                             </button>
@@ -719,15 +719,15 @@ function SettingsPanel({
 
                             {/* Gemini AI設定 */}
                             <div className="bg-gray-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-gray-200 dark:border-slate-700 space-y-3">
-                                <span className="font-black text-gray-700 dark:text-slate-200 block text-xs">Gemini AI設定</span>
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">Gemini AI設定</span>
                                 
                                 {/* APIキー */}
                                 <div>
-                                    <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-1">APIキー</label>
+                                    <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">APIキー</label>
                                     <div className="relative">
                                         <input
                                             type={showKey ? "text" : "password"}
-                                            className="w-full border rounded-lg pl-2.5 pr-8 py-1.5 font-mono text-xs bg-white dark:bg-slate-800"
+                                            className="w-full border rounded-lg pl-3 pr-10 py-2 font-mono text-sm bg-white dark:bg-slate-800"
                                             placeholder="AIzaSy..."
                                             value={tempKey}
                                             onChange={(e) => setTempKey(e.target.value)}
@@ -735,14 +735,14 @@ function SettingsPanel({
                                         <button
                                             type="button"
                                             onClick={() => setShowKey(!showKey)}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
                                         >
                                             {showKey ? '隠す' : '表示'}
                                         </button>
                                     </div>
                                     <button
                                         onClick={handleSaveApiKey}
-                                        className="w-full mt-1.5 bg-gray-800 hover:bg-gray-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-1.5 rounded-lg text-xs transition-all"
+                                        className="w-full mt-2 bg-gray-800 hover:bg-gray-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2 rounded-lg text-sm transition-all"
                                     >
                                         APIキーを保存
                                     </button>
@@ -750,9 +750,9 @@ function SettingsPanel({
 
                                 {/* モデル選択 */}
                                 <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
-                                    <label className="text-[11px] font-bold text-gray-500 dark:text-slate-400 block mb-1">使用AIモデル（日報・多角分析用）</label>
+                                    <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">使用AIモデル（日報・多角分析用）</label>
                                     <select
-                                        className="w-full border rounded-lg px-2.5 py-1.5 font-bold text-xs bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                        className="w-full border rounded-lg px-3 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
                                         value={selectedAiModel}
                                         onChange={handleModelChange}
                                     >
@@ -769,7 +769,7 @@ function SettingsPanel({
                             <div className="pt-2">
                                 <button
                                     onClick={handleFullReset}
-                                    className="w-full py-2 text-xs font-bold text-red-500 hover:text-red-700 text-center transition-colors"
+                                    className="w-full py-2.5 text-sm font-bold text-red-500 hover:text-red-700 text-center transition-colors"
                                 >
                                     ⚠️ アプリを完全初期化する
                                 </button>
