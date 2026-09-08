@@ -286,6 +286,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
         ) : '―'}
     </div>
 </div>
+                        </div>
                     </div>
                 </div>
             </div>
