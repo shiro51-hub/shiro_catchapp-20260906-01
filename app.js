@@ -346,11 +346,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 }
 
 // ==========================================
-// 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
-// ※名前の重複を完全に回避するため MemoModalWithTags と命名
-// ==========================================
-// ==========================================
 // 船長釣行メモモーダル（2行グリッド ＆ 履歴学習型・入力枠拡大版）
+// ※名前の重複を完全に回避するため MemoModalWithTags と命名
 // ==========================================
 function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
     if (!showMemoModal) return null;
@@ -387,19 +384,19 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         },
         {
             id: 'point',
-            name: '⚓ ポイント・タナ',
+            name: '⚓ ポイント',
             tags: [
                 'ポイント移動', '深場へ移動', '浅場へ移動',
                 '根周り集中', 'ツブ根攻め', '砂地フラット',
-                '底ベッタリ狙い', 'ちょい宙', 'タナ高め'
+                'ベタ底', 'ちょい宙'
             ]
         },
         {
             id: 'weather',
-            name: '🌤️ 天候・海況',
+            name: '🌤️ 天候',
             tags: [
-                '北東風強まる', '南西そよそよ', 'ナギ倒れ', 'ウネリあり', '波立ってきた',
-                '晴天', '曇天・ローライト', '急な雨'
+                '北東風強まる', '南西風強まる', '南西風そよそよ', 'ウネリあり', '波立ってきた',
+                '晴天', '曇天', '雨', '雪'
             ]
         }
     ];
@@ -508,7 +505,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
-                {/* 本文入力欄（縦幅を広げて広々使えるように拡張） */}
+                {/* 本文入力欄 */}
                 <div className="p-3 flex-1 flex flex-col min-h-0 overflow-hidden">
                     <textarea
                         className="w-full flex-1 p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100 font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none leading-relaxed"
@@ -543,7 +540,10 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             </div>
         </div>
     );
-}// アプリ本体
+}
+
+// ==========================================
+// アプリ本体
 // ==========================================
 function App() {
     const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('fishing_last_tab') || 'input');
@@ -1254,7 +1254,7 @@ function App() {
                 selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
             />
 
-            {/* 詳細メモモーダル（重複回避した MemoModalWithTags を使用） */}
+            {/* 詳細メモモーダル（定義名 MemoModalWithTags と完全に一致） */}
             <MemoModalWithTags
                 showMemoModal={showMemoModal}
                 setShowMemoModal={setShowMemoModal}
