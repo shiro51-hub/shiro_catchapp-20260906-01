@@ -349,7 +349,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 // 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
 // ※名前の重複を完全に回避するため MemoModalWithTags と命名
 // ==========================================
-// ==========================================
+f// ==========================================
 // 船長釣行メモモーダル（2行グリッド ＆ 履歴学習型・入力枠拡大版）
 // ==========================================
 function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
@@ -398,7 +398,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             id: 'weather',
             name: '🌤️ 天候',
             tags: [
-                '北東風強まる', '南西風強まる', '南西風そよそよ', 'ウネリあり', '波立ってきた',
+                '北東風強まる', '南西風そよそよ', 'ウネリあり', '波立ってきた',
                 '晴天', '曇天', '雨', '雪'
             ]
         }
@@ -508,7 +508,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
-                {/* 本文入力欄 */}
+                {/* 本文入力欄（広々使えるサイズを維持） */}
                 <div className="p-3 flex-1 flex flex-col min-h-0 overflow-hidden">
                     <textarea
                         className="w-full flex-1 p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100 font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none leading-relaxed"
@@ -543,7 +543,10 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             </div>
         </div>
     );
-}}// アプリ本体
+}
+
+// ==========================================
+// アプリ本体
 // ==========================================
 function App() {
     const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('fishing_last_tab') || 'input');
