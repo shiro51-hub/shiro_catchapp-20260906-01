@@ -273,7 +273,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
                             {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
                             <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
-                                {/* 1. ポイント + 水深 */}
                                 <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">{record.point || 'ポイント未設定'}</span>
                                     {record.waterDepth ? (
@@ -281,7 +280,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     ) : null}
                                 </div>
 
-                                {/* 2. 水温 */}
                                 <div className="px-2 shrink-0 flex items-center gap-1 text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className={isDark ? 'text-slate-400 font-bold inline-block' : 'text-sky-200/80 font-bold inline-block'}>水温</span>
                                     <span className="text-white font-black inline-block">
@@ -289,7 +287,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </span>
                                 </div>
 
-                                {/* 3. 潮回り */}
                                 <div className="shrink-0 font-black text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">
                                         {getSafeTideDisplay(record.tideState)}
@@ -350,8 +347,9 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
 // ==========================================
 // 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
+// ※名前の重複を完全に回避するため MemoModalWithTags と命名
 // ==========================================
-function MemoModal({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
+function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
     if (!showMemoModal) return null;
 
     const [selectedCat, setSelectedCat] = React.useState('activity');
@@ -1220,8 +1218,8 @@ function App() {
                 selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
             />
 
-            {/* 詳細メモモーダル */}
-            <MemoModal
+            {/* 詳細メモモーダル（重複回避した MemoModalWithTags を使用） */}
+            <MemoModalWithTags
                 showMemoModal={showMemoModal}
                 setShowMemoModal={setShowMemoModal}
                 tempMemo={tempMemo}
