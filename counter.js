@@ -5,6 +5,10 @@
 const ResetButton = ({ onReset, counterMode, setCounterMode }) => {
     const [confirming, setConfirming] = React.useState(false);
 
+    const RefreshIcon = typeof IconRefresh !== 'undefined' ? IconRefresh : () => <span>🔄</span>;
+    const SwipeIcon = typeof IconSwipe !== 'undefined' ? IconSwipe : () => <span>↔️</span>;
+    const KeyboardIcon = typeof IconKeyboard !== 'undefined' ? IconKeyboard : () => <span>🔢</span>;
+
     return (
         <div className="mt-4 pt-1">
             {confirming && (
@@ -28,11 +32,11 @@ const ResetButton = ({ onReset, counterMode, setCounterMode }) => {
                         style={{ left: counterMode === 'tap' ? '2px' : counterMode === 'slide' ? 'calc(33.33% + 1px)' : 'calc(66.66%)' }}
                     />
                     <button onClick={() => setCounterMode('tap')} className={`flex-1 flex items-center justify-center font-black text-[11px] sm:text-xs z-10 transition-colors duration-200 ${counterMode === 'tap' ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>タップ</button>
-                    <button onClick={() => setCounterMode('slide')} className={`flex-1 flex items-center justify-center font-black text-[11px] sm:text-xs z-10 transition-colors duration-200 ${counterMode === 'slide' ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}><IconSwipe className="w-3.5 h-3.5 mr-0.5 sm:mr-1" />スライド</button>
-                    <button onClick={() => setCounterMode('keypad')} className={`flex-1 flex items-center justify-center font-black text-[11px] sm:text-xs z-10 transition-colors duration-200 ${counterMode === 'keypad' ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}><IconKeyboard className="w-3.5 h-3.5 mr-0.5 sm:mr-1" />テンキー</button>
+                    <button onClick={() => setCounterMode('slide')} className={`flex-1 flex items-center justify-center font-black text-[11px] sm:text-xs z-10 transition-colors duration-200 ${counterMode === 'slide' ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}><SwipeIcon className="w-3.5 h-3.5 mr-0.5 sm:mr-1" />スライド</button>
+                    <button onClick={() => setCounterMode('keypad')} className={`flex-1 flex items-center justify-center font-black text-[11px] sm:text-xs z-10 transition-colors duration-200 ${counterMode === 'keypad' ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}><KeyboardIcon className="w-3.5 h-3.5 mr-0.5 sm:mr-1" />テンキー</button>
                 </div>
                 <button onClick={() => setConfirming(true)} className="w-1/3 border border-gray-300 dark:border-slate-600 text-gray-500 dark:text-slate-400 bg-white dark:bg-slate-800 rounded-lg flex flex-col items-center justify-center active:bg-gray-50 dark:active:bg-slate-700 transition-colors shadow-sm px-0.5 pt-0.5">
-                    <span className="text-sky-500 mb-0.5"><IconRefresh className="w-4 h-4" /></span> 
+                    <span className="text-sky-500 mb-0.5"><RefreshIcon className="w-4 h-4" /></span> 
                     <span className="text-[11px] sm:text-xs font-black leading-none tracking-tighter">釣果リセット</span>
                 </button>
             </div>
@@ -55,7 +59,7 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
         <div className="flex flex-col mb-1.5 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm border border-gray-100 dark:border-slate-700">
             <div className="flex items-center space-x-1.5">
                 <span className={`w-6 text-center font-black shrink-0 text-base cursor-pointer ${isPort ? 'text-red-500' : 'text-emerald-500'}`} onClick={() => onToggleVisibility(side, index)}>{seat.id}</span>
-                <input type="text" className="flex-1 min-w-0 border rounded px-2 py-1 text-sm bg-gray-50 dark:bg-slate-900 font-bold focus:bg-white text-gray-800 dark:text-slate-100" value={seat.name} onChange={(e) => onSeatChange(side, index, 'name', e.target.value)} onKeyDown={handleEnterKey} placeholder="名前" />
+                <input type="text" className="flex-1 min-w-0 border rounded px-2 py-1 text-sm bg-gray-50 dark:bg-slate-900 font-bold focus:bg-white text-gray-800 dark:text-slate-100" value={seat.name} onChange={(e) => onSeatChange(side, index, 'name', e.target.value)} onKeyDown={typeof handleEnterKey !== 'undefined' ? handleEnterKey : undefined} placeholder="名前" />
                 <div className={`w-12 h-8 shrink-0 flex items-center justify-center rounded border font-black text-lg ${countBoxBg}`}>{seat.count || '0'}</div>
             </div>
             <div className="relative flex items-center ml-7 mt-1">
@@ -87,7 +91,7 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         onCountDelta(side, index, 1);
         setIsFlashing(true);
         setTimeout(() => setIsFlashing(false), 150);
-        if (navigator.vibrate) navigator.vibrate(25);
+        if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
     const handlePointerDown = (e) => {
@@ -96,7 +100,7 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         timerRef.current = setTimeout(() => {
             isLongPress.current = true;
             onClear(side, index);
-            if (navigator.vibrate) navigator.vibrate(40);
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(40);
         }, 1000);
     };
 
@@ -133,6 +137,8 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     const [startX, setStartX] = React.useState(0);
     const [curX, setCurX] = React.useState(0);
     const [isDragging, setIsDragging] = React.useState(false);
+    // フラッシュ状態管理: null(通常) | 'plus'(緑フラッシュ) | 'minus'(赤フラッシュ)
+    const [flashType, setFlashType] = React.useState(null);
     const isPort = side === 'port';
 
     const handleStart = (cx) => { setStartX(cx); setIsDragging(true); };
@@ -142,10 +148,14 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         setIsDragging(false);
         if (curX > 40) {
             onCountDelta(side, index, 1);
-            if (navigator.vibrate) navigator.vibrate(25); // タップと同じ小気味よい振動
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
+            setFlashType('plus');
+            setTimeout(() => setFlashType(null), 150);
         } else if (curX < -40) {
             onCountDelta(side, index, -1);
-            if (navigator.vibrate) navigator.vibrate(25); // タップと同じ小気味よい振動
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
+            setFlashType('minus');
+            setTimeout(() => setFlashType(null), 150);
         }
         setCurX(0);
     };
@@ -158,11 +168,19 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
+    // スライド完了時のフラッシュクラス（プラス時はエメラルドグリーン、マイナス時は赤）
+    const flashClass = flashType === 'plus'
+        ? 'bg-emerald-500 text-white scale-[0.98]'
+        : flashType === 'minus'
+        ? 'bg-red-500 text-white scale-[0.98]'
+        : cardBg;
+
     return (
         <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden flex-1 flex flex-col tap-none select-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
             onTouchStart={(e) => handleStart(e.touches[0].clientX)} onTouchMove={(e) => handleMove(e.touches[0].clientX)} onTouchEnd={handleEnd}
             onMouseDown={(e) => handleStart(e.clientX)} onMouseMove={(e) => handleMove(e.clientX)} onMouseUp={handleEnd} onMouseLeave={() => isDragging && handleEnd()}>
             
+            {/* スライド操作中の下地ガイド（指で引っ張っている時だけ表示） */}
             <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
                 curX > 15 ? 'bg-emerald-600 text-white' : curX < -15 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
             }`}>
@@ -170,12 +188,15 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
                 <span>{curX < -15 ? '− 1' : ''}</span>
             </div>
 
-            <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm ${cardBg}`} style={{ transform: `translateX(${curX}px)` }}>
+            {/* カウンター本体カード（指を離して確定した瞬間、色に応じて0.15秒パッと光る） */}
+            <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm transition-all duration-150 ${flashClass}`} style={{ transform: `translateX(${curX}px)` }}>
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
-                    <span className={`text-lg font-bold truncate ${nameColor}`}>{seat.name || '-'} {seat.memo && `(${seat.memo})`}</span>
+                    <span className={`text-lg font-bold truncate ${flashType ? 'text-white/90' : nameColor}`}>{seat.name || '-'} {seat.memo && `(${seat.memo})`}</span>
                 </div>
-                <div className="text-4xl sm:text-5xl font-black mt-3">{seat.count || '0'}</div>
+                <div className={`text-4xl sm:text-5xl font-black mt-3 transition-transform duration-100 ${flashType ? 'scale-110' : 'scale-100'}`}>
+                    {seat.count || '0'}
+                </div>
             </div>
         </div>
     );
