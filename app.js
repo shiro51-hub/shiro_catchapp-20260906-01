@@ -349,48 +349,62 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 // 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
 // ※名前の重複を完全に回避するため MemoModalWithTags と命名
 // ==========================================
+// ==========================================
+// 船長釣行メモモーダル（2行グリッド ＆ 履歴学習型）
+// ==========================================
 function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
     if (!showMemoModal) return null;
 
     const [selectedCat, setSelectedCat] = React.useState('activity');
 
-    const categories = [
+    // タグの利用履歴（直近使った順の配列をローカルストレージから取得）
+    const [recentTags, setRecentTags] = React.useState(() => {
+        try {
+            const saved = localStorage.getItem('yamashitamaru_memo_recent_tags');
+            return saved ? JSON.parse(saved) : [];
+        } catch (e) {
+            return [];
+        }
+    });
+
+    const defaultCategories = [
         {
             id: 'activity',
             name: '🔥 釣況・活性',
             tags: [
-                '時合い突入', 'バタバタヒット', '連発中', '連チャン', '入れ食いタイム', '食い渋り', '当たり遠い',
-                '良型混じり', '型揃い', 'メガハギ・良型', '尺ハギ', '小型・ワッペン多数', '底ベッタリ', '浮いた反応あり',
-                'バラシあり', 'バラシ多い', 'サメ・フグの邪魔あり', '外道多数', 'エサ取り活発', 'エサそのまま'
+                '時合い突入', 'バタバタヒット', '連チャン', '入れ食いタイム', '食い渋り', '当たり遠い',
+                '良型交じり '型揃い', '良型', '尺ハギ', '小型・ワッペン多数', 
+                'バラシあり', 'バラシ多い', '外道多数', 'エサ取り活発', 'エサそのまま'
             ]
         },
         {
             id: 'tide',
-            name: '🌊 潮流・水況',
+            name: '🌊 潮況',
             tags: [
-                '潮流れず', '上潮速い', '二枚潮気味', '潮止まり', 'トロトロ流れる', '潮効いてきた',
-                '澄み潮', '適度な濁り', '濁り強い', '水温低下気味', '水温上昇'
+                '潮あまり流れず', '上層潮速い', '二枚潮気味', '潮止まり', 'トロトロ流れる',
+                '潮効いてきた','澄み潮', '適度な濁り', '濁り強い', '水温低下気味', '水温上昇'
             ]
         },
         {
             id: 'point',
             name: '⚓ ポイント・タナ',
             tags: [
-                'ポイント移動', '深場へ移動', '浅場を流す',
-                '根周り集中', 'ツブ根攻め', '砂地フラット', '根掛かり注意',
-                '底から1m', '底ベッタリ狙い', '宙層に浮き反応', 'タナ高め'
+                'ポイント移動', '深場へ移動', '浅場へ移動', '底ベッタリ', 'ちょい宙',
+　　　　　'根周り集中', 'ツブ根攻め', '砂地フラット',
+              　'底ベッタリ狙い', '宙層に浮き反応', 'タナ高め'
             ]
         },
         {
             id: 'weather',
             name: '🌤️ 天候・海況',
             tags: [
-                '北東風強まる', '南西そよそよ', 'ナギ倒れ', 'ウネリあり', '波立ってきた',
-                '晴天', '曇天・ローライト', '急な雨'
+                '北東風強まる', '南西強まる', 'ウネリあり', '波立ってきた',
+                '晴天', '曇天','雨', '雪'
             ]
         }
     ];
 
+    // タグをタップした時の処理（メモ追記 ＋ 履歴学習）
     const handleTagClick = (tagText) => {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -408,12 +422,29 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             return `${text} ${tagText} `;
         });
 
+        // 履歴学習：タップしたタグを先頭へ移動して保存（最大20件記憶）
+        setRecentTags((prev) => {
+            const updated = [tagText, ...prev.filter(t => t !== tagText)].slice(0, 20);
+            try {
+                localStorage.setItem('yamashitamaru_memo_recent_tags', JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+        });
+
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
             navigator.vibrate(15);
         }
     };
 
-    const currentCategoryObj = categories.find(c => c.id === selectedCat) || categories[0];
+    // 選択されたカテゴリのタグ一覧を取得し、履歴にあるタグを手前（左側）へ優先ソート
+    const currentCategoryObj = defaultCategories.find(c => c.id === selectedCat) || defaultCategories[0];
+    const sortedTags = React.useMemo(() => {
+        const baseTags = currentCategoryObj.tags;
+        const inRecent = baseTags.filter(t => recentTags.includes(t))
+                                 .sort((a, b) => recentTags.indexOf(a) - recentTags.indexOf(b));
+        const notInRecent = baseTags.filter(t => !recentTags.includes(t));
+        return [...inRecent, ...notInRecent];
+    }, [currentCategoryObj, recentTags]);
 
     return (
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-[fadeIn_0.15s_ease-out]">
@@ -434,11 +465,11 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </button>
                 </div>
 
-                {/* クイック入力タグエリア（上段：カテゴリタブ / 下段：横スクロールタグ） */}
+                {/* クイック入力タグエリア（上段：カテゴリタブ / 下段：2行グリッド横スクロール） */}
                 <div className="bg-slate-50 dark:bg-slate-900/40 p-2.5 border-b border-gray-200 dark:border-slate-700/80 flex flex-col gap-2 shrink-0">
                     {/* 1段目：カテゴリタブ切り替え */}
                     <div className="flex gap-1 overflow-x-auto no-scrollbar">
-                        {categories.map((cat) => (
+                        {defaultCategories.map((cat) => (
                             <button
                                 key={cat.id}
                                 type="button"
@@ -454,18 +485,26 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                         ))}
                     </div>
 
-                    {/* 2段目：選択中カテゴリのタグ */}
-                    <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-                        {currentCategoryObj.tags.map((tag, idx) => (
-                            <button
-                                key={idx}
-                                type="button"
-                                onClick={() => handleTagClick(tag)}
-                                className="px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 text-sky-800 dark:text-sky-300 active:bg-sky-100 dark:active:bg-slate-700 shadow-sm active:scale-95 transition-transform shrink-0"
-                            >
-                                ＋ {tag}
-                            </button>
-                        ))}
+                    {/* 2段目：2行グリッド（上下2段で横にスワイプ可能・直近使ったものが左端に自動集約） */}
+                    <div className="grid grid-rows-2 grid-flow-col auto-cols-max gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-h-20">
+                        {sortedTags.map((tag, idx) => {
+                            const isRecentlyUsed = recentTags.includes(tag);
+                            return (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={() => handleTagClick(tag)}
+                                    className={`px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap border shadow-sm active:scale-95 transition-all shrink-0 flex items-center gap-1 ${
+                                        isRecentlyUsed
+                                            ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-300 dark:border-sky-700 text-sky-900 dark:text-sky-200 active:bg-sky-200'
+                                            : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-300 active:bg-gray-100 dark:active:bg-slate-700'
+                                    }`}
+                                >
+                                    {isRecentlyUsed ? <span className="text-[10px] text-amber-500 font-black">★</span> : <span>＋</span>}
+                                    <span>{tag}</span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
