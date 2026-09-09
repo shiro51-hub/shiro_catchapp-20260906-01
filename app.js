@@ -642,9 +642,29 @@ function App() {
         setToastMessage('釣果記録を削除しました（画面表示もリセットされました）');
     };
 
+    // 自動タイムスタンプ付きでメモを開く
     const openMemoModal = (record) => {
-        setActiveMemoRecordId(record.id);
-        setTempMemo(record.detailedMemo || '');
+        const targetId = record ? record.id : null;
+        setActiveMemoRecordId(targetId);
+
+        const currentText = record ? (record.detailedMemo || '') : (detailedMemo || '');
+        
+        // 自動タイムスタンプの生成（HH:MM）
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const stamp = `【${hh}:${mm}】 `;
+
+        // 既存の文字がある場合は改行して追記、真っ白ならそのまま先頭に挿入
+        let initialText = currentText;
+        if (!initialText || initialText.trim() === '') {
+            initialText = stamp;
+        } else {
+            const spacer = initialText.endsWith('\n') ? '' : '\n';
+            initialText = `${initialText}${spacer}${stamp}`;
+        }
+
+        setTempMemo(initialText);
         setShowMemoModal(true);
     };
 
@@ -1246,7 +1266,30 @@ function App() {
                             )}
                         </div>
 
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-3 mt-2 shrink-0">
+                        {/* 【新設】船長メモ 独立横長バー（サイズ枠の真上に配置） */}
+                        <div className="mt-2 shrink-0">
+                            <button
+                                type="button"
+                                onClick={() => openMemoModal(null)}
+                                className={`w-full py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-between shadow-sm active:scale-[0.99] transition-all border ${
+                                    detailedMemo && detailedMemo.trim() !== ''
+                                        ? 'bg-amber-50 dark:bg-slate-800 border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-300'
+                                        : 'bg-sky-50 dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-sky-800 dark:text-sky-300'
+                                }`}
+                            >
+                                <div className="flex items-center gap-1.5 truncate">
+                                    <span>📝</span>
+                                    <span>{detailedMemo && detailedMemo.trim() !== '' ? '船長釣行メモ（記録あり）' : '船長釣行メモ（自動時刻挿入）'}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-[11px] font-bold opacity-80 shrink-0">
+                                    <span>{detailedMemo ? `${detailedMemo.length}文字` : 'タップして記録'}</span>
+                                    <span>›</span>
+                                </div>
+                            </button>
+                        </div>
+
+                        {/* 魚のサイズ（元の綺麗なボックスデザインをそのまま維持） */}
+                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-3 shrink-0">
                             <div className="text-xs font-black text-gray-500 dark:text-slate-400 mb-2 flex items-center">
                                 <IconRuler className="w-4 h-4 mr-1 text-sky-500 dark:text-sky-400" /> 魚のサイズ (cm)
                             </div>
@@ -1481,6 +1524,14 @@ function App() {
                                             <IconCamera /> 釣果ボード
                                         </button>
                                         
+                                        {/* 履歴からもメモを開ける */}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
+                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-amber-600 dark:text-amber-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
+                                        >
+                                            <span>📝</span> {r.detailedMemo ? 'メモ確認' : 'メモ追記'}
+                                        </button>
+
                                         {/* AI分析ボタン */}
                                         <button
                                             onClick={(e) => {
