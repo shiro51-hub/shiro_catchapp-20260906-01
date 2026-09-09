@@ -140,8 +140,13 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     const handleEnd = () => {
         if (!isDragging) return;
         setIsDragging(false);
-        if (curX > 40) onCountDelta(side, index, 1);
-        else if (curX < -40) onCountDelta(side, index, -1);
+        if (curX > 40) {
+            onCountDelta(side, index, 1);
+            if (navigator.vibrate) navigator.vibrate(25); // タップと同じ小気味よい振動
+        } else if (curX < -40) {
+            onCountDelta(side, index, -1);
+            if (navigator.vibrate) navigator.vibrate(25); // タップと同じ小気味よい振動
+        }
         setCurX(0);
     };
 
