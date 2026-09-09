@@ -348,6 +348,188 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     );
 }
 
+<button 
+                    onClick={handleDownload}
+                    disabled={isGenerating}
+                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3 rounded-xl text-xs sm:text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-1.5 mt-0.5"
+                >
+                    {isGenerating ? (
+                        <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
+                    ) : (
+                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
+                    )}
+                </button>
+            </div>
+        </div>
+    );
+}
+
+// ==========================================
+// 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
+// ==========================================
+function MemoModal({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
+    if (!showMemoModal) return null;
+
+    const [selectedCat, setSelectedCat] = React.useState('activity');
+
+    const categories = [
+        {
+            id: 'activity',
+            name: '🔥 釣況・活性',
+            tags: [
+                '時合い突入', 'バタバタとヒット', '連発中', '連チャン', '入れ食いタイム', '食い渋り', 'アタリ遠い',
+                '良型交じり', '型揃い', '尺ハギ', '小型・ワッペン多数', '底ベッタリ', '浮いた反応あり',
+                'バラシあり', 'バラシ多い', '外道多数', 'エサ取り活発', 'エサそのまま'
+            ]
+        },
+        {
+            id: 'tide',
+            name: '🌊 潮流・水況',
+            tags: [
+                '潮あまり流れず', '上げ潮速い','下げ潮速い', '二枚潮気味','二枚潮速い', '潮止まり', 'トロトロ流れる', '潮効いてきた',
+                '澄み潮', '適度な濁り', '濁り強い', '水温低下気味', '水温上昇'
+            ]
+        },
+        {
+            id: 'point',
+            name: '⚓ ポイント・タナ',
+            tags: [
+                'ポイント移動', '深場へ移動', '浅場へ移動',
+                '根周り集中', 'ツブ根攻め', '砂地フラット',
+                 'チョイ宙,'底ベッタリ狙い',  'タナ高め','宙層に浮き反応','反応動き回り不安定'
+
+            ]
+        },
+        {
+            id: 'weather',
+            name: '🌤️ 天候・海況',
+            tags: [
+                '北東風強まる', '南西風強まる, 'ナギ倒れ', 'ウネリあり', '波立ってきた',
+                '晴天', '曇天・ローライト', '急な雨'
+            ]
+        }
+    ];
+
+    const handleTagClick = (tagText) => {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const stamp = `【${hh}:${mm}】 `;
+
+        setTempMemo((prev) => {
+            const text = prev || '';
+            if (!text.trim()) {
+                return `${stamp}${tagText} `;
+            }
+            if (text.endsWith('\n')) {
+                return `${text}${stamp}${tagText} `;
+            }
+            return `${text} ${tagText} `;
+        });
+
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(15);
+        }
+    };
+
+    const currentCategoryObj = categories.find(c => c.id === selectedCat) || categories[0];
+
+    return (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4 animate-[fadeIn_0.15s_ease-out]">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-lg flex flex-col max-h-[92dvh] overflow-hidden">
+                
+                {/* モーダルヘッダー */}
+                <div className="p-3.5 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/80 dark:bg-slate-900/50">
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-base">📝</span>
+                        <h3 className="font-black text-gray-800 dark:text-slate-100 text-sm sm:text-base">船長釣行メモ</h3>
+                    </div>
+                    <button 
+                        type="button"
+                        onClick={() => setShowMemoModal(false)}
+                        className="w-7 h-7 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300 text-xs active:scale-95"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                {/* クイック入力タグエリア（上段：カテゴリタブ / 下段：横スクロールタグ） */}
+                <div className="bg-slate-50 dark:bg-slate-900/40 p-2.5 border-b border-gray-200 dark:border-slate-700/80 flex flex-col gap-2 shrink-0">
+                    {/* 1段目：カテゴリタブ切り替え */}
+                    <div className="flex gap-1 overflow-x-auto no-scrollbar">
+                        {categories.map((cat) => (
+                            <button
+                                key={cat.id}
+                                type="button"
+                                onClick={() => setSelectedCat(cat.id)}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-black whitespace-nowrap transition-all ${
+                                    selectedCat === cat.id
+                                        ? 'bg-sky-600 text-white shadow-sm'
+                                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700'
+                                }`}
+                            >
+                                {cat.name}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* 2段目：選択中カテゴリのタグ */}
+                    <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                        {currentCategoryObj.tags.map((tag, idx) => (
+                            <button
+                                key={idx}
+                                type="button"
+                                onClick={() => handleTagClick(tag)}
+                                className="px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 text-sky-800 dark:text-sky-300 active:bg-sky-100 dark:active:bg-slate-700 shadow-sm active:scale-95 transition-transform shrink-0"
+                            >
+                                ＋ {tag}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 本文入力欄 */}
+                <div className="p-3 flex-1 flex flex-col min-h-[160px] overflow-hidden">
+                    <textarea
+                        className="w-full flex-1 p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100 font-bold text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none leading-relaxed"
+                        placeholder="タグをタップすると時刻付きで入力されます。キーボードのマイクで音声入力も併用できます..."
+                        value={tempMemo}
+                        onChange={(e) => setTempMemo(e.target.value)}
+                    />
+                    <div className="text-[11px] text-gray-400 dark:text-slate-500 mt-1.5 flex items-center justify-between px-1 shrink-0">
+                        <span>🎙️ 音声入力はキーボードのマイクをご利用ください</span>
+                        <span>{tempMemo ? `${tempMemo.length}文字` : '0文字'}</span>
+                    </div>
+                </div>
+
+                {/* モーダルフッター */}
+                <div className="p-3 bg-gray-50/80 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-700 flex gap-2 shrink-0">
+                    <button
+                        type="button"
+                        onClick={copyMemoToClipboard}
+                        className="px-4 py-2.5 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 font-black rounded-xl text-xs active:scale-95 transition-all"
+                    >
+                        コピー
+                    </button>
+                    <button
+                        type="button"
+                        onClick={saveMemo}
+                        className="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-2.5 rounded-xl text-xs sm:text-sm shadow-md active:scale-95 transition-all"
+                    >
+                        保存する
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+// ==========================================
+// アプリ本体
+// ==========================================
+function App() {
+    const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('fishing_last_tab') || 'input');
 // ==========================================
 // アプリ本体
 // ==========================================
