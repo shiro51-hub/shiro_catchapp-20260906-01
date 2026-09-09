@@ -1533,12 +1533,20 @@ function App() {
                                             <IconCamera /> 釣果ボード
                                         </button>
                                         
-                                        {/* 履歴からもメモを開ける */}
+                                      {/* 履歴のメモボタン（文字は黒・チェックはアンバー色） */}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
-                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-amber-600 dark:text-amber-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
+                                            className={`px-2.5 py-1.5 rounded-lg text-xs font-black flex items-center gap-1 shadow-sm transition-colors border ${
+                                                r.detailedMemo && r.detailedMemo.trim() !== ''
+                                                    ? 'bg-amber-50/60 dark:bg-slate-800 border-amber-300 dark:border-amber-600/70 text-gray-900 dark:text-slate-100'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100'
+                                            }`}
                                         >
-                                            <span>📝</span> {r.detailedMemo ? 'メモ確認' : 'メモ追記'}
+                                            <span>📝</span>
+                                            <span>メモ</span>
+                                            {r.detailedMemo && r.detailedMemo.trim() !== '' && (
+                                                <span className="text-amber-500 dark:text-amber-400 font-black text-sm leading-none ml-0.5">✓</span>
+                                            )}
                                         </button>
 
                                         {/* AI分析ボタン */}
