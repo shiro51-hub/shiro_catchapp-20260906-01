@@ -1,9 +1,18 @@
 // ==========================================
-// counter.js : カウンター画面専用コンポーネント群
+// counter.js : カウンター画面専用コンポーネント群（完全版）
 // ==========================================
 
+// 共通ハプティクス（振動）発動ヘルパー（Brave / Chrome両対応）
+const triggerVibration = (ms = 20) => {
+    try {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(ms);
+        }
+    } catch (e) {}
+};
+
 // ==========================================
-// 1. スライド式カウンターカード
+// 1. スライド式カウンターカード（スライド確定時に振動）
 // ==========================================
 function CounterCardSlide({ side, seat, index, onCountDelta, totalSeats }) {
     const [startX, setStartX] = React.useState(null);
@@ -21,6 +30,7 @@ function CounterCardSlide({ side, seat, index, onCountDelta, totalSeats }) {
     const handleTouchMove = (e) => {
         if (startX === null) return;
         const diff = e.touches[0].clientX - startX;
+        // 横揺れ幅を制限して操作感を安定化
         if (Math.abs(diff) < 80) {
             setCurrentDeltaX(diff);
         }
@@ -29,12 +39,12 @@ function CounterCardSlide({ side, seat, index, onCountDelta, totalSeats }) {
     const handleTouchEnd = () => {
         const threshold = 35; // スライド判定のしきい値
         if (currentDeltaX > threshold) {
-            // 右へスライド: +1（指先へコツッと振動）
-            try { if (navigator && navigator.vibrate) navigator.vibrate(25); } catch (err) {}
+            // 右へスライド: +1（コツッと短く振動）
+            triggerVibration(25);
             onCountDelta(side, index, 1);
         } else if (currentDeltaX < -threshold) {
             // 左へスライド: -1（軽めに振動）
-            try { if (navigator && navigator.vibrate) navigator.vibrate(18); } catch (err) {}
+            triggerVibration(18);
             onCountDelta(side, index, -1);
         }
         setStartX(null);
@@ -97,13 +107,13 @@ function CounterCardTap({ side, seat, index, onCountDelta, onClear, totalSeats }
 
     const handlePlus = (e) => {
         e.stopPropagation();
-        try { if (navigator && navigator.vibrate) navigator.vibrate(25); } catch (err) {}
+        triggerVibration(25);
         onCountDelta(side, index, 1);
     };
 
     const handleMinus = (e) => {
         e.stopPropagation();
-        try { if (navigator && navigator.vibrate) navigator.vibrate(18); } catch (err) {}
+        triggerVibration(18);
         onCountDelta(side, index, -1);
     };
 
@@ -236,7 +246,7 @@ function ResetButton({ onReset, counterMode, setCounterMode }) {
     const [showConfirm, setShowConfirm] = React.useState(false);
 
     const handleConfirm = () => {
-        try { if (navigator && navigator.vibrate) navigator.vibrate(30); } catch (err) {}
+        triggerVibration(30);
         onReset();
         setShowConfirm(false);
     };
@@ -247,21 +257,21 @@ function ResetButton({ onReset, counterMode, setCounterMode }) {
             <div className="flex bg-gray-200 dark:bg-slate-800 p-1 rounded-xl border border-gray-200 dark:border-slate-700 text-xs font-black shadow-inner">
                 <button
                     type="button"
-                    onClick={() => { try { if (navigator && navigator.vibrate) navigator.vibrate(15); } catch (err) {} setCounterMode('tap'); localStorage.setItem('fishing_counter_mode', 'tap'); }}
+                    onClick={() => { triggerVibration(15); setCounterMode('tap'); localStorage.setItem('fishing_counter_mode', 'tap'); }}
                     className={`flex-1 py-2 rounded-lg transition-all ${counterMode === 'tap' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                 >
                     TAP（ボタン）
                 </button>
                 <button
                     type="button"
-                    onClick={() => { try { if (navigator && navigator.vibrate) navigator.vibrate(15); } catch (err) {} setCounterMode('slide'); localStorage.setItem('fishing_counter_mode', 'slide'); }}
+                    onClick={() => { triggerVibration(15); setCounterMode('slide'); localStorage.setItem('fishing_counter_mode', 'slide'); }}
                     className={`flex-1 py-2 rounded-lg transition-all ${counterMode === 'slide' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                 >
                     SLIDE（スライド）
                 </button>
                 <button
                     type="button"
-                    onClick={() => { try { if (navigator && navigator.vibrate) navigator.vibrate(15); } catch (err) {} setCounterMode('keypad'); localStorage.setItem('fishing_counter_mode', 'keypad'); }}
+                    onClick={() => { triggerVibration(15); setCounterMode('keypad'); localStorage.setItem('fishing_counter_mode', 'keypad'); }}
                     className={`flex-1 py-2 rounded-lg transition-all ${counterMode === 'keypad' ? 'bg-white dark:bg-slate-700 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
                 >
                     KEYPAD（テンキー）
