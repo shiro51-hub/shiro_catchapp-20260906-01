@@ -1266,46 +1266,55 @@ function App() {
                             )}
                         </div>
 
-                        {/* 【新設】船長メモ 独立横長バー（サイズ枠の真上に配置） */}
-                        <div className="mt-2 shrink-0">
+                        {/* 魚のサイズ（左） ＋ 船長メモ正方形大型ボタン（右） */}
+                        <div className="flex items-stretch gap-2 shrink-0">
+                            {/* 左側：魚のサイズ枠 */}
+                            <div className="flex-1 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-2.5 flex flex-col justify-between">
+                                <div className="text-xs font-black text-gray-500 dark:text-slate-400 mb-1.5 flex items-center">
+                                    <IconRuler className="w-4 h-4 mr-1 text-sky-500 dark:text-sky-400 shrink-0" /> 
+                                    <span>魚のサイズ (cm)</span>
+                                </div>
+                                <div className="flex items-center space-x-1.5">
+                                    <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden min-w-0">
+                                        <span className="pl-1.5 text-[11px] text-gray-400 font-bold shrink-0">小</span>
+                                        <input 
+                                            type="number" 
+                                            className="w-full py-1.5 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none min-w-0" 
+                                            placeholder="-" 
+                                            value={sizeMin} 
+                                            onChange={(e) => handleSizeChange('min', e.target.value)} 
+                                        />
+                                    </div>
+                                    <span className="text-gray-400 font-bold text-xs shrink-0">〜</span>
+                                    <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden min-w-0">
+                                        <span className="pl-1.5 text-[11px] text-gray-400 font-bold shrink-0">大</span>
+                                        <input 
+                                            type="number" 
+                                            className="w-full py-1.5 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none min-w-0" 
+                                            placeholder="-" 
+                                            value={sizeMax} 
+                                            onChange={(e) => handleSizeChange('max', e.target.value)} 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 右側：正方形大型メモボタン */}
                             <button
                                 type="button"
                                 onClick={() => openMemoModal(null)}
-                                className={`w-full py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm flex items-center justify-between shadow-sm active:scale-[0.99] transition-all border ${
+                                className={`w-24 sm:w-28 rounded-xl shadow-sm border p-2 flex flex-col items-center justify-center text-center active:scale-95 transition-all select-none shrink-0 ${
                                     detailedMemo && detailedMemo.trim() !== ''
-                                        ? 'bg-amber-50 dark:bg-slate-800 border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-300'
+                                        ? 'bg-amber-50 dark:bg-slate-800 border-amber-300 dark:border-amber-600 text-amber-900 dark:text-amber-300'
                                         : 'bg-sky-50 dark:bg-slate-800 border-sky-200 dark:border-slate-700 text-sky-800 dark:text-sky-300'
                                 }`}
                             >
-                                <div className="flex items-center gap-1.5 truncate">
-                                    <span>📝</span>
-                                    <span>{detailedMemo && detailedMemo.trim() !== '' ? '船長釣行メモ（記録あり）' : '船長釣行メモ（自動時刻挿入）'}</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-[11px] font-bold opacity-80 shrink-0">
-                                    <span>{detailedMemo ? `${detailedMemo.length}文字` : 'タップして記録'}</span>
-                                    <span>›</span>
-                                </div>
+                                <span className="text-2xl mb-0.5">📝</span>
+                                <span className="text-xs font-black leading-tight tracking-tight">船長メモ</span>
+                                <span className="text-[10px] font-bold opacity-75 mt-0.5 leading-none">
+                                    {detailedMemo && detailedMemo.trim() !== '' ? `${detailedMemo.length}文字` : 'タップ記録'}
+                                </span>
                             </button>
-                        </div>
-
-                        {/* 魚のサイズ（元の綺麗なボックスデザインをそのまま維持） */}
-                        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-3 shrink-0">
-                            <div className="text-xs font-black text-gray-500 dark:text-slate-400 mb-2 flex items-center">
-                                <IconRuler className="w-4 h-4 mr-1 text-sky-500 dark:text-sky-400" /> 魚のサイズ (cm)
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden">
-                                    <span className="pl-2.5 text-xs text-gray-500 dark:text-slate-400 font-bold shrink-0">最小</span>
-                                    <input type="number" className="w-full py-2 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none" placeholder="-" value={sizeMin} onChange={(e) => handleSizeChange('min', e.target.value)} />
-                                    <span className="pr-2 text-xs text-gray-400 shrink-0">cm</span>
-                                </div>
-                                <span className="text-gray-400 font-bold">〜</span>
-                                <div className="flex-1 flex items-center border border-gray-300 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-900 focus-within:border-sky-400 dark:focus-within:border-sky-500 overflow-hidden">
-                                    <span className="pl-2.5 text-xs text-gray-500 dark:text-slate-400 font-bold shrink-0">最大</span>
-                                    <input type="number" className="w-full py-2 bg-transparent text-center font-black text-base text-gray-800 dark:text-slate-100 focus:outline-none" placeholder="-" value={sizeMax} onChange={(e) => handleSizeChange('max', e.target.value)} />
-                                    <span className="pr-2 text-xs text-gray-400 shrink-0">cm</span>
-                                </div>
-                            </div>
                         </div>
 
                         <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
