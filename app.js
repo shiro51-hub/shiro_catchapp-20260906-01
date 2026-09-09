@@ -555,6 +555,9 @@ function App() {
     const [selectedAiModel, setSelectedAiModel] = React.useState(() => localStorage.getItem('fishing_ai_model') || 'Gemini 2.5 Flash');
     const [toastMessage, setToastMessage] = React.useState('');
 
+    // 下部ナビゲーションバーの表示・非表示状態
+    const [isBottomNavVisible, setIsBottomNavVisible] = React.useState(true);
+
     const [date, setDate] = React.useState(getTodayString());
     const [targetFish, setTargetFish] = React.useState('');
     const [sizeMin, setSizeMin] = React.useState('');
@@ -617,6 +620,48 @@ function App() {
     const [showAnalysisModal, setShowAnalysisModal] = React.useState(false);
     const [analyzingRecordId, setAnalyzingRecordId] = React.useState(null);
     const [currentAnalysis, setCurrentAnalysis] = React.useState(null);
+
+    // ==========================================
+    // スワイプによるタブ切り替えロジック
+    // （ヘッダーおよび下部ナビバーのみで受付）
+    // ==========================================
+    const touchStartX = React.useRef(0);
+    const touchStartY = React.useRef(0);
+    const tabList = ['input', 'counter', 'history'];
+
+    const handleSwipeStart = (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        touchStartX.current = e.touches[0].clientX;
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleSwipeEnd = (e) => {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const diffX = e.changedTouches[0].clientX - touchStartX.current;
+        const diffY = e.changedTouches[0].clientY - touchStartY.current;
+
+        // 横スワイプ量が45px以上、かつ縦ブレが横移動より小さい場合に判定
+        if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+            const currentIdx = tabList.indexOf(activeTab);
+            if (diffX < 0) {
+                // 右から左へ（次へ進む）
+                if (currentIdx < tabList.length - 1) {
+                    const next = tabList[currentIdx + 1];
+                    setActiveTab(next);
+                    localStorage.setItem('fishing_last_tab', next);
+                    if (navigator.vibrate) navigator.vibrate(15);
+                }
+            } else {
+                // 左から右へ（前へ戻る）
+                if (currentIdx > 0) {
+                    const prev = tabList[currentIdx - 1];
+                    setActiveTab(prev);
+                    localStorage.setItem('fishing_last_tab', prev);
+                    if (navigator.vibrate) navigator.vibrate(15);
+                }
+            }
+        }
+    };
 
     const wizardSteps = [
         { id: 'condition', title: '📊 今日の釣況', desc: '今日の船全体の食い気・上がり具合を選択してください。', isSelect: true, options: ['🌟 絶好調', '☀️ 好調', '☁️ 普通', '🌊 食い渋り', '☔ 厳しい'] },
@@ -1306,8 +1351,12 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー */}
-            <div className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors">
+            {/* ヘッダー（左右スワイプでタブ切り替え可能） */}
+            <div 
+                onTouchStart={handleSwipeStart}
+                onTouchEnd={handleSwipeEnd}
+                className="sticky top-0 z-20 shadow-md bg-gradient-to-r from-blue-900 via-blue-600 to-blue-900 dark:from-slate-950 dark:via-blue-950 dark:to-slate-950 text-white px-3 py-2 flex justify-between items-center border-b border-transparent dark:border-slate-800/80 transition-colors select-none"
+            >
                 <div className="w-8 shrink-0"></div>
                 <div className="flex flex-col items-center justify-center flex-1 max-w-[320px] -translate-x-3.5 sm:-translate-x-5">
                     <img 
@@ -1801,8 +1850,14 @@ function App() {
                 )}
             </div>
 
-            {/* 下部固定ナビゲーション */}
-            <div className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2">
+            {/* 下部ナビゲーションバー（収納機能 ＆ 左右スワイプ対応） */}
+            <div 
+                onTouchStart={handleSwipeStart}
+                onTouchEnd={handleSwipeEnd}
+                className={`fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2 transition-transform duration-300 ease-out select-none ${
+                    isBottomNavVisible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+                }`}
+            >
                 <button
                     className={`flex-1 flex flex-col items-center justify-center h-full py-1 transition-colors ${activeTab === 'input' ? 'text-sky-600 font-black' : 'text-gray-400 dark:text-slate-500 font-bold'}`}
                     onClick={() => setActiveTab('input')}
@@ -1833,7 +1888,31 @@ function App() {
                     <IconCalendar className="w-5 h-5 mb-0.5" />
                     <span className="text-xs tracking-tight">履歴</span>
                 </button>
+
+                {/* ナビバーを収納（非表示）にする小さなボタン */}
+                <button
+                    type="button"
+                    onClick={() => setIsBottomNavVisible(false)}
+                    className="w-8 h-full flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300 active:scale-95 shrink-0 pl-1"
+                    title="ナビバーを隠す"
+                >
+                    <span className="text-base leading-none font-bold">⌵</span>
+                    <span className="text-[9px] font-black scale-90">隠す</span>
+                </button>
             </div>
+
+            {/* ナビバーが隠れている時だけ画面右下に出現する、半透明の復帰ボタン */}
+            {!isBottomNavVisible && (
+                <button
+                    type="button"
+                    onClick={() => setIsBottomNavVisible(true)}
+                    className="fixed bottom-4 right-4 z-40 bg-sky-600/80 hover:bg-sky-600 text-white rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-lg backdrop-blur-xs border border-white/30 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
+                    title="ナビバーを表示する"
+                >
+                    <span className="text-base font-black leading-none -mt-0.5">⌃</span>
+                    <span className="text-[8px] font-black leading-none scale-90">MENU</span>
+                </button>
+            )}
         </div>
     );
 }
