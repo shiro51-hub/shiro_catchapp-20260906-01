@@ -623,7 +623,7 @@ function App() {
 
     // ==========================================
     // スワイプによるタブ切り替えロジック
-    // （ヘッダーおよび下部ナビバーのみで受付）
+    // （ヘッダー・下部ナビバー・最下端スワイプエリアで受付）
     // ==========================================
     const touchStartX = React.useRef(0);
     const touchStartY = React.useRef(0);
@@ -640,8 +640,8 @@ function App() {
         const diffX = e.changedTouches[0].clientX - touchStartX.current;
         const diffY = e.changedTouches[0].clientY - touchStartY.current;
 
-        // 横スワイプ量が45px以上、かつ縦ブレが横移動より小さい場合に判定
-        if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+        // 横スワイプ量が40px以上、かつ縦ブレが横移動より小さい場合に判定
+        if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
             const currentIdx = tabList.indexOf(activeTab);
             if (diffX < 0) {
                 // 右から左へ（次へ進む）
@@ -1672,7 +1672,7 @@ function App() {
                                                 {(r.sizeMin || r.sizeMax) && (
                                                     <div className="flex items-baseline text-slate-800 dark:text-slate-100">
                                                         <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">型:</span>
-                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜{r.sizeMax || '?'}</span>
+                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜${r.sizeMax || '?'}</span>
                                                         <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 ml-0.5">cm</span>
                                                     </div>
                                                 )}
@@ -1901,12 +1901,22 @@ function App() {
                 </button>
             </div>
 
+            {/* ナビバーが隠れている時だけ画面最下端に常駐する透明スワイプエリア */}
+            {!isBottomNavVisible && (
+                <div
+                    onTouchStart={handleSwipeStart}
+                    onTouchEnd={handleSwipeEnd}
+                    className="fixed bottom-0 inset-x-0 mx-auto w-full max-w-md h-6 z-40 bg-transparent"
+                    title="左右スワイプでタブ切り替え"
+                />
+            )}
+
             {/* ナビバーが隠れている時だけ画面右下に出現する、半透明の復帰ボタン */}
             {!isBottomNavVisible && (
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(true)}
-                    className="fixed bottom-4 right-4 z-40 bg-sky-600/80 hover:bg-sky-600 text-white rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-lg backdrop-blur-xs border border-white/30 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
+                    className="fixed bottom-3 right-3 z-40 bg-sky-600/80 hover:bg-sky-600 text-white rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-lg backdrop-blur-xs border border-white/30 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
                     title="ナビバーを表示する"
                 >
                     <span className="text-base font-black leading-none -mt-0.5">⌃</span>
