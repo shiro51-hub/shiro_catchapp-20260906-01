@@ -348,22 +348,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
     );
 }
 
-<button 
-                    onClick={handleDownload}
-                    disabled={isGenerating}
-                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 active:from-sky-600 active:to-blue-700 text-white font-black py-3 rounded-xl text-xs sm:text-sm shadow-lg active:scale-95 transition-all flex justify-center items-center gap-1.5 mt-0.5"
-                >
-                    {isGenerating ? (
-                        <><span className="animate-spin text-base leading-none mb-0.5">↻</span> キャプチャ中...</>
-                    ) : (
-                        <><IconCamera className="w-4 h-4" /> この画像をスマホに保存</>
-                    )}
-                </button>
-            </div>
-        </div>
-    );
-}
-
 // ==========================================
 // 船長釣行メモモーダル（カテゴリ別クイック入力タグ搭載版）
 // ==========================================
@@ -377,16 +361,16 @@ function MemoModal({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, cop
             id: 'activity',
             name: '🔥 釣況・活性',
             tags: [
-                '時合い突入', 'バタバタとヒット', '連発中', '連チャン', '入れ食いタイム', '食い渋り', 'アタリ遠い',
-                '良型交じり', '型揃い', '尺ハギ', '小型・ワッペン多数', '底ベッタリ', '浮いた反応あり',
-                'バラシあり', 'バラシ多い', '外道多数', 'エサ取り活発', 'エサそのまま'
+                '時合い突入', 'バタバタヒット', '連発中', '連チャン', '入れ食いタイム', '食い渋り', '当たり遠い',
+                '良型混じり', '型揃い', 'メガハギ・良型', '尺ハギ', '小型・ワッペン多数', '底ベッタリ', '浮いた反応あり',
+                'バラシあり', 'バラシ多い', 'サメ・フグの邪魔あり', '外道多数', 'エサ取り活発', 'エサそのまま'
             ]
         },
         {
             id: 'tide',
             name: '🌊 潮流・水況',
             tags: [
-                '潮あまり流れず', '上げ潮速い','下げ潮速い', '二枚潮気味','二枚潮速い', '潮止まり', 'トロトロ流れる', '潮効いてきた',
+                '潮流れず', '上潮速い', '二枚潮気味', '潮止まり', 'トロトロ流れる', '潮効いてきた',
                 '澄み潮', '適度な濁り', '濁り強い', '水温低下気味', '水温上昇'
             ]
         },
@@ -394,17 +378,16 @@ function MemoModal({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, cop
             id: 'point',
             name: '⚓ ポイント・タナ',
             tags: [
-                'ポイント移動', '深場へ移動', '浅場へ移動',
-                '根周り集中', 'ツブ根攻め', '砂地フラット',
-                 'チョイ宙,'底ベッタリ狙い',  'タナ高め','宙層に浮き反応','反応動き回り不安定'
-
+                'ポイント移動', '深場へ移動', '浅場を流す',
+                '根周り集中', 'ツブ根攻め', '砂地フラット', '根掛かり注意',
+                '底から1m', '底ベッタリ狙い', '宙層に浮き反応', 'タナ高め'
             ]
         },
         {
             id: 'weather',
             name: '🌤️ 天候・海況',
             tags: [
-                '北東風強まる', '南西風強まる, 'ナギ倒れ', 'ウネリあり', '波立ってきた',
+                '北東風強まる', '南西そよそよ', 'ナギ倒れ', 'ウネリあり', '波立ってきた',
                 '晴天', '曇天・ローライト', '急な雨'
             ]
         }
@@ -525,11 +508,6 @@ function MemoModal({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, cop
     );
 }
 
-// ==========================================
-// アプリ本体
-// ==========================================
-function App() {
-    const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('fishing_last_tab') || 'input');
 // ==========================================
 // アプリ本体
 // ==========================================
@@ -800,7 +778,6 @@ function App() {
     const handleDeleteRecord = (recordId) => {
         const target = records.find(r => r.id === recordId);
         
-        // 削除対象の日付が現在選択されている日付と同じ場合、画面ステートも完全リセット
         if (target && target.date === date) {
             setPortSeatCount('');
             setStarboardSeatCount('');
@@ -831,13 +808,11 @@ function App() {
 
         const currentText = record ? (record.detailedMemo || '') : (detailedMemo || '');
         
-        // 自動タイムスタンプの生成（HH:MM）
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
         const mm = String(now.getMinutes()).padStart(2, '0');
         const stamp = `【${hh}:${mm}】 `;
 
-        // 既存の文字がある場合は改行して追記、真っ白ならそのまま先頭に挿入
         let initialText = currentText;
         if (!initialText || initialText.trim() === '') {
             initialText = stamp;
@@ -1546,7 +1521,7 @@ function App() {
                             return (
                                 <div key={r.id} className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-100 dark:border-slate-700 overflow-hidden transition-all">
                                     <div 
-                                        className="p-4 cursor-pointer active:bg-gray-50 dark:active:bg-slate-700/50 select-none"
+                                        className="p-4 cursor-pointer active:bg-gray-50 dark:active:bg-slate-700/50 select-none" 
                                         onClick={() => setExpandedRecordId(isExpanded ? null : r.id)}
                                     >
                                         <div className="flex justify-between items-center mb-2">
@@ -1715,7 +1690,7 @@ function App() {
                                             <IconCamera /> 釣果ボード
                                         </button>
                                         
-                                      {/* 履歴のメモボタン（文字は黒・チェックはアンバー色） */}
+                                        {/* 履歴のメモボタン（文字は黒・チェックはアンバー色） */}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
                                             className={`px-2.5 py-1.5 rounded-lg text-xs font-black flex items-center gap-1 shadow-sm transition-colors border ${
