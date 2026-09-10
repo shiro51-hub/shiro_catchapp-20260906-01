@@ -22,6 +22,36 @@ const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
 );
 
 // ==========================================
+// 潮時アラートバナー（ReferenceError解消用・安全定義）
+// ==========================================
+function TideAlertBanner({ tideState, highTide1, highTide2, lowTide1, lowTide2 }) {
+    if (!tideState && !highTide1 && !lowTide1) return null;
+
+    return (
+        <div className="bg-sky-50 dark:bg-slate-800/80 border border-sky-200 dark:border-slate-700 rounded-xl px-3 py-1.5 flex items-center justify-between text-xs shrink-0 select-none shadow-xs">
+            <div className="flex items-center gap-1.5 font-black text-sky-800 dark:text-sky-300">
+                <span>🌊</span>
+                <span>{tideState ? (tideState.endsWith('潮') ? tideState : `${tideState}潮`) : '潮況'}</span>
+            </div>
+            <div className="flex items-center gap-3 text-[11px] font-bold text-gray-600 dark:text-slate-300">
+                {(highTide1 || highTide2) && (
+                    <span className="flex items-center gap-0.5">
+                        <span className="text-red-500 font-black">満</span>
+                        <span>{[highTide1, highTide2].filter(Boolean).join(' / ')}</span>
+                    </span>
+                )}
+                {(lowTide1 || lowTide2) && (
+                    <span className="flex items-center gap-0.5">
+                        <span className="text-blue-500 font-black">干</span>
+                        <span>{[lowTide1, lowTide2].filter(Boolean).join(' / ')}</span>
+                    </span>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// ==========================================
 // デジタル釣果ボード（SNS画像）作成モーダル
 // ==========================================
 function ShareImageModal({ record, onClose, setToastMessage }) {
@@ -82,7 +112,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
         }
     };
 
-    // 潮回りの安全な表示整形
     const getSafeTideDisplay = (tideStr) => {
         if (!tideStr) return '―';
         return tideStr.endsWith('潮') ? tideStr : `${tideStr}潮`;
@@ -97,7 +126,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー：日付をロゴの真ん中直下に配置 */}
+                        {/* ヘッダー */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -117,7 +146,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 【左：釣果＋純白数字】 / 【右：竿頭＋純白名前＋末尾に「さん」】 */}
+                        {/* 釣果・竿頭 */}
                         <div className={`rounded-lg px-3.5 py-3 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -256,9 +285,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報（最下段レイアウト） */}
+                        {/* フッター情報 */}
                         <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
-                            {/* 上段：型・総計・平均 */}
                             <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
                                     型: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
@@ -271,7 +299,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
 
-                            {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
                             <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
                                 <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
                                     <span className="inline-block">{record.point || 'ポイント未設定'}</span>
@@ -305,7 +332,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     <button onClick={onClose} className="w-7 h-7 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center text-gray-600 dark:text-slate-300 font-bold hover:bg-gray-300 text-xs">✕</button>
                 </div>
                 
-                {/* テーマ切り替え */}
                 <div className="flex gap-2 p-1 bg-gray-100 dark:bg-slate-700/50 rounded-xl">
                     <button 
                         onClick={() => setCardTheme('dark')} 
@@ -321,7 +347,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     </button>
                 </div>
 
-                {/* 匿名化スイッチ */}
                 <label className="flex items-center justify-between p-2 px-3 bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer active:scale-[0.98] transition-transform">
                     <span className="text-xs font-bold text-gray-700 dark:text-slate-200">
                         お名前を隠す（匿名化）
@@ -346,15 +371,13 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 }
 
 // ==========================================
-// 船長釣行メモモーダル（2行グリッド ＆ 履歴学習型・入力枠拡大版）
-// ※名前の重複を完全に回避するため MemoModalWithTags と命名
+// 船長釣行メモモーダル
 // ==========================================
 function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
     if (!showMemoModal) return null;
 
     const [selectedCat, setSelectedCat] = React.useState('activity');
 
-    // タグの利用履歴（直近使った順の配列をローカルストレージから取得）
     const [recentTags, setRecentTags] = React.useState(() => {
         try {
             const saved = localStorage.getItem('yamashitamaru_memo_recent_tags');
@@ -401,7 +424,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         }
     ];
 
-    // タグをタップした時の処理（メモ追記 ＋ 履歴学習）
     const handleTagClick = (tagText) => {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -419,7 +441,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             return `${text} ${tagText} `;
         });
 
-        // 履歴学習：タップしたタグを先頭へ移動して保存（最大20件記憶）
         setRecentTags((prev) => {
             const updated = [tagText, ...prev.filter(t => t !== tagText)].slice(0, 20);
             try {
@@ -429,11 +450,10 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         });
 
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
-            navigator.vibrate(15);
+            try { navigator.vibrate(15); } catch (e) {}
         }
     };
 
-    // 選択されたカテゴリのタグ一覧を取得し、履歴にあるタグを手前（左側）へ優先ソート
     const currentCategoryObj = defaultCategories.find(c => c.id === selectedCat) || defaultCategories[0];
     const sortedTags = React.useMemo(() => {
         const baseTags = currentCategoryObj.tags;
@@ -447,7 +467,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-[fadeIn_0.15s_ease-out]">
             <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-lg flex flex-col h-[90dvh] max-h-[720px] overflow-hidden">
                 
-                {/* モーダルヘッダー */}
                 <div className="p-3 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/80 dark:bg-slate-900/50 shrink-0">
                     <div className="flex items-center gap-1.5">
                         <span className="text-base">📝</span>
@@ -462,9 +481,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </button>
                 </div>
 
-                {/* クイック入力タグエリア（コンパクト化して高さを抑え、入力欄の広さを確保） */}
                 <div className="bg-slate-50 dark:bg-slate-900/40 p-2 border-b border-gray-200 dark:border-slate-700/80 flex flex-col gap-1.5 shrink-0">
-                    {/* 1段目：カテゴリタブ切り替え */}
                     <div className="flex gap-1 overflow-x-auto no-scrollbar">
                         {defaultCategories.map((cat) => (
                             <button
@@ -482,7 +499,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                         ))}
                     </div>
 
-                    {/* 2段目：2行グリッド（直近タップしたタグが★付きで先頭に自動ソート） */}
                     <div className="grid grid-rows-2 grid-flow-col auto-cols-max gap-1 overflow-x-auto no-scrollbar py-0.5">
                         {sortedTags.map((tag, idx) => {
                             const isRecentlyUsed = recentTags.includes(tag);
@@ -505,7 +521,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
-                {/* 本文入力欄 */}
                 <div className="p-3 flex-1 flex flex-col min-h-0 overflow-hidden">
                     <textarea
                         className="w-full flex-1 p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100 font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none leading-relaxed"
@@ -519,7 +534,6 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
-                {/* モーダルフッター */}
                 <div className="p-2.5 bg-gray-50/80 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-700 flex gap-2 shrink-0">
                     <button
                         type="button"
@@ -555,7 +569,6 @@ function App() {
     const [selectedAiModel, setSelectedAiModel] = React.useState(() => localStorage.getItem('fishing_ai_model') || 'Gemini 2.5 Flash');
     const [toastMessage, setToastMessage] = React.useState('');
 
-    // 下部ナビゲーションバーの表示・非表示状態
     const [isBottomNavVisible, setIsBottomNavVisible] = React.useState(true);
 
     const [date, setDate] = React.useState(getTodayString());
@@ -621,10 +634,7 @@ function App() {
     const [analyzingRecordId, setAnalyzingRecordId] = React.useState(null);
     const [currentAnalysis, setCurrentAnalysis] = React.useState(null);
 
-    // ==========================================
-    // スワイプによるタブ切り替えロジック
-    // （エンドレス・ローテーション / 循環切り替え）
-    // ==========================================
+    // スワイプによるエンドレス・循環切り替え
     const touchStartX = React.useRef(0);
     const touchStartY = React.useRef(0);
     const tabList = ['input', 'counter', 'history'];
@@ -640,23 +650,22 @@ function App() {
         const diffX = e.changedTouches[0].clientX - touchStartX.current;
         const diffY = e.changedTouches[0].clientY - touchStartY.current;
 
-        // 横スワイプ量が40px以上、かつ縦ブレが横移動より小さい場合に判定
         if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
             const currentIdx = tabList.indexOf(activeTab);
             let nextIdx = currentIdx;
 
             if (diffX < 0) {
-                // 右から左へ（次へ進む：履歴の次は釣り座へループ）
                 nextIdx = (currentIdx + 1) % tabList.length;
             } else {
-                // 左から右へ（前へ戻る：釣り座の前は履歴へループ）
                 nextIdx = (currentIdx - 1 + tabList.length) % tabList.length;
             }
 
             const nextTab = tabList[nextIdx];
             setActiveTab(nextTab);
             localStorage.setItem('fishing_last_tab', nextTab);
-            if (navigator.vibrate) navigator.vibrate(15);
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                try { navigator.vibrate(15); } catch (err) {}
+            }
         }
     };
 
@@ -848,9 +857,6 @@ function App() {
         setToastMessage('釣果数をリセットしました（サイズ・お名前は保持）');
     };
 
-    // ==========================================
-    // 履歴からの個別削除処理（当日画面も即座にリセット）
-    // ==========================================
     const handleDeleteRecord = (recordId) => {
         const target = records.find(r => r.id === recordId);
         
@@ -877,7 +883,6 @@ function App() {
         setToastMessage('釣果記録を削除しました（画面表示もリセットされました）');
     };
 
-    // 自動タイムスタンプ付きでメモを開く
     const openMemoModal = (record) => {
         const targetId = record ? record.id : null;
         setActiveMemoRecordId(targetId);
@@ -1097,9 +1102,6 @@ function App() {
         setSharedRecordId(null);
     };
 
-    // ==========================================
-    // AI分析 実行処理
-    // ==========================================
     const handleRunAiAnalysis = async (record) => {
         const activeApiKey = (userApiKey || '').replace(/[\s\r\n ]/g, '');
         if (!activeApiKey) {
@@ -1296,7 +1298,7 @@ function App() {
                 selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
             />
 
-            {/* 詳細メモモーダル（定義名 MemoModalWithTags と完全に一致） */}
+            {/* 詳細メモモーダル */}
             <MemoModalWithTags
                 showMemoModal={showMemoModal}
                 setShowMemoModal={setShowMemoModal}
@@ -1475,7 +1477,7 @@ function App() {
                             );
                         })()}
 
-                        {/* 潮時リアルタイムアラートバー */}
+                        {/* 潮時アラートバー（安全定義済み） */}
                         <TideAlertBanner
                             tideState={tideState}
                             highTide1={highTide1}
@@ -1503,9 +1505,8 @@ function App() {
                             )}
                         </div>
 
-                        {/* 魚のサイズ（左） ＋ 船長メモ正方形大型ボタン（右） */}
+                        {/* 魚のサイズ ＋ 船長メモボタン */}
                         <div className="flex items-stretch gap-2 shrink-0">
-                            {/* 左側：魚のサイズ枠 */}
                             <div className="flex-1 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-2.5 flex flex-col justify-between">
                                 <div className="text-xs font-black text-gray-500 dark:text-slate-400 mb-1.5 flex items-center">
                                     <IconRuler className="w-4 h-4 mr-1 text-sky-500 dark:text-sky-400 shrink-0" /> 
@@ -1536,7 +1537,6 @@ function App() {
                                 </div>
                             </div>
 
-                            {/* 右側：正方形大型メモボタン */}
                             <button
                                 type="button"
                                 onClick={() => openMemoModal(null)}
@@ -1615,7 +1615,9 @@ function App() {
                                                             e.stopPropagation();
                                                             if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
                                                             aiTimerRef.current = setTimeout(() => {
-                                                                if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+                                                                if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                                                                    try { navigator.vibrate([30, 50, 30]); } catch (err) {}
+                                                                }
                                                                 setTargetRecordForAi(r);
                                                                 setAiInputData({
                                                                     condition: r.aiInput_condition || '',
@@ -1770,7 +1772,6 @@ function App() {
                                             <IconCamera /> 釣果ボード
                                         </button>
                                         
-                                        {/* 履歴のメモボタン（文字は黒・チェックはアンバー色） */}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
                                             className={`px-2.5 py-1.5 rounded-lg text-xs font-black flex items-center gap-1 shadow-sm transition-colors border ${
@@ -1786,7 +1787,6 @@ function App() {
                                             )}
                                         </button>
 
-                                        {/* AI分析ボタン */}
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -1886,7 +1886,7 @@ function App() {
                     <span className="text-xs tracking-tight">履歴</span>
                 </button>
 
-                {/* ナビバーを収納（非表示）にするマークのみのボタン（「隠す」テキストなし） */}
+                {/* ナビバーを収納（非表示）にするマークのみのボタン */}
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(false)}
