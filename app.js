@@ -2,7 +2,6 @@
 // app.js : メイン司令塔・画面遷移・全体レンダリング
 // ==========================================
 
-// 画像キャプチャ用のライブラリを動的に読み込む機能
 const loadHtml2Canvas = () => {
     return new Promise((resolve, reject) => {
         if (window.html2canvas) {
@@ -52,7 +51,7 @@ function TideAlertBanner({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
 }
 
 // ==========================================
-// リセット ＆ モード切替ボタン（未定義エラー解消用）
+// リセット ＆ モード切替ボタン
 // ==========================================
 function ResetButton({ onReset, counterMode, setCounterMode }) {
     const [confirming, setConfirming] = React.useState(false);
@@ -1590,7 +1589,7 @@ function App() {
                             </button>
                         </div>
 
-                        {/* リセット＆モード切替ボタン（定義済み） */}
+                        {/* リセット＆モード切替ボタン */}
                         <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
 
                         <div className="h-16 shrink-0 pointer-events-none"></div>
@@ -1957,7 +1956,7 @@ function App() {
     );
 }
 
-// HTMLの読み込み完了を待ってから確実にマウントする安全起動処理
+// 安全マウント処理
 function mountApp() {
     const rootEl = document.getElementById('root');
     if (!rootEl) return;
