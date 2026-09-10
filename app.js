@@ -21,6 +21,84 @@ const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
 );
 
 // ==========================================
+// 座席入力枠部品（SeatInput : 人数入力時のクラッシュを完全防止）
+// ==========================================
+function SeatInput({ side, seat, index, onSeatChange, onCountDelta, viewMode, onToggleVisibility }) {
+    if (!seat) return null;
+    const isPort = side === 'port';
+    const isHidden = seat.isVisible === false;
+
+    return (
+        <div className={`p-2 mb-1.5 rounded-xl border shadow-xs transition-all ${
+            isHidden 
+                ? 'opacity-40 bg-gray-100 dark:bg-slate-800/40 border-dashed border-gray-300 dark:border-slate-700' 
+                : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700'
+        }`}>
+            <div className="flex items-center justify-between gap-1 mb-1">
+                <div className="flex items-center gap-1 min-w-0">
+                    <span className={`text-xs font-black shrink-0 ${isPort ? 'text-red-500' : 'text-emerald-600'}`}>
+                        {seat.id}.
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="お名前"
+                        className="w-full text-xs font-bold px-1.5 py-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded text-gray-800 dark:text-slate-100 focus:outline-none min-w-0"
+                        value={seat.name || ''}
+                        onChange={(e) => onSeatChange(side, index, 'name', e.target.value)}
+                    />
+                </div>
+                <button
+                    type="button"
+                    onClick={() => onToggleVisibility && onToggleVisibility(side, index)}
+                    className={`text-[10px] px-1 py-0.5 rounded font-bold shrink-0 ${
+                        isHidden 
+                            ? 'bg-gray-200 dark:bg-slate-700 text-gray-500' 
+                            : 'text-gray-400 hover:text-gray-600 dark:hover:text-slate-300'
+                    }`}
+                    title={isHidden ? '表示する' : '非表示にする'}
+                >
+                    {isHidden ? '非表示中' : '隠す'}
+                </button>
+            </div>
+
+            <div className="flex items-center justify-between gap-1">
+                <input
+                    type="text"
+                    placeholder="備考・仕掛け等"
+                    className="flex-1 text-[11px] px-1.5 py-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded text-gray-600 dark:text-slate-300 focus:outline-none min-w-0"
+                    value={seat.memo || ''}
+                    onChange={(e) => onSeatChange(side, index, 'memo', e.target.value)}
+                />
+
+                <div className="flex items-center gap-0.5 shrink-0">
+                    <button
+                        type="button"
+                        onClick={() => onCountDelta(side, index, -1)}
+                        className="w-6 h-6 rounded bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-black text-xs flex items-center justify-center active:bg-gray-300"
+                    >
+                        -
+                    </button>
+                    <input
+                        type="number"
+                        className="w-9 h-6 text-center text-xs font-black bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded text-gray-800 dark:text-slate-100 p-0 focus:outline-none"
+                        value={seat.count !== undefined ? seat.count : ''}
+                        onChange={(e) => onSeatChange(side, index, 'count', e.target.value)}
+                        placeholder="0"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => onCountDelta(side, index, 1)}
+                        className="w-6 h-6 rounded bg-sky-500 text-white font-black text-xs flex items-center justify-center active:bg-sky-600"
+                    >
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ==========================================
 // 潮時アラートバナー
 // ==========================================
 function TideAlertBanner({ tideState, highTide1, highTide2, lowTide1, lowTide2 }) {
