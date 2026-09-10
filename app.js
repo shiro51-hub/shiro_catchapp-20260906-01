@@ -1923,4 +1923,21 @@ function App() {
     );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// HTMLの読み込み完了を待ってから確実に画面を生成する
+function mountApp() {
+    const rootEl = document.getElementById('root');
+    if (!rootEl) return;
+
+    if (ReactDOM.createRoot) {
+        const root = ReactDOM.createRoot(rootEl);
+        root.render(React.createElement(App));
+    } else {
+        ReactDOM.render(React.createElement(App), rootEl);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountApp);
+} else {
+    mountApp();
+}
