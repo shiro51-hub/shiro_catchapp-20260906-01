@@ -22,7 +22,7 @@ const IconCamera = ({ className = "w-4 h-4 mr-1 shrink-0" }) => (
 );
 
 // ==========================================
-// 潮時アラートバナー（ReferenceError解消用・安全定義）
+// 潮時アラートバナー
 // ==========================================
 function TideAlertBanner({ tideState, highTide1, highTide2, lowTide1, lowTide2 }) {
     if (!tideState && !highTide1 && !lowTide1) return null;
@@ -52,12 +52,59 @@ function TideAlertBanner({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
 }
 
 // ==========================================
+// リセット ＆ モード切替ボタン（未定義エラー解消用）
+// ==========================================
+function ResetButton({ onReset, counterMode, setCounterMode }) {
+    const [confirming, setConfirming] = React.useState(false);
+
+    const handleResetClick = () => {
+        if (!confirming) {
+            setConfirming(true);
+            setTimeout(() => setConfirming(false), 3000);
+        } else {
+            onReset();
+            setConfirming(false);
+        }
+    };
+
+    return (
+        <div className="flex items-center gap-2 pt-1 select-none">
+            <button
+                type="button"
+                onClick={handleResetClick}
+                className={`flex-1 py-2.5 rounded-xl font-black text-xs transition-all shadow-sm active:scale-95 ${
+                    confirming 
+                        ? 'bg-red-600 text-white animate-pulse' 
+                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-50'
+                }`}
+            >
+                {confirming ? '⚠️ 本当に釣果数をリセットしますか？' : '釣果数のみリセット'}
+            </button>
+
+            <button
+                type="button"
+                onClick={() => {
+                    const nextMode = counterMode === 'tap' ? 'slide' : counterMode === 'slide' ? 'keypad' : 'tap';
+                    setCounterMode(nextMode);
+                    localStorage.setItem('fishing_counter_mode', nextMode);
+                }}
+                className="px-3 py-2.5 rounded-xl font-black text-xs bg-sky-50 dark:bg-slate-800 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-slate-700 shadow-sm active:scale-95 transition-all flex items-center gap-1 shrink-0"
+                title="操作モード切替"
+            >
+                <span>切替:</span>
+                <span className="uppercase text-sky-600 font-black">{counterMode}</span>
+            </button>
+        </div>
+    );
+}
+
+// ==========================================
 // デジタル釣果ボード（SNS画像）作成モーダル
 // ==========================================
 function ShareImageModal({ record, onClose, setToastMessage }) {
     const [isAnonymous, setIsAnonymous] = React.useState(false);
     const [isGenerating, setIsGenerating] = React.useState(false);
-    const [cardTheme, setCardTheme] = React.useState('dark'); // 'dark' or 'light'
+    const [cardTheme, setCardTheme] = React.useState('dark');
     const cardRef = React.useRef(null);
 
     React.useEffect(() => {
@@ -126,7 +173,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -146,7 +192,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 釣果・竿頭 */}
                         <div className={`rounded-lg px-3.5 py-3 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -221,7 +266,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             )}
                         </div>
 
-                        {/* 座席リスト */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
@@ -285,7 +329,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報 */}
                         <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
                             <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
                                 <div className={isDark ? 'text-slate-300' : 'text-white'}>
@@ -325,7 +368,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                 </div>
             </div>
 
-            {/* コントロールパネル */}
             <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-3.5 flex flex-col gap-2 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
                 <div className="flex justify-between items-center mb-0.5">
                     <span className="font-black text-gray-800 dark:text-slate-100 text-base">釣果ボードを作成</span>
@@ -1244,7 +1286,6 @@ function App() {
                 </div>
             )}
 
-            {/* 個別記録削除の確認モーダル */}
             {recordToDelete && (
                 <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-[fadeIn_0.15s_ease-out]" onClick={() => setRecordToDelete(null)}>
                     <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-2xl border-2 border-red-300 dark:border-red-800 w-full max-w-xs text-center space-y-4" onClick={(e) => e.stopPropagation()}>
@@ -1298,7 +1339,6 @@ function App() {
                 selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
             />
 
-            {/* 詳細メモモーダル */}
             <MemoModalWithTags
                 showMemoModal={showMemoModal}
                 setShowMemoModal={setShowMemoModal}
@@ -1308,7 +1348,6 @@ function App() {
                 saveMemo={saveMemo}
             />
 
-            {/* AI日報入力ウィザードモーダル */}
             <AiInputWizardModal
                 showAiInputModal={showAiInputModal}
                 setShowAiInputModal={setShowAiInputModal}
@@ -1324,7 +1363,6 @@ function App() {
                 handleAiGenerate={handleAiGenerate}
             />
 
-            {/* AI日報表示モーダル */}
             <AiResultModal
                 showAiModal={showAiModal}
                 setShowAiModal={setShowAiModal}
@@ -1333,7 +1371,6 @@ function App() {
                 handleCopyPattern={handleCopyPattern}
             />
 
-            {/* AI多角分析モーダル */}
             <AiAnalysisModal
                 showAnalysisModal={showAnalysisModal}
                 setShowAnalysisModal={setShowAnalysisModal}
@@ -1343,14 +1380,13 @@ function App() {
                 handleCopyPattern={handleCopyPattern}
             />
 
-            {/* 釣果ボード生成モーダル */}
             <ShareImageModal
                 record={shareImageRecord}
                 onClose={() => setShareImageRecord(null)}
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（左右スワイプでエンドレス・循環切り替え） */}
+            {/* ヘッダー */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
@@ -1477,7 +1513,7 @@ function App() {
                             );
                         })()}
 
-                        {/* 潮時アラートバー（安全定義済み） */}
+                        {/* 潮時アラートバー */}
                         <TideAlertBanner
                             tideState={tideState}
                             highTide1={highTide1}
@@ -1554,6 +1590,7 @@ function App() {
                             </button>
                         </div>
 
+                        {/* リセット＆モード切替ボタン（定義済み） */}
                         <ResetButton onReset={resetOnlyCounts} counterMode={counterMode} setCounterMode={setCounterMode} />
 
                         <div className="h-16 shrink-0 pointer-events-none"></div>
@@ -1847,7 +1884,7 @@ function App() {
                 )}
             </div>
 
-            {/* 下部ナビゲーションバー（収納機能 ＆ 循環スワイプ対応） */}
+            {/* 下部ナビゲーションバー */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
@@ -1886,7 +1923,6 @@ function App() {
                     <span className="text-xs tracking-tight">履歴</span>
                 </button>
 
-                {/* ナビバーを収納（非表示）にするマークのみのボタン */}
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(false)}
@@ -1897,7 +1933,6 @@ function App() {
                 </button>
             </div>
 
-            {/* ナビバーが隠れている時だけ画面最下端に常駐する透明スワイプエリア */}
             {!isBottomNavVisible && (
                 <div
                     onTouchStart={handleSwipeStart}
@@ -1907,7 +1942,6 @@ function App() {
                 />
             )}
 
-            {/* ナビバーが隠れている時だけ画面右下に出現する、半透明の復帰ボタン */}
             {!isBottomNavVisible && (
                 <button
                     type="button"
@@ -1923,7 +1957,7 @@ function App() {
     );
 }
 
-// HTMLの読み込み完了を待ってから確実に画面を生成する
+// HTMLの読み込み完了を待ってから確実にマウントする安全起動処理
 function mountApp() {
     const rootEl = document.getElementById('root');
     if (!rootEl) return;
