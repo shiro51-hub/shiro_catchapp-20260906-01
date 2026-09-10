@@ -70,11 +70,13 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     );
 };
 
+// タップ式カウンターカード（＋で緑フラッシュ、ーで赤フラッシュ連動版）
 const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
     if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
     
-    const [isFlashing, setIsFlashing] = React.useState(false);
+    // フラッシュ状態管理: null(通常) | 'plus'(緑フラッシュ) | 'minus'(赤フラッシュ)
+    const [flashType, setFlashType] = React.useState(null);
     const timerRef = React.useRef(null);
     const isLongPress = React.useRef(false);
     const isPort = side === 'port';
@@ -87,13 +89,15 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
+    // プラス操作（緑色に発光）
     const handleCardTap = () => {
         onCountDelta(side, index, 1);
-        setIsFlashing(true);
-        setTimeout(() => setIsFlashing(false), 150);
+        setFlashType('plus');
+        setTimeout(() => setFlashType(null), 150);
         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
+    // マイナスボタン長押し（全クリア）
     const handlePointerDown = (e) => {
         e.stopPropagation();
         isLongPress.current = false;
@@ -104,14 +108,23 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         }, 1000);
     };
 
+    // マイナス操作（赤色に発光）
     const handlePointerUp = (e) => {
         e.stopPropagation();
         if (timerRef.current) clearTimeout(timerRef.current);
-        if (!isLongPress.current) onCountDelta(side, index, -1);
+        if (!isLongPress.current) {
+            onCountDelta(side, index, -1);
+            setFlashType('minus');
+            setTimeout(() => setFlashType(null), 150);
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
+        }
     };
 
-    const flashClass = isFlashing 
-        ? (isPort ? 'bg-red-500 text-white scale-[0.98]' : 'bg-emerald-500 text-white scale-[0.98]') 
+    // プラス時はエメラルドグリーン、マイナス時は赤にフラッシュ
+    const flashClass = flashType === 'plus'
+        ? 'bg-emerald-500 text-white scale-[0.98]'
+        : flashType === 'minus'
+        ? 'bg-red-500 text-white scale-[0.98]'
         : normalCardBg;
 
     return (
@@ -119,9 +132,9 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
             <div className="flex-1 flex flex-col items-center justify-center cursor-pointer pt-2" onClick={handleCardTap}>
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
-                    <span className={`text-lg font-bold truncate ${isFlashing ? 'text-white/90' : nameColor}`}>{seat.name || '-'} {seat.memo && `(${seat.memo})`}</span>
+                    <span className={`text-lg font-bold truncate ${flashType ? 'text-white/90' : nameColor}`}>{seat.name || '-'} {seat.memo && `(${seat.memo})`}</span>
                 </div>
-                <div className={`text-4xl sm:text-5xl font-black mt-3 transition-transform duration-100 ${isFlashing ? 'scale-110' : 'scale-100'}`}>
+                <div className={`text-4xl sm:text-5xl font-black mt-3 transition-transform duration-100 ${flashType ? 'scale-110' : 'scale-100'}`}>
                     {seat.count === '' ? '0' : seat.count}
                 </div>
             </div>
@@ -137,7 +150,6 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     const [startX, setStartX] = React.useState(0);
     const [curX, setCurX] = React.useState(0);
     const [isDragging, setIsDragging] = React.useState(false);
-    // フラッシュ状態管理: null(通常) | 'plus'(緑フラッシュ) | 'minus'(赤フラッシュ)
     const [flashType, setFlashType] = React.useState(null);
     const isPort = side === 'port';
 
@@ -168,7 +180,6 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
-    // スライド完了時のフラッシュクラス（プラス時はエメラルドグリーン、マイナス時は赤）
     const flashClass = flashType === 'plus'
         ? 'bg-emerald-500 text-white scale-[0.98]'
         : flashType === 'minus'
@@ -180,7 +191,6 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onTouchStart={(e) => handleStart(e.touches[0].clientX)} onTouchMove={(e) => handleMove(e.touches[0].clientX)} onTouchEnd={handleEnd}
             onMouseDown={(e) => handleStart(e.clientX)} onMouseMove={(e) => handleMove(e.clientX)} onMouseUp={handleEnd} onMouseLeave={() => isDragging && handleEnd()}>
             
-            {/* スライド操作中の下地ガイド（指で引っ張っている時だけ表示） */}
             <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
                 curX > 15 ? 'bg-emerald-600 text-white' : curX < -15 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
             }`}>
@@ -188,7 +198,6 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
                 <span>{curX < -15 ? '− 1' : ''}</span>
             </div>
 
-            {/* カウンター本体カード（指を離して確定した瞬間、色に応じて0.15秒パッと光る） */}
             <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm transition-all duration-150 ${flashClass}`} style={{ transform: `translateX(${curX}px)` }}>
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
