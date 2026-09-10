@@ -623,7 +623,7 @@ function App() {
 
     // ==========================================
     // スワイプによるタブ切り替えロジック
-    // （ヘッダー・下部ナビバー・最下端スワイプエリアで受付）
+    // （エンドレス・ローテーション / 循環切り替え）
     // ==========================================
     const touchStartX = React.useRef(0);
     const touchStartY = React.useRef(0);
@@ -643,23 +643,20 @@ function App() {
         // 横スワイプ量が40px以上、かつ縦ブレが横移動より小さい場合に判定
         if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.5) {
             const currentIdx = tabList.indexOf(activeTab);
+            let nextIdx = currentIdx;
+
             if (diffX < 0) {
-                // 右から左へ（次へ進む）
-                if (currentIdx < tabList.length - 1) {
-                    const next = tabList[currentIdx + 1];
-                    setActiveTab(next);
-                    localStorage.setItem('fishing_last_tab', next);
-                    if (navigator.vibrate) navigator.vibrate(15);
-                }
+                // 右から左へ（次へ進む：履歴の次は釣り座へループ）
+                nextIdx = (currentIdx + 1) % tabList.length;
             } else {
-                // 左から右へ（前へ戻る）
-                if (currentIdx > 0) {
-                    const prev = tabList[currentIdx - 1];
-                    setActiveTab(prev);
-                    localStorage.setItem('fishing_last_tab', prev);
-                    if (navigator.vibrate) navigator.vibrate(15);
-                }
+                // 左から右へ（前へ戻る：釣り座の前は履歴へループ）
+                nextIdx = (currentIdx - 1 + tabList.length) % tabList.length;
             }
+
+            const nextTab = tabList[nextIdx];
+            setActiveTab(nextTab);
+            localStorage.setItem('fishing_last_tab', nextTab);
+            if (navigator.vibrate) navigator.vibrate(15);
         }
     };
 
@@ -1351,7 +1348,7 @@ function App() {
                 setToastMessage={setToastMessage}
             />
 
-            {/* ヘッダー（左右スワイプでタブ切り替え可能） */}
+            {/* ヘッダー（左右スワイプでエンドレス・循環切り替え） */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
@@ -1672,7 +1669,7 @@ function App() {
                                                 {(r.sizeMin || r.sizeMax) && (
                                                     <div className="flex items-baseline text-slate-800 dark:text-slate-100">
                                                         <span className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 mr-1.5">型:</span>
-                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜${r.sizeMax || '?'}</span>
+                                                        <span className="text-lg sm:text-xl font-black">{r.sizeMin || '?'}〜{r.sizeMax || '?'}</span>
                                                         <span className="text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 ml-0.5">cm</span>
                                                     </div>
                                                 )}
@@ -1850,7 +1847,7 @@ function App() {
                 )}
             </div>
 
-            {/* 下部ナビゲーションバー（収納機能 ＆ 左右スワイプ対応） */}
+            {/* 下部ナビゲーションバー（収納機能 ＆ 循環スワイプ対応） */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
@@ -1889,15 +1886,14 @@ function App() {
                     <span className="text-xs tracking-tight">履歴</span>
                 </button>
 
-                {/* ナビバーを収納（非表示）にする小さなボタン */}
+                {/* ナビバーを収納（非表示）にするマークのみのボタン（「隠す」テキストなし） */}
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(false)}
-                    className="w-8 h-full flex flex-col items-center justify-center text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300 active:scale-95 shrink-0 pl-1"
+                    className="w-8 h-full flex items-center justify-center text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300 active:scale-90 transition-transform shrink-0"
                     title="ナビバーを隠す"
                 >
-                    <span className="text-base leading-none font-bold">⌵</span>
-                    <span className="text-[9px] font-black scale-90">隠す</span>
+                    <span className="text-lg leading-none font-bold">⌵</span>
                 </button>
             </div>
 
