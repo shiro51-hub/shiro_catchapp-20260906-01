@@ -434,8 +434,8 @@ function SettingsPanel({
                     {/* ========================================== */}
                     {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
-                            {/* 画面テーマ切り替えスイッチ */}
-                            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-slate-900/60 rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
+                            {/* 画面テーマ切り替えスイッチ（グレー） */}
+                            <div className="flex justify-between items-center p-3 bg-slate-100/80 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                                 <div>
                                     <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
                                     <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
@@ -448,8 +448,8 @@ function SettingsPanel({
                                 </button>
                             </div>
 
-                            {/* 釣り座席数設定 */}
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2">
+                            {/* 釣り座席数設定（薄いミントグリーン） */}
+                            <div className="bg-emerald-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-emerald-200/80 dark:border-slate-700 space-y-2">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">釣り座の席数設定（0〜15席）</span>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
@@ -475,11 +475,11 @@ function SettingsPanel({
                                 </div>
                             </div>
 
-                            {/* 基本海況・ポイント */}
-                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3 rounded-xl border border-gray-200 dark:border-slate-700 space-y-2.5">
+                            {/* 基本海況・ポイント（薄い水色） */}
+                            <div className="bg-sky-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200 dark:border-slate-700 space-y-2.5">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">基本海況・ポイント設定</span>
                                 
-                                {/* 1段目：釣り物（最優先・横幅いっぱい） */}
+                                {/* 1段目：釣り物 */}
                                 <div>
                                     <label className="text-xs font-bold text-sky-700 dark:text-sky-300 block mb-1">🎣 釣り物 (候補・手入力)</label>
                                     <input
