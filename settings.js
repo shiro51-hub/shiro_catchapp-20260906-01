@@ -182,11 +182,28 @@ function SettingsPanel({
 {"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(8方位のみ)","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
 
             const parsed = await callVisionApi(file, prompt);
+
+            // AIの画像認識による東西逆転を補正する処理
+            const correctWindDirection = (dir) => {
+                if (!dir) return '';
+                const map = {
+                    '北西': '北東',
+                    '北東': '北西',
+                    '西': '東',
+                    '東': '西',
+                    '南西': '南東',
+                    '南東': '南西',
+                    '北': '北',
+                    '南': '南'
+                };
+                return map[dir] || dir;
+            };
+
             let count = 0;
             if (parsed.weather1) { setWeather1(parsed.weather1); count++; }
             if (parsed.weather2) { setWeather2(parsed.weather2); count++; }
-            if (parsed.windDir1) { setWindDir1(parsed.windDir1); count++; }
-            if (parsed.windDir2) { setWindDir2(parsed.windDir2); count++; }
+            if (parsed.windDir1) { setWindDir1(correctWindDirection(parsed.windDir1)); count++; }
+            if (parsed.windDir2) { setWindDir2(correctWindDirection(parsed.windDir2)); count++; }
             if (parsed.windSpeed1) { setWindSpeed1(parsed.windSpeed1); count++; }
             if (parsed.windSpeed2) { setWindSpeed2(parsed.windSpeed2); count++; }
             if (parsed.waveHeight1) { setWaveHeight1(parsed.waveHeight1); count++; }
