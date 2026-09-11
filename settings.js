@@ -175,10 +175,12 @@ function SettingsPanel({
 
             const parsed = await callVisionApi(file, prompt);
 
-            // 矢印の見た目の向きから、正確な風向（風が吹いてくる方角）へ100%確実に変換
+            // 矢印の見た目の向きから、正確な風向（風が吹いてくる方角）へ確実に変換
             const arrowToWindDir = (arrow) => {
                 if (!arrow) return '';
                 const clean = arrow.trim();
+                
+                // 1. 見た目の向きマップ（最優先照合）
                 const map = {
                     '真下': '北',
                     '左下': '北東',
@@ -189,7 +191,9 @@ function SettingsPanel({
                     '真右': '西',
                     '右下': '北西'
                 };
-                // もしAIが直接「北東」等の方角で返してきた場合の保険
+                if (map[clean]) return map[clean];
+
+                // 2. もしAIが直接方角文字列で返してきた場合の保険（2文字の方角を先に判定）
                 if (clean.includes('北東')) return '北東';
                 if (clean.includes('北西')) return '北西';
                 if (clean.includes('南東')) return '南東';
@@ -199,7 +203,7 @@ function SettingsPanel({
                 if (clean.includes('東')) return '東';
                 if (clean.includes('西')) return '西';
 
-                return map[clean] || clean;
+                return clean;
             };
 
             let count = 0;
