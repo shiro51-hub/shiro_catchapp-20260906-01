@@ -160,45 +160,53 @@ function SettingsPanel({
             const prompt = `この画像は海の天気・風・波の気象予報スクリーンショットです。
 午前(前半)・午後(後半)の予報を読み取り、JSON形式のみで出力してください。
 
-【風向矢印の判定ルール（最重要）】
-画像最下段の風向き矢印アイコンの先端（矢じり）が指している向きを「時計の短針（時）」に見立てて、風が吹いてくる元の方角（8方位）を判定してください：
-・5時半〜6時半の方向（真下）を指している ➔ "北"
-・6時半〜8時半の方向（左斜め下〜真左手前）を指している ➔ "北東"
-・8時半〜9時半の方向（真左）を指している ➔ "東"
-・9時半〜11時半の方向（左斜め上〜真上手前）を指している ➔ "南東"
-・11時半〜12時半の方向（真上）を指している ➔ "南"
-・12時半〜2時半の方向（右斜め上〜真右手前）を指している ➔ "南西"
-・2時半〜3時半の方向（真右）を指している ➔ "西"
-・3時半〜5時半の方向（右斜め下〜真下手前）を指している ➔ "北西"
-
-※風向（windDir1, windDir2）は必ず以下の8方位のいずれか1つのみを出力してください：
-["北", "北東", "東", "南東", "南", "南西", "西", "北西"]
+【重要：風向き矢印の向き】
+画像最下段の風向き矢印アイコンの先端（矢じり）が、画面上で「どの方角に向かって指しているか」を純粋な見た目の向きで答えてください：
+選択肢：["真下", "左下", "真左", "左上", "真上", "右上", "真右", "右下"]
+・windDir1: 前半の矢印が指している向き
+・windDir2: 後半の矢印が指している向き
 
 【波高の判定ルール】
-・波高（waveHeight1, waveHeight2）は以下の選択肢から選んでください：
+・waveHeight1, waveHeight2 は以下の選択肢から選んでください：
 ["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
 
 不明な項目は空文字 "" にしてください。
-{"weather1":"前半天気","weather2":"後半天気","windDir1":"前半風向","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
+{"weather1":"前半天気","weather2":"後半天気","windDir1":"前半の矢印の向き","windDir2":"後半の矢印の向き","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
 
             const parsed = await callVisionApi(file, prompt);
 
-            // 8方位への確実な丸め込み（万が一16方位の文字が混ざった時の保険）
-            const normalizeWindDir = (dir) => {
-                if (!dir) return '';
-                const clean = dir.replace(/の風|風/g, '').trim();
-                if (clean.includes('北東') || clean === '北北東' || clean === '東北東') return '北東';
-                if (clean.includes('北西') || clean === '北北西' || clean === '西北西') return '北西';
-                if (clean.includes('南東') || clean === '南南東' || clean === '東南東') return '南東';
-                if (clean.includes('南西') || clean === '南南西' || clean === '西南西') return '南西';
-                return clean;
+            // 矢印の見た目の向きから、正確な風向（風が吹いてくる方角）へ100%確実に変換
+            const arrowToWindDir = (arrow) => {
+                if (!arrow) return '';
+                const clean = arrow.trim();
+                const map = {
+                    '真下': '北',
+                    '左下': '北東',
+                    '真左': '東',
+                    '左上': '南東',
+                    '真上': '南',
+                    '右上': '南西',
+                    '真右': '西',
+                    '右下': '北西'
+                };
+                // もしAIが直接「北東」等の方角で返してきた場合の保険
+                if (clean.includes('北東')) return '北東';
+                if (clean.includes('北西')) return '北西';
+                if (clean.includes('南東')) return '南東';
+                if (clean.includes('南西')) return '南西';
+                if (clean.includes('北')) return '北';
+                if (clean.includes('南')) return '南';
+                if (clean.includes('東')) return '東';
+                if (clean.includes('西')) return '西';
+
+                return map[clean] || clean;
             };
 
             let count = 0;
             if (parsed.weather1) { setWeather1(parsed.weather1); count++; }
             if (parsed.weather2) { setWeather2(parsed.weather2); count++; }
-            if (parsed.windDir1) { setWindDir1(normalizeWindDir(parsed.windDir1)); count++; }
-            if (parsed.windDir2) { setWindDir2(normalizeWindDir(parsed.windDir2)); count++; }
+            if (parsed.windDir1) { setWindDir1(arrowToWindDir(parsed.windDir1)); count++; }
+            if (parsed.windDir2) { setWindDir2(arrowToWindDir(parsed.windDir2)); count++; }
             if (parsed.windSpeed1) { setWindSpeed1(parsed.windSpeed1); count++; }
             if (parsed.windSpeed2) { setWindSpeed2(parsed.windSpeed2); count++; }
             if (parsed.waveHeight1) { setWaveHeight1(parsed.waveHeight1); count++; }
