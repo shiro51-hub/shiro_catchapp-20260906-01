@@ -374,22 +374,22 @@ function SettingsPanel({
                 </div>
 
                 {/* 3タブ切り替えバー */}
-                <div className="flex bg-gray-100 dark:bg-slate-900 p-1.5 gap-1 border-b border-gray-200 dark:border-slate-700 font-black shrink-0">
+                <div className="flex bg-gray-200/80 dark:bg-slate-950 p-1.5 gap-1.5 border-b border-gray-300 dark:border-slate-700 font-black shrink-0">
                     <button
                         onClick={() => setActiveSettingsTab('basic')}
-                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2 rounded-lg text-xs sm:text-sm font-black transition-all border ${activeSettingsTab === 'basic' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 border-sky-400/80 dark:border-sky-500 shadow-md scale-[1.02]' : 'bg-gray-100/60 dark:bg-slate-900/60 text-gray-500 dark:text-slate-400 border-gray-300/70 dark:border-slate-800 active:bg-gray-200'}`}
                     >
                         基本設定
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('weather')}
-                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'weather' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2 rounded-lg text-xs sm:text-sm font-black transition-all border ${activeSettingsTab === 'weather' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 border-sky-400/80 dark:border-sky-500 shadow-md scale-[1.02]' : 'bg-gray-100/60 dark:bg-slate-900/60 text-gray-500 dark:text-slate-400 border-gray-300/70 dark:border-slate-800 active:bg-gray-200'}`}
                     >
                         気象・潮時
                     </button>
                     <button
                         onClick={() => setActiveSettingsTab('system')}
-                        className={`flex-1 py-2.5 rounded-xl text-sm transition-all ${activeSettingsTab === 'system' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 shadow-sm' : 'text-gray-500 dark:text-slate-400'}`}
+                        className={`flex-1 py-2 rounded-lg text-xs sm:text-sm font-black transition-all border ${activeSettingsTab === 'system' ? 'bg-white dark:bg-slate-800 text-sky-600 dark:text-sky-400 border-sky-400/80 dark:border-sky-500 shadow-md scale-[1.02]' : 'bg-gray-100/60 dark:bg-slate-900/60 text-gray-500 dark:text-slate-400 border-gray-300/70 dark:border-slate-800 active:bg-gray-200'}`}
                     >
                         システム
                     </button>
