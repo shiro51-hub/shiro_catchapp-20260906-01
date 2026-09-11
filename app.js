@@ -347,12 +347,14 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
 
 // ==========================================
 // 船長釣行メモモーダル（2行グリッド ＆ 履歴学習型・入力枠拡大版）
+// ※名前の重複を完全に回避するため MemoModalWithTags と命名
 // ==========================================
 function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempMemo, copyMemoToClipboard, saveMemo }) {
     if (!showMemoModal) return null;
 
     const [selectedCat, setSelectedCat] = React.useState('activity');
 
+    // タグの利用履歴（直近使った順の配列をローカルストレージから取得）
     const [recentTags, setRecentTags] = React.useState(() => {
         try {
             const saved = localStorage.getItem('yamashitamaru_memo_recent_tags');
@@ -399,6 +401,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         }
     ];
 
+    // タグをタップした時の処理（メモ追記 ＋ 履歴学習）
     const handleTagClick = (tagText) => {
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
@@ -416,6 +419,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
             return `${text} ${tagText} `;
         });
 
+        // 履歴学習：タップしたタグを先頭へ移動して保存（最大20件記憶）
         setRecentTags((prev) => {
             const updated = [tagText, ...prev.filter(t => t !== tagText)].slice(0, 20);
             try {
@@ -429,6 +433,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         }
     };
 
+    // 選択されたカテゴリのタグ一覧を取得し、履歴にあるタグを手前（左側）へ優先ソート
     const currentCategoryObj = defaultCategories.find(c => c.id === selectedCat) || defaultCategories[0];
     const sortedTags = React.useMemo(() => {
         const baseTags = currentCategoryObj.tags;
@@ -442,6 +447,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4 animate-[fadeIn_0.15s_ease-out]">
             <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 w-full max-w-lg flex flex-col h-[90dvh] max-h-[720px] overflow-hidden">
                 
+                {/* モーダルヘッダー */}
                 <div className="p-3 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center bg-gray-50/80 dark:bg-slate-900/50 shrink-0">
                     <div className="flex items-center gap-1.5">
                         <span className="text-base">📝</span>
@@ -456,7 +462,9 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </button>
                 </div>
 
+                {/* クイック入力タグエリア（コンパクト化して高さを抑え、入力欄の広さを確保） */}
                 <div className="bg-slate-50 dark:bg-slate-900/40 p-2 border-b border-gray-200 dark:border-slate-700/80 flex flex-col gap-1.5 shrink-0">
+                    {/* 1段目：カテゴリタブ切り替え */}
                     <div className="flex gap-1 overflow-x-auto no-scrollbar">
                         {defaultCategories.map((cat) => (
                             <button
@@ -474,6 +482,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                         ))}
                     </div>
 
+                    {/* 2段目：2行グリッド（直近タップしたタグが★付きで先頭に自動ソート） */}
                     <div className="grid grid-rows-2 grid-flow-col auto-cols-max gap-1 overflow-x-auto no-scrollbar py-0.5">
                         {sortedTags.map((tag, idx) => {
                             const isRecentlyUsed = recentTags.includes(tag);
@@ -496,6 +505,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
+                {/* 本文入力欄 */}
                 <div className="p-3 flex-1 flex flex-col min-h-0 overflow-hidden">
                     <textarea
                         className="w-full flex-1 p-3 border border-gray-200 dark:border-slate-700 rounded-xl bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100 font-bold text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none leading-relaxed"
@@ -509,6 +519,7 @@ function MemoModalWithTags({ showMemoModal, setShowMemoModal, tempMemo, setTempM
                     </div>
                 </div>
 
+                {/* モーダルフッター */}
                 <div className="p-2.5 bg-gray-50/80 dark:bg-slate-900/50 border-t border-gray-100 dark:border-slate-700 flex gap-2 shrink-0">
                     <button
                         type="button"
@@ -979,7 +990,7 @@ function App() {
         const secondMax = secondCounts.length > 0 ? Math.max(...secondCounts) : null;
         const secondMaxStr = secondMax !== null ? `${secondMax} ${unit}` : 'なし';
 
-        let inputData = `日付: ${record.date} (${getDayOfWeek(record.date)})\n釣り物: ${record.targetFish}\n釣果: ${record.min}〜${record.max} ${unit}\n竿頭: ${record.topAnglerName || 'なし'} (${maxCount} ${unit})\n二番手釣果: ${secondMaxStr}\nポイント: ${record.point || ''}\n水深: ${record.waterDepth || ''}m / 水温: ${record.waterTemp || ''}℃ / 潮色: ${record.tide || ''} / 潮回り: ${record.tideState || ''}\n天候・風波: 前半[${record.weather1 || ''}, ${record.windDir1 || ''} ${record.windSpeed1 || ''}, ${record.waveHeight1 || ''}] / 後半[${record.weather2 || ''}, ${record.windDir2 || ''} ${record.windSpeed2 || ''}, ${record.waveHeight2 || ''}]`;${record.targetFish}\n釣果: ${record.min}〜${record.max} ${unit}\n竿頭: ${record.topAnglerName || 'なし'}\nポイント: ${record.point || ''}\n水深: ${record.waterDepth || ''}m / 水温: ${record.waterTemp || ''}℃ / 潮色: ${record.tide || ''} / 潮回り: ${record.tideState || ''}\n天候・風波: 前半[${record.weather1 || ''}, ${record.windDir1 || ''} ${record.windSpeed1 || ''}, ${record.waveHeight1 || ''}] / 後半[${record.weather2 || ''}, ${record.windDir2 || ''} ${record.windSpeed2 || ''}, ${record.waveHeight2 || ''}]`;
+        let inputData = `日付: ${record.date} (${getDayOfWeek(record.date)})\n釣り物: ${record.targetFish}\n釣果: ${record.min}〜${record.max} ${unit}\n竿頭: ${record.topAnglerName || 'なし'} (${maxCount} ${unit})\n二番手釣果: ${secondMaxStr}\nポイント: ${record.point || ''}\n水深: ${record.waterDepth || ''}m / 水温: ${record.waterTemp || ''}℃ / 潮色: ${record.tide || ''} / 潮回り: ${record.tideState || ''}\n天候・風波: 前半[${record.weather1 || ''}, ${record.windDir1 || ''} ${record.windSpeed1 || ''}, ${record.waveHeight1 || ''}] / 後半[${record.weather2 || ''}, ${record.windDir2 || ''} ${record.windSpeed2 || ''}, ${record.waveHeight2 || ''}]`;
 
         let extraInfo = "";
         if (record.detailedMemo && record.detailedMemo.trim() !== '') {
@@ -1297,7 +1308,7 @@ function App() {
                 selectedAiModel={selectedAiModel} setSelectedAiModel={setSelectedAiModel}
             />
 
-            {/* 詳細メモモーダル */}
+            {/* 詳細メモモーダル（定義名 MemoModalWithTags と完全に一致） */}
             <MemoModalWithTags
                 showMemoModal={showMemoModal}
                 setShowMemoModal={setShowMemoModal}
@@ -1924,20 +1935,4 @@ function App() {
     );
 }
 
-// HTML要素の読み込みを待ってから安全にマウント
-function mountApp() {
-    const rootEl = document.getElementById('root');
-    if (!rootEl) return;
-    if (ReactDOM.createRoot) {
-        const root = ReactDOM.createRoot(rootEl);
-        root.render(React.createElement(App));
-    } else {
-        ReactDOM.render(React.createElement(App), rootEl);
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountApp);
-} else {
-    mountApp();
-}
+ReactDOM.render(<App />, document.getElementById('root'));
