@@ -435,7 +435,7 @@ function SettingsPanel({
                     {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             {/* 画面テーマ切り替えスイッチ（グレー） */}
-                            <div className="flex justify-between items-center p-3 bg-slate-100/80 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div className="flex justify-between items-center p-3 bg-amber-50/70 dark:bg-slate-900/60 rounded-xl border border-amber-200/80 dark:border-slate-700 shadow-sm">
                                 <div>
                                     <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
                                     <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
