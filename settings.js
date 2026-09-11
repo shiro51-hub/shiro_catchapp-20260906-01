@@ -157,53 +157,48 @@ function SettingsPanel({
         setToastMessage('気象予報をAI解析中...');
 
         try {
-            const prompt = `この画像は海の天気・風・波の気象予報スクリーンショット（Windyなど）です。
-午前・午後の予報を読み取り、JSON形式のみで出力してください。
+            const prompt = `この画像は海の天気・風・波の気象予報スクリーンショットです。
+午前(前半)・午後(後半)の予報を読み取り、JSON形式のみで出力してください。
 
-【厳守：風向の判定ルール】
-・画像内の風向き矢印は「風が流れていく向き（風下）」を指しています。
-・風向は必ず「風が吹いてくる元の方角（矢印の根元）」で判定してください。
-  ↓（真下を向く矢印）: 北から吹くので「北」
-  ↑（真上を向く矢印）: 南から吹くので「南」
-  →（真右を向く矢印）: 西から吹くので「西」
-  ←（真左を向く矢印）: 東から吹くので「東」
-  ↙（左下を向く矢印）: 右上（北東）から吹いてくるので必ず【北東】
-  ↘（右下を向く矢印）: 左上（北西）から吹いてくるので必ず【北西】
-  ↗（右上を向く矢印）: 左下（南西）から吹いてくるので必ず【南西】
-  ↖（左上を向く矢印）: 右下（南東）から吹いてくるので必ず【南東】
-・風向（windDir1, windDir2）は必ず以下の8方位のいずれか1つのみを出力してください：
-  ["北", "北東", "東", "南東", "南", "南西", "西", "北西"]
+【風向矢印の判定ルール（最重要）】
+画像最下段の風向き矢印アイコンの先端（矢じり）が指している向きを「時計の短針（時）」に見立てて、風が吹いてくる元の方角（8方位）を判定してください：
+・5時半〜6時半の方向（真下）を指している ➔ "北"
+・6時半〜8時半の方向（左斜め下〜真左手前）を指している ➔ "北東"
+・8時半〜9時半の方向（真左）を指している ➔ "東"
+・9時半〜11時半の方向（左斜め上〜真上手前）を指している ➔ "南東"
+・11時半〜12時半の方向（真上）を指している ➔ "南"
+・12時半〜2時半の方向（右斜め上〜真右手前）を指している ➔ "南西"
+・2時半〜3時半の方向（真右）を指している ➔ "西"
+・3時半〜5時半の方向（右斜め下〜真下手前）を指している ➔ "北西"
+
+※風向（windDir1, windDir2）は必ず以下の8方位のいずれか1つのみを出力してください：
+["北", "北東", "東", "南東", "南", "南西", "西", "北西"]
 
 【波高の判定ルール】
-・波高（waveHeight1, waveHeight2）は可能な限り以下の選択肢のいずれかに分類してください：
-  ["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
+・波高（waveHeight1, waveHeight2）は以下の選択肢から選んでください：
+["穏やか", "穏やかな方", "多少波がある", "波がやや高い", "波が高い", "しける", "大しけ"]
 
 不明な項目は空文字 "" にしてください。
-{"weather1":"前半天気(晴れ,曇り,雨など)","weather2":"後半天気","windDir1":"前半風向(8方位のみ)","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
+{"weather1":"前半天気","weather2":"後半天気","windDir1":"前半風向","windDir2":"後半風向","windSpeed1":"前半風速(例: 3m)","windSpeed2":"後半風速","waveHeight1":"前半波高","waveHeight2":"後半波高"}`;
 
             const parsed = await callVisionApi(file, prompt);
 
-            // AIの画像認識による東西逆転を補正する処理
-            const correctWindDirection = (dir) => {
+            // 8方位への確実な丸め込み（万が一16方位の文字が混ざった時の保険）
+            const normalizeWindDir = (dir) => {
                 if (!dir) return '';
-                const map = {
-                    '北西': '北東',
-                    '北東': '北西',
-                    '西': '東',
-                    '東': '西',
-                    '南西': '南東',
-                    '南東': '南西',
-                    '北': '北',
-                    '南': '南'
-                };
-                return map[dir] || dir;
+                const clean = dir.replace(/の風|風/g, '').trim();
+                if (clean.includes('北東') || clean === '北北東' || clean === '東北東') return '北東';
+                if (clean.includes('北西') || clean === '北北西' || clean === '西北西') return '北西';
+                if (clean.includes('南東') || clean === '南南東' || clean === '東南東') return '南東';
+                if (clean.includes('南西') || clean === '南南西' || clean === '西南西') return '南西';
+                return clean;
             };
 
             let count = 0;
             if (parsed.weather1) { setWeather1(parsed.weather1); count++; }
             if (parsed.weather2) { setWeather2(parsed.weather2); count++; }
-            if (parsed.windDir1) { setWindDir1(correctWindDirection(parsed.windDir1)); count++; }
-            if (parsed.windDir2) { setWindDir2(correctWindDirection(parsed.windDir2)); count++; }
+            if (parsed.windDir1) { setWindDir1(normalizeWindDir(parsed.windDir1)); count++; }
+            if (parsed.windDir2) { setWindDir2(normalizeWindDir(parsed.windDir2)); count++; }
             if (parsed.windSpeed1) { setWindSpeed1(parsed.windSpeed1); count++; }
             if (parsed.windSpeed2) { setWindSpeed2(parsed.windSpeed2); count++; }
             if (parsed.waveHeight1) { setWaveHeight1(parsed.waveHeight1); count++; }
