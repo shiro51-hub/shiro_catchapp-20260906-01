@@ -33,6 +33,13 @@ function SettingsPanel({
         setTempKey(userApiKey || '');
     }, [userApiKey]);
 
+    // 設定パネルが開いた時、常に「基本設定」タブにリセット
+    React.useEffect(() => {
+        if (isSettingsOpen) {
+            setActiveSettingsTab('basic');
+        }
+    }, [isSettingsOpen]);
+
     if (!isSettingsOpen) return null;
 
     // AIモデルの表示名とAPI識別子のマップ
