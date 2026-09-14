@@ -1403,7 +1403,7 @@ function App() {
             </div>
 
             {/* メインスクロールエリア（bg-slate-200 で白い履歴カードを際立たせる） */}
-            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-blue-100/80 dark:bg-slate-900">
+            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-200/50 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         {/* 日付・釣り物 ＆ 海況サマリー（ワンサイズUP・波高完全非表示版） */}
