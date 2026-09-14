@@ -1673,28 +1673,27 @@ function App() {
                                             </div>
                                         </div>
 
-                                        {(r.point || r.waterDepth || r.waterTemp || r.tide || r.tideState || r.weather1 || r.windDir1 || r.windSpeed1 || r.waveHeight1) && (
-                                            <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
-                                                {r.point && <span className="font-black text-slate-800 dark:text-slate-100">{r.point}</span>}
-                                                {r.waterDepth && <span>{r.waterDepth}m</span>}
-                                                {r.waterTemp && <span>{r.waterTemp}℃</span>}
-                                                {r.tide && <span>{r.tide}</span>}
-                                                {r.tideState && <span>{r.tideState}</span>}
-                                                {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
-                                                {(() => {
-    const wd1 = r.windDir1 || r.windDir || '';
-    const ws1 = r.windSpeed1 || r.windSpeed || '';
-    const wd2 = r.windDir2 || '';
-    const ws2 = r.windSpeed2 || '';
-    const f1 = (wd1 || ws1) ? `${wd1}${ws1 ? `(${ws1})` : ''}` : '';
-    const f2 = (wd2 || ws2) ? `${wd2}${ws2 ? `(${ws2})` : ''}` : '';
-    if (!f1 && !f2) return null;
-    if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
-    return <span>{f1 || f2}</span>;
-})()}
-                                                {waveHeight1 && <span>{waveHeight1}</span>}
-                                            </div>
-                                        )}
+                                        {(r.point || r.waterDepth || r.waterTemp || r.tide || r.tideState || r.weather1 || r.windDir1 || r.windSpeed1) && (
+    <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200">
+        {r.point && <span className="font-black text-slate-800 dark:text-slate-100">{r.point}</span>}
+        {r.waterDepth && <span>{r.waterDepth}m</span>}
+        {r.waterTemp && <span>{r.waterTemp}℃</span>}
+        {r.tide && <span>{r.tide}</span>}
+        {r.tideState && <span>{r.tideState}</span>}
+        {r.weather1 && <span>{r.weather1}{r.weather2 && r.weather1 !== r.weather2 ? `→${r.weather2}` : ''}</span>}
+        {(() => {
+            const wd1 = r.windDir1 || r.windDir || '';
+            const ws1 = r.windSpeed1 || r.windSpeed || '';
+            const wd2 = r.windDir2 || '';
+            const ws2 = r.windSpeed2 || '';
+            const f1 = (wd1 || ws1) ? `${wd1}${ws1 ? `(${ws1})` : ''}` : '';
+            const f2 = (wd2 || ws2) ? `${wd2}${ws2 ? `(${ws2})` : ''}` : '';
+            if (!f1 && !f2) return null;
+            if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
+            return <span>{f1 || f2}</span>;
+        })()}
+    </div>
+)}
 
                                         <div className="bg-sky-50 dark:bg-slate-900/60 border border-sky-100 dark:border-slate-800 rounded-xl p-3 flex flex-wrap justify-between items-center gap-x-3 gap-y-1.5">
                                             <div className="flex items-center flex-wrap gap-x-3.5 gap-y-1">
