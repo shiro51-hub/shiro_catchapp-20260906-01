@@ -56,17 +56,18 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     }
     const countBoxBg = isPort ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400';
     return (
-        /* 一番外側の外枠のみ dark:border-slate-600 に変更 */
+        /* 座席1つの外側の枠のみ変更 */
         <div className="flex flex-col mb-1.5 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm border border-gray-100 dark:border-slate-600">
             <div className="flex items-center space-x-1.5">
                 <span className={`w-6 text-center font-black shrink-0 text-base cursor-pointer ${isPort ? 'text-red-500' : 'text-emerald-500'}`} onClick={() => onToggleVisibility(side, index)}>{seat.id}</span>
-                {/* 名前入力枠はそのままで維持 */}
+                {/* 名前入力枠：初期状態 */}
                 <input type="text" className="flex-1 min-w-0 border rounded px-2 py-1 text-sm bg-gray-50 dark:bg-slate-900 font-bold focus:bg-white text-gray-800 dark:text-slate-100" value={seat.name} onChange={(e) => onSeatChange(side, index, 'name', e.target.value)} onKeyDown={typeof handleEnterKey !== 'undefined' ? handleEnterKey : undefined} placeholder="名前" />
+                {/* 釣果枠：初期状態 */}
                 <div className={`w-12 h-8 shrink-0 flex items-center justify-center rounded border font-black text-lg ${countBoxBg}`}>{seat.count || '0'}</div>
             </div>
             <div className="relative flex items-center ml-7 mt-1">
                 <span className="text-[10px] text-gray-400 mr-1">📝</span>
-                {/* メモ入力枠もそのままで維持 */}
+                {/* メモ入力枠：初期状態 */}
                 <input type="text" className="flex-1 min-w-0 border rounded px-1.5 py-0.5 text-xs bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-slate-300" value={seat.memo || ''} onChange={(e) => onSeatChange(side, index, 'memo', e.target.value)} placeholder="MEMO" />
             </div>
         </div>
