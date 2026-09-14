@@ -387,8 +387,8 @@ function SettingsPanel({
                     </button>
                 </div>
 
-                {/* 3タブ切り替えバー（タブ高さ確保・上部余白極小・ダークモード洗練版） */}
-                <div className="flex bg-sky-200 dark:bg-slate-950 px-2 pt-0.5 gap-1.5 border-b border-sky-300 dark:border-slate-700 font-black shrink-0 items-end">
+                {/* 3タブ切り替えバー（ダークモード枠線を沈めた版） */}
+                <div className="flex bg-sky-200 dark:bg-slate-950 px-2 pt-0.5 gap-1.5 border-b border-sky-300 dark:border-slate-800 font-black shrink-0 items-end">
                     {[
                         { id: 'basic', label: '基本設定' },
                         { id: 'weather', label: '気象・潮時' },
@@ -402,10 +402,10 @@ function SettingsPanel({
                                 onClick={() => setActiveSettingsTab(tab.id)}
                                 className={`flex-1 py-2.5 px-2 rounded-t-xl text-sm font-black transition-all relative select-none ${
                                     isActive
-                                        /* 選択中：下の入力エリアとシームレスに結合 */
-                                        ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-600 dark:border-t-sky-400 border-x-sky-300 dark:border-x-slate-700 -mb-px z-10 shadow-sm'
-                                        /* 未選択：日中は爽やかな淡い水色 / ダーク時は輪郭が際立つ洗練スレート */
-                                        : 'bg-sky-100/85 hover:bg-sky-100 dark:bg-slate-900 hover:dark:bg-slate-850 text-sky-800 dark:text-slate-300 border-t border-x border-sky-200/60 dark:border-slate-800 hover:dark:text-white active:scale-[0.98]'
+                                        /* 選択中：下の入力エリアとシームレスに結合しつつ、ダーク時の横枠を暗く抑制 */
+                                        ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-600 dark:border-t-sky-400 border-x-sky-300 dark:border-x-slate-800 -mb-px z-10 shadow-sm'
+                                        /* 未選択：ダーク時は境界線を暗く沈める */
+                                        : 'bg-sky-100/85 hover:bg-sky-100 dark:bg-slate-900 hover:dark:bg-slate-850 text-sky-800 dark:text-slate-400 border-t border-x border-sky-200/60 dark:border-slate-800/80 hover:dark:text-white active:scale-[0.98]'
                                 }`}
                             >
                                 {tab.label}

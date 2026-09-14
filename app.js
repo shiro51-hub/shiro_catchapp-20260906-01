@@ -1406,25 +1406,25 @@ function App() {
             <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-200/50 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
-                        {/* 日付・釣り物 ＆ 海況サマリー（ワンサイズUP・波高完全非表示版） */}
-                        <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 shadow border border-gray-100 dark:border-slate-700 flex flex-col gap-2.5">
+                        {/* 日付・釣り物 ＆ 海況サマリー（落ち着いた砂浜ベージュ ＆ ダーク枠線抑制版） */}
+                        <div className="bg-[#f7f5f0] dark:bg-slate-800/90 rounded-xl p-3.5 shadow-sm border border-stone-300/80 dark:border-slate-800 flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
-                                {/* 日付選択：文字サイズを大きく調整 */}
+                                {/* 日付選択：白枠を消し、ダーク時は暗いスレート枠へ */}
                                 <input 
                                     type="date" 
-                                    className="border rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100" 
+                                    className="border border-stone-300 dark:border-slate-800 rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 shadow-2xs" 
                                     value={date} 
                                     onChange={(e) => setDate(e.target.value)} 
                                 />
-                                {/* 釣り物：文字サイズをワンサイズ拡大 */}
-                                <span className="text-base sm:text-lg font-black text-sky-600 dark:text-sky-400">
+                                {/* 釣り物 */}
+                                <span className="text-base sm:text-lg font-black text-sky-700 dark:text-sky-400">
                                     {targetFish || '釣り物未設定'}
                                 </span>
                             </div>
 
-                            {/* 概要サマリー行：text-xs sm:text-sm → text-sm sm:text-base へワンサイズUP */}
+                            {/* 概要サマリー行 */}
                             {(point || waterDepth || waterTemp || tide || tideState || weather1 || windDir1 || windSpeed1) && (
-                                <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-200 pt-2 border-t border-gray-100 dark:border-slate-700 leading-normal">
+                                <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2 text-sm sm:text-base font-bold text-stone-800 dark:text-slate-200 pt-2 border-t border-stone-200 dark:border-slate-800 leading-normal">
                                     {point && <span className="font-black text-slate-800 dark:text-slate-100">{point}</span>}
                                     {waterDepth && <span>{waterDepth}m</span>}
                                     {waterTemp && <span>{waterTemp}℃</span>}
@@ -1442,7 +1442,7 @@ function App() {
                             )}
                         </div>
 
-                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター（文字サイズ統一・ほんのりサイズUP版） */}
+                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター */}
                         <div className="flex items-center justify-between gap-1.5 mb-2 select-none">
                             {/* 左舷ボタン */}
                             <button
@@ -1450,24 +1450,23 @@ function App() {
                                 onClick={() => setInputSide(inputSide === 'port' ? 'both' : 'port')}
                                 className={`flex-1 py-2 px-2.5 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
                                     inputSide === 'port'
-                                        ? 'bg-red-500 text-white border-red-600 shadow-sm ring-2 ring-red-300 dark:ring-red-900'
+                                        ? 'bg-red-500 text-white border-red-600 shadow-sm ring-2 ring-red-300 dark:ring-red-950 dark:border-red-700'
                                         : inputSide === 'both'
-                                        ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/60 hover:bg-red-100'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 opacity-60'
+                                        ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-950/60 hover:bg-red-100'
+                                        : 'bg-gray-100 dark:bg-slate-800/80 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-800 opacity-60'
                                 }`}
                             >
                                 <span>左舷</span>
                                 {inputSide === 'port' && <span className="text-[11px] font-bold bg-white/20 px-1 rounded">のみ</span>}
                             </button>
 
-                            {/* 両舷ボタン（フォントをtext-smに統一＆ほんのり拡大） */}
-                            {/* 案1: 超ペール水色（上品で控えめ） */}
+                            {/* 両舷ボタン（ダークモード時は枠線を暗く沈める） */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide('both')}
                                 className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
                                     inputSide === 'both'
-                                        ? 'bg-sky-50 dark:bg-slate-800 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-700 shadow-2xs'
+                                        ? 'bg-sky-50 dark:bg-slate-800 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-850 shadow-2xs'
                                         : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
                                 }`}
                             >
@@ -1480,10 +1479,10 @@ function App() {
                                 onClick={() => setInputSide(inputSide === 'starboard' ? 'both' : 'starboard')}
                                 className={`flex-1 py-2 px-2.5 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
                                     inputSide === 'starboard'
-                                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm ring-2 ring-emerald-300 dark:ring-emerald-900'
+                                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm ring-2 ring-emerald-300 dark:ring-emerald-950 dark:border-emerald-700'
                                         : inputSide === 'both'
-                                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/60 hover:bg-emerald-100'
-                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 opacity-60'
+                                        ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-950/60 hover:bg-emerald-100'
+                                        : 'bg-gray-100 dark:bg-slate-800/80 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-800 opacity-60'
                                 }`}
                             >
                                 <span>右舷</span>
