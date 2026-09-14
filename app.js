@@ -1426,7 +1426,7 @@ function App() {
     if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
     return <span>{f1 || f2}</span>;
 })()}
-                                    {waveHeight1 && <span>{waveHeight1}</span>}
+                                    
                                 </div>
                             )}
                         </div>
