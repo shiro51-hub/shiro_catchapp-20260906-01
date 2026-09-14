@@ -1851,12 +1851,12 @@ function App() {
 
                                     {/* ========================================== */}
                                     {/* 2段アクションツールバー */}
-                                    {/* 上段：メモ / 分析 / ボード / (日報) */}
+                                    {/* 上段：[メモ] [分析] [日報] [ボード] */}
                                     {/* 下段：[共有] ----------------- [削除] */}
                                     {/* ========================================== */}
                                     <div className="p-3 border-t border-slate-100 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-900/40 flex flex-col gap-2.5">
                                         
-                                        {/* 【上段】作成・確認系（左から メモ ➔ 分析 ➔ ボード ➔ 日報） */}
+                                        {/* 【上段】左から メモ ➔ 分析 ➔ 日報 ➔ ボード */}
                                         <div className="flex items-center gap-1.5 w-full">
                                             
                                             {/* 1. メモボタン */}
@@ -1894,17 +1894,7 @@ function App() {
                                                 <span>{analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '分析済' : '分析'}</span>
                                             </button>
 
-                                            {/* 3. 釣果ボードボタン */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
-                                                className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-700 dark:text-sky-300 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
-                                            >
-                                                <IconCamera className="w-3.5 h-3.5" />
-                                                <span>ボード</span>
-                                            </button>
-
-                                            {/* 4. 日報ボタン（作成中、または保存済み日報がある時だけ一番右端に表示） */}
+                                            {/* 3. 日報ボタン（作成中、または保存済み日報がある時のみ表示） */}
                                             {generatingAiId === r.id ? (
                                                 <div className="flex-1 py-2 px-1 rounded-xl text-xs font-black flex items-center justify-center gap-0.5 bg-amber-50 dark:bg-slate-800 border border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-300 select-none">
                                                     <span className="animate-spin text-xs">↻</span>
@@ -1926,9 +1916,19 @@ function App() {
                                                 </button>
                                             ) : null}
 
+                                            {/* 4. 釣果ボードボタン（一番右端に配置） */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
+                                                className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-700 dark:text-sky-300 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
+                                            >
+                                                <IconCamera className="w-3.5 h-3.5" />
+                                                <span>ボード</span>
+                                            </button>
+
                                         </div>
 
-                                        {/* 【下段】左下：共有 ―― 右下：削除 */}
+                                        {/* 【下段】左下：共有 ―― 右下：削除（四角い枠付き） */}
                                         <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800">
                                             {/* 左下：共有 */}
                                             <button
@@ -1940,17 +1940,17 @@ function App() {
                                                 <span>共有</span>
                                             </button>
 
-                                            {/* 右下：削除（誤タップを防ぐため右端に配置） */}
+                                            {/* 右下：削除（共有と同じ四角い枠付きデザイン） */}
                                             <button
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setRecordToDelete(r);
                                                 }}
-                                                className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all flex items-center gap-1 select-none"
+                                                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 bg-white hover:bg-red-50 dark:bg-slate-800 dark:hover:bg-red-950/30 border border-slate-200 dark:border-slate-700 shadow-2xs transition-all flex items-center gap-1 select-none active:scale-95"
                                                 title="この日の記録を削除"
                                             >
-                                                <IconTrash className="w-3.5 h-3.5" />
+                                                <IconTrash className="w-3.5 h-3.5 text-slate-400 hover:text-red-500" />
                                                 <span>削除</span>
                                             </button>
                                         </div>
