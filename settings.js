@@ -723,7 +723,7 @@ function SettingsPanel({
 
                                     <button
                                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                                        className="w-full bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                        className="w-full bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                                     >
                                         <span>📤</span> データを復元
                                     </button>
