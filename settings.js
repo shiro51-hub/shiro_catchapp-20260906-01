@@ -703,11 +703,12 @@ function SettingsPanel({
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             {/* データ管理・バックアップ */}
                             <div className="bg-sky-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
-                                <span className="font-black text-sky-800 dark:text-sky-300 block text-sm">データ管理・バックアップ</span>
+                                <span className="font-black text-sky-800 dark:text-sky-300 block text-sm">データ管理・メンテナンス</span>
                                 <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
-                                    釣果記録を端末に保存、またはバックアップから復元します。
+                                    釣果記録の保存・復元、または初期化を行います。
                                 </p>
                                 
+                                {/* 1段目：保存 と 復元 */}
                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                     <button
                                         onClick={handleExportData}
@@ -731,7 +732,15 @@ function SettingsPanel({
                                     />
                                 </div>
 
-                                
+                                {/* 2段目：派手さを抑えた上品な赤の「アプリを初期化」ボタン */}
+                                <div className="pt-1.5 border-t border-sky-100 dark:border-slate-800">
+                                    <button
+                                        onClick={handleFullReset}
+                                        className="w-full bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/70 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                    >
+                                        <span>⚠️</span> アプリを初期化
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Gemini AI設定 */}
@@ -782,15 +791,7 @@ function SettingsPanel({
                                 </div>
                             </div>
 
-                            {/* 完全初期化 */}
-                            <div className="pt-2">
-                                <button
-                                    onClick={handleFullReset}
-                                    className="w-full py-2.5 text-sm font-bold text-red-500 hover:text-red-700 text-center transition-colors"
-                                >
-                                    ⚠️ アプリを完全初期化する
-                                </button>
-                            </div>
+                            
                         </div>
                     )}
                 </div>
