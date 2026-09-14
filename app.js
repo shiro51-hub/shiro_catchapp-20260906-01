@@ -1419,7 +1419,13 @@ function App() {
                                     {tide && <span>{tide}</span>}
                                     {tideState && <span>{tideState}</span>}
                                     {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
-                                    {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                    {(() => {
+    const f1 = (windDir1 || windSpeed1) ? `${windDir1 || ''}${windSpeed1 ? `(${windSpeed1})` : ''}` : '';
+    const f2 = (windDir2 || windSpeed2) ? `${windDir2 || ''}${windSpeed2 ? `(${windSpeed2})` : ''}` : '';
+    if (!f1 && !f2) return null;
+    if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
+    return <span>{f1 || f2}</span>;
+})()}
                                     {waveHeight1 && <span>{waveHeight1}</span>}
                                 </div>
                             )}
@@ -1675,7 +1681,17 @@ function App() {
                                                 {r.tide && <span>{r.tide}</span>}
                                                 {r.tideState && <span>{r.tideState}</span>}
                                                 {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
-                                                {(windDir1 || windSpeed1) && <span>{windDir1 || ''}{windSpeed1 ? `(${windSpeed1})` : ''}</span>}
+                                                {(() => {
+    const wd1 = r.windDir1 || r.windDir || '';
+    const ws1 = r.windSpeed1 || r.windSpeed || '';
+    const wd2 = r.windDir2 || '';
+    const ws2 = r.windSpeed2 || '';
+    const f1 = (wd1 || ws1) ? `${wd1}${ws1 ? `(${ws1})` : ''}` : '';
+    const f2 = (wd2 || ws2) ? `${wd2}${ws2 ? `(${ws2})` : ''}` : '';
+    if (!f1 && !f2) return null;
+    if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
+    return <span>{f1 || f2}</span>;
+})()}
                                                 {waveHeight1 && <span>{waveHeight1}</span>}
                                             </div>
                                         )}
