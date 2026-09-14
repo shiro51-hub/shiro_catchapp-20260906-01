@@ -1406,13 +1406,25 @@ function App() {
             <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
+                        {/* 日付・釣り物 ＆ 海況サマリー（ワンサイズUP・波高完全非表示版） */}
                         <div className="bg-white dark:bg-slate-800 rounded-xl p-3.5 shadow border border-gray-100 dark:border-slate-700 flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
-                                <input type="date" className="border rounded-lg px-3 py-1.5 text-base sm:text-lg font-black bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100" value={date} onChange={(e) => setDate(e.target.value)} />
-                                <span className="text-sm sm:text-base font-black text-sky-600 dark:text-sky-400">{targetFish || '釣り物未設定'}</span>
+                                {/* 日付選択：文字サイズを大きく調整 */}
+                                <input 
+                                    type="date" 
+                                    className="border rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-gray-50 dark:bg-slate-900 text-gray-800 dark:text-slate-100" 
+                                    value={date} 
+                                    onChange={(e) => setDate(e.target.value)} 
+                                />
+                                {/* 釣り物：文字サイズをワンサイズ拡大 */}
+                                <span className="text-base sm:text-lg font-black text-sky-600 dark:text-sky-400">
+                                    {targetFish || '釣り物未設定'}
+                                </span>
                             </div>
-                            {(point || waterDepth || waterTemp || tide || tideState || weather1 || windDir1 || windSpeed1 || waveHeight1) && (
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 pt-2 border-t border-gray-100 dark:border-slate-700 leading-normal">
+
+                            {/* 概要サマリー行：text-xs sm:text-sm → text-sm sm:text-base へワンサイズUP */}
+                            {(point || waterDepth || waterTemp || tide || tideState || weather1 || windDir1 || windSpeed1) && (
+                                <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2 text-sm sm:text-base font-bold text-slate-700 dark:text-slate-200 pt-2 border-t border-gray-100 dark:border-slate-700 leading-normal">
                                     {point && <span className="font-black text-slate-800 dark:text-slate-100">{point}</span>}
                                     {waterDepth && <span>{waterDepth}m</span>}
                                     {waterTemp && <span>{waterTemp}℃</span>}
@@ -1420,13 +1432,12 @@ function App() {
                                     {tideState && <span>{tideState}</span>}
                                     {weather1 && <span>{weather1}{weather2 && weather1 !== weather2 ? `→${weather2}` : ''}</span>}
                                     {(() => {
-    const f1 = (windDir1 || windSpeed1) ? `${windDir1 || ''}${windSpeed1 ? `(${windSpeed1})` : ''}` : '';
-    const f2 = (windDir2 || windSpeed2) ? `${windDir2 || ''}${windSpeed2 ? `(${windSpeed2})` : ''}` : '';
-    if (!f1 && !f2) return null;
-    if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
-    return <span>{f1 || f2}</span>;
-})()}
-                                    
+                                        const f1 = (windDir1 || windSpeed1) ? `${windDir1 || ''}${windSpeed1 ? `(${windSpeed1})` : ''}` : '';
+                                        const f2 = (windDir2 || windSpeed2) ? `${windDir2 || ''}${windSpeed2 ? `(${windSpeed2})` : ''}` : '';
+                                        if (!f1 && !f2) return null;
+                                        if (f1 && f2 && f1 !== f2) return <span>{f1}→{f2}</span>;
+                                        return <span>{f1 || f2}</span>;
+                                    })()}
                                 </div>
                             )}
                         </div>
