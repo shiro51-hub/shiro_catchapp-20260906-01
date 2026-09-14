@@ -565,13 +565,13 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 2: 気象・潮時 */}
+                    {/* タブ 2: 気象・潮時（基本設定と統一したグレー枠版） */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'weather' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             
                             {/* 上段：潮時ブロック */}
-                            <div className="bg-sky-50 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-100 dark:border-slate-700 space-y-2.5">
+                            <div className="bg-sky-50 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200/80 dark:border-slate-600 space-y-2.5 shadow-2xs">
                                 <div className="flex justify-between items-center">
                                     <span className="font-black text-sky-900 dark:text-sky-300 block text-sm">🌊 潮時データ</span>
                                     <span className="text-xs text-gray-400">カウンターのアラート連動</span>
@@ -594,7 +594,7 @@ function SettingsPanel({
                                         <label className="text-xs font-bold text-sky-700 dark:text-sky-300 block mb-1">潮回り（大潮・中潮など）</label>
                                         <input
                                             type="text"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
+                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={tideState}
                                             onChange={(e) => setTideState(e.target.value)}
                                             placeholder="例: 中潮"
@@ -605,26 +605,26 @@ function SettingsPanel({
                                     <div className="grid grid-cols-2 gap-2">
                                         <div>
                                             <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (1)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
+                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (2)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
+                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (1)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
+                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
                                         </div>
                                         <div>
                                             <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (2)</label>
-                                            <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-center" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
+                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             {/* 下段：気象・風波ブロック */}
-                            <div className="bg-amber-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-amber-100 dark:border-slate-700 space-y-2.5">
+                            <div className="bg-amber-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-amber-200/80 dark:border-slate-600 space-y-2.5 shadow-2xs">
                                 <span className="font-black text-amber-900 dark:text-amber-300 block text-sm">☀️ 気象・風・波データ</span>
 
                                 {/* 天気予報画像解析ボタン */}
@@ -641,34 +641,34 @@ function SettingsPanel({
                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={weather2} onChange={(e) => setWeather2(e.target.value)} placeholder="例: 曇り" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={weather2} onChange={(e) => setWeather2(e.target.value)} placeholder="例: 曇り" />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windDir1} onChange={(e) => setWindDir1(e.target.value)} placeholder="例: 北東" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windDir1} onChange={(e) => setWindDir1(e.target.value)} placeholder="例: 北東" />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windDir2} onChange={(e) => setWindDir2(e.target.value)} placeholder="例: 南西" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windDir2} onChange={(e) => setWindDir2(e.target.value)} placeholder="例: 南西" />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (前半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windSpeed1} onChange={(e) => setWindSpeed1(e.target.value)} placeholder="例: 3m" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windSpeed1} onChange={(e) => setWindSpeed1(e.target.value)} placeholder="例: 3m" />
                                     </div>
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (後半)</label>
-                                        <input type="text" className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800" value={windSpeed2} onChange={(e) => setWindSpeed2(e.target.value)} placeholder="例: 6m" />
+                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windSpeed2} onChange={(e) => setWindSpeed2(e.target.value)} placeholder="例: 6m" />
                                     </div>
 
                                     {/* 波高プルダウン */}
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (前半)</label>
                                         <select
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={waveHeight1}
                                             onChange={(e) => setWaveHeight1(e.target.value)}
                                         >
@@ -681,7 +681,7 @@ function SettingsPanel({
                                     <div>
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (後半)</label>
                                         <select
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={waveHeight2}
                                             onChange={(e) => setWaveHeight2(e.target.value)}
                                         >
