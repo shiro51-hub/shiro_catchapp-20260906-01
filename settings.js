@@ -796,7 +796,7 @@ function SettingsPanel({
                                     </div>
                                     <button
                                         onClick={handleSaveApiKey}
-                                        className="w-full mt-2 bg-gray-800 hover:bg-gray-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-2 rounded-lg text-sm transition-all"
+                                        className="w-full mt-2 bg-sky-600 hover:bg-sky-700 text-white font-black py-2 rounded-lg text-sm shadow-sm transition-all active:scale-95"
                                     >
                                         APIキーを保存
                                     </button>
