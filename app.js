@@ -1461,13 +1461,14 @@ function App() {
                             </button>
 
                             {/* 両舷ボタン（フォントをtext-smに統一＆ほんのり拡大） */}
+                            {/* 案1: 超ペール水色（上品で控えめ） */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide('both')}
                                 className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
                                     inputSide === 'both'
-                                        ? 'bg-sky-600 text-white border-sky-700 shadow-sm ring-2 ring-sky-300 dark:ring-sky-900'
-                                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-300 dark:border-slate-600 hover:bg-gray-50'
+                                        ? 'bg-sky-50 dark:bg-slate-800 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-700 shadow-2xs'
+                                        : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
                                 }`}
                             >
                                 両舷
