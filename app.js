@@ -1402,8 +1402,8 @@ function App() {
                 </button>
             </div>
 
-            {/* メインスクロールエリア */}
-            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar">
+            {/* メインスクロールエリア（bg-slate-200 で白い履歴カードを際立たせる） */}
+            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-slate-200/90 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         {/* 日付・釣り物 ＆ 海況サマリー（ワンサイズUP・波高完全非表示版） */}
@@ -1849,82 +1849,112 @@ function App() {
                                         </div>
                                     )}
 
-                                    <div className="p-3 border-t border-gray-100 dark:border-slate-700/60 flex gap-2 flex-wrap items-center">
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
-                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-600 dark:text-sky-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
-                                        >
-                                            <IconCamera /> 釣果ボード
-                                        </button>
+                                    {/* ========================================== */}
+                                    {/* 2段アクションツールバー */}
+                                    {/* 上段：メモ / 分析 / ボード / (日報) */}
+                                    {/* 下段：[共有] ----------------- [削除] */}
+                                    {/* ========================================== */}
+                                    <div className="p-3 border-t border-slate-100 dark:border-slate-700/80 bg-slate-50/60 dark:bg-slate-900/40 flex flex-col gap-2.5">
                                         
-                                        {/* 履歴のメモボタン（文字は黒・チェックはアンバー色） */}
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
-                                            className={`px-2.5 py-1.5 rounded-lg text-xs font-black flex items-center gap-1 shadow-sm transition-colors border ${
-                                                r.detailedMemo && r.detailedMemo.trim() !== ''
-                                                    ? 'bg-amber-50/60 dark:bg-slate-800 border-amber-300 dark:border-amber-600/70 text-gray-900 dark:text-slate-100'
-                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 border-gray-200 dark:border-slate-700 text-gray-900 dark:text-slate-100'
-                                            }`}
-                                        >
-                                            <span>📝</span>
-                                            <span>メモ</span>
-                                            {r.detailedMemo && r.detailedMemo.trim() !== '' && (
-                                                <span className="text-amber-500 dark:text-amber-400 font-black text-sm leading-none ml-0.5">✓</span>
-                                            )}
-                                        </button>
-
-                                        {/* AI分析ボタン */}
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                if (r.aiAnalysisResult) {
-                                                    setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
-                                                    setShowAnalysisModal(true);
-                                                } else {
-                                                    handleRunAiAnalysis(r);
-                                                }
-                                            }}
-                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-600 dark:text-emerald-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors select-none"
-                                        >
-                                            {analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '📊 AI分析 (保存済)' : '📊 AI分析'}
-                                        </button>
-
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); setSharedRecordId(sharedRecordId === r.id ? null : r.id); }}
-                                            className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-lg text-xs font-black flex items-center shadow-sm active:bg-gray-200 transition-colors"
-                                        >
-                                            <IconShare /> 共有
-                                        </button>
-
-                                        {generatingAiId === r.id ? (
-                                            <span className="text-amber-600 bg-gray-100 dark:bg-slate-800 dark:text-amber-400 text-xs px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg flex items-center font-bold">
-                                                <span className="animate-spin mr-1">↻</span>日報生成中...
-                                            </span>
-                                        ) : (r.aiGeneratedPatterns?.length > 0 || r.aiGeneratedText) ? (
+                                        {/* 【上段】作成・確認系（左から メモ ➔ 分析 ➔ ボード ➔ 日報） */}
+                                        <div className="flex items-center gap-1.5 w-full">
+                                            
+                                            {/* 1. メモボタン */}
                                             <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
+                                                className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 border shadow-2xs active:scale-95 transition-all select-none ${
+                                                    r.detailedMemo && r.detailedMemo.trim() !== ''
+                                                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700/80'
+                                                        : 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
+                                                }`}
+                                            >
+                                                <span>📝</span>
+                                                <span>メモ</span>
+                                                {r.detailedMemo && r.detailedMemo.trim() !== '' && (
+                                                    <span className="text-amber-500 dark:text-amber-400 font-black text-xs leading-none">✓</span>
+                                                )}
+                                            </button>
+
+                                            {/* 2. AI分析ボタン */}
+                                            <button
+                                                type="button"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    setAiGeneratedPatterns(r.aiGeneratedPatterns || []);
-                                                    setAiGeneratedText(r.aiGeneratedText || '');
-                                                    setShowAiModal(true);
+                                                    if (r.aiAnalysisResult) {
+                                                        setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
+                                                        setShowAnalysisModal(true);
+                                                    } else {
+                                                        handleRunAiAnalysis(r);
+                                                    }
                                                 }}
-                                                className="text-amber-600 hover:text-amber-700 dark:text-amber-400 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-xs px-3 py-1.5 border border-gray-200 dark:border-slate-700 rounded-lg flex items-center font-black shadow-sm active:bg-gray-200 transition-colors"
+                                                className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-white hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
                                             >
-                                                <IconStar className="w-3.5 h-3.5 mr-1" /> 保存済日報
+                                                <span>📊</span>
+                                                <span>{analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '分析済' : '分析'}</span>
                                             </button>
-                                        ) : null}
 
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setRecordToDelete(r);
-                                            }}
-                                            className="ml-auto text-gray-600 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 p-1.5 px-2.5 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-750 active:bg-gray-200 transition-colors shadow-sm flex items-center gap-1 text-xs font-black"
-                                            title="この日の釣果記録を削除"
-                                        >
-                                            <IconTrash className="w-3.5 h-3.5" />
-                                            <span>削除</span>
-                                        </button>
+                                            {/* 3. 釣果ボードボタン */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
+                                                className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-700 dark:text-sky-300 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
+                                            >
+                                                <IconCamera className="w-3.5 h-3.5" />
+                                                <span>ボード</span>
+                                            </button>
+
+                                            {/* 4. 日報ボタン（作成中、または保存済み日報がある時だけ一番右端に表示） */}
+                                            {generatingAiId === r.id ? (
+                                                <div className="flex-1 py-2 px-1 rounded-xl text-xs font-black flex items-center justify-center gap-0.5 bg-amber-50 dark:bg-slate-800 border border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-300 select-none">
+                                                    <span className="animate-spin text-xs">↻</span>
+                                                    <span className="text-[11px]">作成中</span>
+                                                </div>
+                                            ) : (r.aiGeneratedPatterns?.length > 0 || r.aiGeneratedText) ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setAiGeneratedPatterns(r.aiGeneratedPatterns || []);
+                                                        setAiGeneratedText(r.aiGeneratedText || '');
+                                                        setShowAiModal(true);
+                                                    }}
+                                                    className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-700 shadow-2xs active:scale-95 transition-all select-none animate-[fadeIn_0.15s_ease-out]"
+                                                >
+                                                    <IconStar className="w-3.5 h-3.5 text-amber-500" />
+                                                    <span>日報</span>
+                                                </button>
+                                            ) : null}
+
+                                        </div>
+
+                                        {/* 【下段】左下：共有 ―― 右下：削除 */}
+                                        <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                                            {/* 左下：共有 */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => { e.stopPropagation(); setSharedRecordId(sharedRecordId === r.id ? null : r.id); }}
+                                                className="px-3.5 py-1.5 rounded-lg text-xs font-black flex items-center gap-1 bg-white hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-blue-700 dark:text-blue-300 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
+                                            >
+                                                <IconShare className="w-3.5 h-3.5" />
+                                                <span>共有</span>
+                                            </button>
+
+                                            {/* 右下：削除（誤タップを防ぐため右端に配置） */}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setRecordToDelete(r);
+                                                }}
+                                                className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all flex items-center gap-1 select-none"
+                                                title="この日の記録を削除"
+                                            >
+                                                <IconTrash className="w-3.5 h-3.5" />
+                                                <span>削除</span>
+                                            </button>
+                                        </div>
+
                                     </div>
                                 </div>
                             );
