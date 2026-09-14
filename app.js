@@ -1442,13 +1442,13 @@ function App() {
                             )}
                         </div>
 
-                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター */}
-                        <div className="flex items-center justify-between gap-1.5 mb-1.5 select-none">
+                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター（文字サイズ統一・ほんのりサイズUP版） */}
+                        <div className="flex items-center justify-between gap-1.5 mb-2 select-none">
                             {/* 左舷ボタン */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide(inputSide === 'port' ? 'both' : 'port')}
-                                className={`flex-1 py-1.5 px-2 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
+                                className={`flex-1 py-2 px-2.5 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
                                     inputSide === 'port'
                                         ? 'bg-red-500 text-white border-red-600 shadow-sm ring-2 ring-red-300 dark:ring-red-900'
                                         : inputSide === 'both'
@@ -1457,17 +1457,17 @@ function App() {
                                 }`}
                             >
                                 <span>左舷</span>
-                                {inputSide === 'port' && <span className="text-[10px] font-bold bg-white/20 px-1 rounded">のみ</span>}
+                                {inputSide === 'port' && <span className="text-[11px] font-bold bg-white/20 px-1 rounded">のみ</span>}
                             </button>
 
-                            {/* 両舷ボタン（真ん中） */}
+                            {/* 両舷ボタン（フォントをtext-smに統一＆ほんのり拡大） */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide('both')}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-black border transition-all active:scale-95 shrink-0 ${
+                                className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
                                     inputSide === 'both'
-                                        ? 'bg-sky-600 text-white border-sky-700 shadow-sm'
-                                        : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-300 dark:border-slate-600 hover:bg-gray-50'
+                                        ? 'bg-sky-600 text-white border-sky-700 shadow-sm ring-2 ring-sky-300 dark:ring-sky-900'
+                                        : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-300 dark:border-slate-600 hover:bg-gray-50'
                                 }`}
                             >
                                 両舷
@@ -1477,7 +1477,7 @@ function App() {
                             <button
                                 type="button"
                                 onClick={() => setInputSide(inputSide === 'starboard' ? 'both' : 'starboard')}
-                                className={`flex-1 py-1.5 px-2 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
+                                className={`flex-1 py-2 px-2.5 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
                                     inputSide === 'starboard'
                                         ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm ring-2 ring-emerald-300 dark:ring-emerald-900'
                                         : inputSide === 'both'
@@ -1486,7 +1486,7 @@ function App() {
                                 }`}
                             >
                                 <span>右舷</span>
-                                {inputSide === 'starboard' && <span className="text-[10px] font-bold bg-white/20 px-1 rounded">のみ</span>}
+                                {inputSide === 'starboard' && <span className="text-[11px] font-bold bg-white/20 px-1 rounded">のみ</span>}
                             </button>
                         </div>
 
