@@ -716,14 +716,14 @@ function SettingsPanel({
                                 <div className="grid grid-cols-2 gap-2 pt-1">
                                     <button
                                         onClick={handleExportData}
-                                        className="w-full bg-sky-600 hover:bg-sky-700 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
+                                        className="w-full bg-sky-100 hover:bg-sky-200 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                                     >
                                         <span>📥</span> データを保存
                                     </button>
 
                                     <button
                                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
-                                        className="w-full bg-white dark:bg-slate-800 border border-sky-300 dark:border-slate-600 text-sky-700 dark:text-sky-300 font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all hover:bg-sky-50"
+                                        className="w-full bg-white hover:bg-sky-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                                     >
                                         <span>📤</span> データを復元
                                     </button>
