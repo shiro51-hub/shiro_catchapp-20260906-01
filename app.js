@@ -1442,22 +1442,61 @@ function App() {
                             )}
                         </div>
 
-                        <div className="flex bg-gray-200 dark:bg-slate-800 p-1 rounded-lg">
-                            {['port', 'both', 'starboard'].map((mode) => (
-                                <button key={mode} className={`flex-1 py-2 text-xs font-black rounded-md ${inputSide === mode ? 'bg-white dark:bg-slate-700 text-sky-600 shadow' : 'text-gray-500'}`} onClick={() => setInputSide(mode)}>
-                                    {mode === 'port' ? '左舷のみ' : mode === 'starboard' ? '右舷のみ' : '両舷'}
-                                </button>
-                            ))}
+                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター */}
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5 select-none">
+                            {/* 左舷ボタン */}
+                            <button
+                                type="button"
+                                onClick={() => setInputSide(inputSide === 'port' ? 'both' : 'port')}
+                                className={`flex-1 py-1.5 px-2 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
+                                    inputSide === 'port'
+                                        ? 'bg-red-500 text-white border-red-600 shadow-sm ring-2 ring-red-300 dark:ring-red-900'
+                                        : inputSide === 'both'
+                                        ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/60 hover:bg-red-100'
+                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 opacity-60'
+                                }`}
+                            >
+                                <span>左舷</span>
+                                {inputSide === 'port' && <span className="text-[10px] font-bold bg-white/20 px-1 rounded">のみ</span>}
+                            </button>
+
+                            {/* 両舷ボタン（真ん中） */}
+                            <button
+                                type="button"
+                                onClick={() => setInputSide('both')}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-black border transition-all active:scale-95 shrink-0 ${
+                                    inputSide === 'both'
+                                        ? 'bg-sky-600 text-white border-sky-700 shadow-sm'
+                                        : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-300 dark:border-slate-600 hover:bg-gray-50'
+                                }`}
+                            >
+                                両舷
+                            </button>
+
+                            {/* 右舷ボタン */}
+                            <button
+                                type="button"
+                                onClick={() => setInputSide(inputSide === 'starboard' ? 'both' : 'starboard')}
+                                className={`flex-1 py-1.5 px-2 rounded-lg text-sm font-black border transition-all flex items-center justify-center gap-1 active:scale-95 ${
+                                    inputSide === 'starboard'
+                                        ? 'bg-emerald-600 text-white border-emerald-700 shadow-sm ring-2 ring-emerald-300 dark:ring-emerald-900'
+                                        : inputSide === 'both'
+                                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/60 hover:bg-emerald-100'
+                                        : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-500 border-gray-200 dark:border-slate-700 opacity-60'
+                                }`}
+                            >
+                                <span>右舷</span>
+                                {inputSide === 'starboard' && <span className="text-[10px] font-bold bg-white/20 px-1 rounded">のみ</span>}
+                            </button>
                         </div>
 
+                        {/* 座席リスト描画 */}
                         {inputSide === 'both' ? (
                             <div className="grid grid-cols-2 gap-2">
                                 <div>
-                                    <div className="text-center mb-1 text-sm font-black text-red-500 border-b pb-1">左舷</div>
                                     {portSeats.map((s, i) => <SeatInput key={`p-${i}`} side="port" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
                                 </div>
                                 <div>
-                                    <div className="text-center mb-1 text-sm font-black text-emerald-600 border-b pb-1">右舷</div>
                                     {starboardSeats.map((s, i) => <SeatInput key={`s-${i}`} side="starboard" seat={s} index={i} onSeatChange={handleSeatChange} onCountDelta={handleCountDelta} viewMode="both" onToggleVisibility={handleToggleVisibility} />)}
                                 </div>
                             </div>
