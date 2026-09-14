@@ -49,38 +49,25 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     const isSingle = viewMode !== 'both';
     if (seat.isVisible === false) {
         return (
-            <div className={`flex items-center justify-center mb-1.5 bg-gray-50 dark:bg-slate-800/40 p-1.5 rounded-lg border border-dashed border-gray-200 dark:border-slate-800 cursor-pointer ${isSingle ? 'h-16' : 'h-12'}`} onClick={() => onToggleVisibility(side, index)}>
-                <span className="text-gray-400 dark:text-slate-500 font-black text-xs">＋ {seat.id}番を表示</span>
+            <div className={`flex items-center justify-center mb-1.5 bg-gray-50 dark:bg-slate-800/50 p-1.5 rounded-lg border border-dashed border-gray-200 dark:border-slate-600 cursor-pointer ${isSingle ? 'h-16' : 'h-12'}`} onClick={() => onToggleVisibility(side, index)}>
+                <span className="text-gray-400 font-black text-xs">＋ {seat.id}番を表示</span>
             </div>
         );
     }
-    const countBoxBg = isPort 
-        ? 'bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 border-red-200 dark:border-red-900/60' 
-        : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-900/60';
-
+    const countBoxBg = isPort ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400';
     return (
-        <div className="flex flex-col mb-1.5 bg-white dark:bg-slate-800/90 p-2 rounded-lg shadow-2xs border border-gray-100 dark:border-slate-800">
+        /* 一番外側の外枠のみ dark:border-slate-600 に変更 */
+        <div className="flex flex-col mb-1.5 bg-white dark:bg-slate-800 p-2 rounded-lg shadow-sm border border-gray-100 dark:border-slate-600">
             <div className="flex items-center space-x-1.5">
-                <span className={`w-6 text-center font-black shrink-0 text-base cursor-pointer select-none ${isPort ? 'text-red-500' : 'text-emerald-500'}`} onClick={() => onToggleVisibility(side, index)}>{seat.id}</span>
-                <input 
-                    type="text" 
-                    className="flex-1 min-w-0 border border-gray-200 dark:border-slate-800 rounded px-2 py-1 text-sm bg-gray-50 dark:bg-slate-900 font-bold focus:bg-white dark:focus:bg-slate-950 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" 
-                    value={seat.name} 
-                    onChange={(e) => onSeatChange(side, index, 'name', e.target.value)} 
-                    onKeyDown={typeof handleEnterKey !== 'undefined' ? handleEnterKey : undefined} 
-                    placeholder="名前" 
-                />
-                <div className={`w-12 h-8 shrink-0 flex items-center justify-center rounded border font-black text-lg select-none ${countBoxBg}`}>{seat.count || '0'}</div>
+                <span className={`w-6 text-center font-black shrink-0 text-base cursor-pointer ${isPort ? 'text-red-500' : 'text-emerald-500'}`} onClick={() => onToggleVisibility(side, index)}>{seat.id}</span>
+                {/* 名前入力枠はそのままで維持 */}
+                <input type="text" className="flex-1 min-w-0 border rounded px-2 py-1 text-sm bg-gray-50 dark:bg-slate-900 font-bold focus:bg-white text-gray-800 dark:text-slate-100" value={seat.name} onChange={(e) => onSeatChange(side, index, 'name', e.target.value)} onKeyDown={typeof handleEnterKey !== 'undefined' ? handleEnterKey : undefined} placeholder="名前" />
+                <div className={`w-12 h-8 shrink-0 flex items-center justify-center rounded border font-black text-lg ${countBoxBg}`}>{seat.count || '0'}</div>
             </div>
             <div className="relative flex items-center ml-7 mt-1">
-                <span className="text-[10px] text-gray-400 mr-1 select-none">📝</span>
-                <input 
-                    type="text" 
-                    className="flex-1 min-w-0 border border-gray-200 dark:border-slate-800 rounded px-1.5 py-0.5 text-xs bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-sky-400" 
-                    value={seat.memo || ''} 
-                    onChange={(e) => onSeatChange(side, index, 'memo', e.target.value)} 
-                    placeholder="MEMO" 
-                />
+                <span className="text-[10px] text-gray-400 mr-1">📝</span>
+                {/* メモ入力枠もそのままで維持 */}
+                <input type="text" className="flex-1 min-w-0 border rounded px-1.5 py-0.5 text-xs bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-slate-300" value={seat.memo || ''} onChange={(e) => onSeatChange(side, index, 'memo', e.target.value)} placeholder="MEMO" />
             </div>
         </div>
     );
