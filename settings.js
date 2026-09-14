@@ -24,8 +24,7 @@ function SettingsPanel({
     const fileInputRef = React.useRef(null);
     const [tempKey, setTempKey] = React.useState(userApiKey || '');
     const [showKey, setShowKey] = React.useState(false);
-    const [showTextInput, setShowTextInput] = React.useState(false);
-    const [pasteText, setPasteText] = React.useState('');
+    
     const [isAnalyzingTide, setIsAnalyzingTide] = React.useState(false);
     const [isAnalyzingWeather, setIsAnalyzingWeather] = React.useState(false);
 
@@ -338,16 +337,7 @@ function SettingsPanel({
         reader.readAsText(file, 'UTF-8');
     };
 
-    // テキスト貼り付け復元
-    const handlePasteRestore = () => {
-        try {
-            applyRestoreData(pasteText);
-            setPasteText('');
-            setShowTextInput(false);
-        } catch (err) {
-            setToastMessage('データの読み取りに失敗しました。コピーした文字列が正しいかご確認ください。');
-        }
-    };
+    
 
     // 完全初期化
     const handleFullReset = () => {
@@ -741,34 +731,7 @@ function SettingsPanel({
                                     />
                                 </div>
 
-                                {/* テキスト貼り付け枠 */}
-                                <div className="pt-1">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowTextInput(!showTextInput)}
-                                        className="text-xs text-sky-600 dark:text-sky-400 underline font-bold"
-                                    >
-                                        {showTextInput ? '▲ 貼り付け入力を閉じる' : '▼ ファイルが選べない時はこちら（文字貼り付けで復元）'}
-                                    </button>
-
-                                    {showTextInput && (
-                                        <div className="mt-2 space-y-2 animate-[fadeIn_0.15s_ease-out]">
-                                            <textarea
-                                                rows="3"
-                                                className="w-full border rounded-lg p-2.5 text-xs font-mono bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
-                                                placeholder="バックアップファイルの中身をコピーしてここに貼り付け"
-                                                value={pasteText}
-                                                onChange={(e) => setPasteText(e.target.value)}
-                                            />
-                                            <button
-                                                onClick={handlePasteRestore}
-                                                className="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-sm transition-all"
-                                            >
-                                                貼り付けた内容から復元する
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+                                
                             </div>
 
                             {/* Gemini AI設定 */}
