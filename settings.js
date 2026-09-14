@@ -400,7 +400,7 @@ function SettingsPanel({
                                 key={tab.id}
                                 type="button"
                                 onClick={() => setActiveSettingsTab(tab.id)}
-                                className={`flex-1 py-2.5 px-2 rounded-t-xl text-xs sm:text-sm font-black transition-all relative select-none ${
+                                className={`flex-1 py-2.5 px-2 rounded-t-xl text-sm font-black transition-all relative select-none ${
                                     isActive
                                         /* 選択中：下の入力エリアとシームレスに結合 */
                                         ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-600 dark:border-t-sky-400 border-x-sky-300 dark:border-x-slate-700 -mb-px z-10 shadow-sm'
@@ -732,11 +732,11 @@ function SettingsPanel({
                                     />
                                 </div>
 
-                                {/* 2段目：派手さを抑えた上品な赤の「アプリを初期化」ボタン */}
-                                <div className="pt-1.5 border-t border-sky-100 dark:border-slate-800">
+                                {/* 2段目：保存・復元と同じ横幅（w-1/2）のコンパクトな初期化ボタン */}
+                                <div className="pt-2 border-t border-sky-200/50 dark:border-slate-800 flex justify-center">
                                     <button
                                         onClick={handleFullReset}
-                                        className="w-full bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/70 font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                        className="w-1/2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/70 font-bold py-1.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
                                     >
                                         <span>⚠️</span> アプリを初期化
                                     </button>
