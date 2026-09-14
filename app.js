@@ -1403,7 +1403,7 @@ function App() {
             </div>
 
             {/* メインスクロールエリア（bg-slate-200 で白い履歴カードを際立たせる） */}
-            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-slate-200/90 dark:bg-slate-900">
+            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-blue-100/80 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         {/* 日付・釣り物 ＆ 海況サマリー（ワンサイズUP・波高完全非表示版） */}
@@ -1876,7 +1876,7 @@ function App() {
                                                 )}
                                             </button>
 
-                                            {/* 2. AI分析ボタン */}
+                                            {/* 2. AI分析ボタン（分析済なら黄色に変化） */}
                                             <button
                                                 type="button"
                                                 onClick={(e) => {
@@ -1888,7 +1888,11 @@ function App() {
                                                         handleRunAiAnalysis(r);
                                                     }
                                                 }}
-                                                className="flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 bg-white hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-2xs active:scale-95 transition-all select-none"
+                                                className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 border shadow-2xs active:scale-95 transition-all select-none ${
+                                                    r.aiAnalysisResult
+                                                        ? 'bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700'
+                                                        : 'bg-white hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-700 dark:text-emerald-400 border-slate-200 dark:border-slate-700'
+                                                }`}
                                             >
                                                 <span>📊</span>
                                                 <span>{analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '分析済' : '分析'}</span>
@@ -1916,7 +1920,7 @@ function App() {
                                                 </button>
                                             ) : null}
 
-                                            {/* 4. 釣果ボードボタン（一番右端に配置） */}
+                                            {/* 4. 釣果ボードボタン（標準デザインのまま一番右に配置） */}
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); setShareImageRecord(r); }}
@@ -1928,7 +1932,7 @@ function App() {
 
                                         </div>
 
-                                        {/* 【下段】左下：共有 ―― 右下：削除（四角い枠付き） */}
+                                        {/* 【下段】左下：共有 ―― 右下：削除（共有と同じ四角い枠付き） */}
                                         <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-800">
                                             {/* 左下：共有 */}
                                             <button
