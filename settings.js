@@ -397,8 +397,8 @@ function SettingsPanel({
                     </button>
                 </div>
 
-                {/* 案1: マリンネイビー */}
-<div className="flex bg-slate-800 dark:bg-slate-950 px-2 pt-2.5 gap-1.5 border-b border-slate-700 dark:border-slate-800 font-black shrink-0 items-end">
+                {/* 案2: スカイブルー */}
+<div className="flex bg-sky-200 dark:bg-slate-950 px-2 pt-2.5 gap-1.5 border-b border-sky-300 dark:border-slate-700 font-black shrink-0 items-end">
     {[
         { id: 'basic', label: '基本設定' },
         { id: 'weather', label: '気象・潮時' },
@@ -412,8 +412,8 @@ function SettingsPanel({
                 onClick={() => setActiveSettingsTab(tab.id)}
                 className={`flex-1 py-2.5 px-2 rounded-t-xl text-xs sm:text-sm font-black transition-all relative select-none ${
                     isActive
-                        ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-500 border-x-slate-300 dark:border-x-slate-700 -mb-px z-10 shadow-sm'
-                        : 'bg-slate-700/70 hover:bg-slate-700 text-sky-100 dark:text-slate-400 border-t border-x border-transparent active:scale-[0.98]'
+                        ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-600 border-x-sky-300 dark:border-x-slate-700 -mb-px z-10 shadow-sm'
+                        : 'bg-sky-100/80 hover:bg-sky-100 text-sky-800 dark:text-slate-400 border-t border-x border-transparent active:scale-[0.98]'
                 }`}
             >
                 {tab.label}
