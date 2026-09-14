@@ -449,43 +449,43 @@ function SettingsPanel({
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 text-sm sm:text-base no-scrollbar bg-white dark:bg-slate-800">
 
                     {/* ========================================== */}
-                    {/* タブ 1: 基本設定 */}
+                    {/* タブ 1: 基本設定（ダーク時の白枠・グレー枠トーンダウン版） */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
-                            {/* 画面テーマ切り替えスイッチ（グレー） */}
-                            <div className="flex justify-between items-center p-3 bg-amber-50/70 dark:bg-slate-900/60 rounded-xl border border-amber-200/80 dark:border-slate-700 shadow-sm">
+                            {/* 画面テーマ切り替えスイッチ */}
+                            <div className="flex justify-between items-center p-3 bg-amber-50/70 dark:bg-slate-900/60 rounded-xl border border-amber-200/80 dark:border-slate-800 shadow-2xs">
                                 <div>
                                     <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
                                     <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
                                 </div>
                                 <button
                                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-lg font-black text-sm shadow-sm active:scale-95 transition-all flex items-center gap-1"
+                                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-750 text-gray-800 dark:text-slate-200 rounded-lg font-black text-sm shadow-2xs active:scale-95 transition-all flex items-center gap-1"
                                 >
                                     {theme === 'dark' ? '🌙 ダークモード' : '☀️ 日中モード'}
                                 </button>
                             </div>
 
-                            {/* 釣り座席数設定（薄いミントグリーン） */}
-                            <div className="bg-emerald-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-emerald-200/80 dark:border-slate-700 space-y-2">
+                            {/* 釣り座席数設定 */}
+                            <div className="bg-emerald-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-emerald-200/80 dark:border-slate-800 space-y-2 shadow-2xs">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">釣り座の席数設定（0〜15席）</span>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label className="text-xs font-bold text-red-500 block mb-1">左舷 席数</label>
+                                        <label className="text-xs font-bold text-red-500 dark:text-red-400 block mb-1">左舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-center text-lg"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center text-lg focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={portCount}
                                             onChange={(e) => onCountChange('port', e.target.value)}
                                             placeholder="0"
                                         />
                                     </div>
                                     <div>
-                                        <label className="text-xs font-bold text-emerald-600 block mb-1">右舷 席数</label>
+                                        <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 block mb-1">右舷 席数</label>
                                         <input
                                             type="number" min="0" max="15"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-center text-lg"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-black bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center text-lg focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={starboardCount}
                                             onChange={(e) => onCountChange('starboard', e.target.value)}
                                             placeholder="0"
@@ -494,8 +494,8 @@ function SettingsPanel({
                                 </div>
                             </div>
 
-                            {/* 基本海況・ポイント（薄い水色） */}
-                            <div className="bg-sky-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200 dark:border-slate-700 space-y-2.5">
+                            {/* 基本海況・ポイント */}
+                            <div className="bg-sky-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200/80 dark:border-slate-800 space-y-2.5 shadow-2xs">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">基本海況・ポイント設定</span>
                                 
                                 {/* 1段目：釣り物 */}
@@ -504,7 +504,7 @@ function SettingsPanel({
                                     <input
                                         type="text"
                                         list="target-fish-options"
-                                        className="w-full border rounded-lg px-3 py-2 font-black text-sm bg-white dark:bg-slate-800"
+                                        className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-3 py-2 font-black text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                         value={targetFish}
                                         onChange={(e) => setTargetFish(e.target.value)}
                                         placeholder="選択または入力（例: カワハギ / アジ）"
@@ -518,7 +518,7 @@ function SettingsPanel({
                                         <input
                                             type="text"
                                             list="point-options"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={point}
                                             onChange={(e) => setPoint(e.target.value)}
                                             placeholder="選択または入力"
@@ -528,7 +528,7 @@ function SettingsPanel({
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水深 (m)</label>
                                         <input
                                             type="text"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={waterDepth}
                                             onChange={(e) => setWaterDepth(e.target.value)}
                                             placeholder="例: 30〜60"
@@ -542,7 +542,7 @@ function SettingsPanel({
                                         <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">水温 (℃)</label>
                                         <input
                                             type="text"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={waterTemp}
                                             onChange={(e) => setWaterTemp(e.target.value)}
                                             placeholder="例: 20〜24"
@@ -553,7 +553,7 @@ function SettingsPanel({
                                         <input
                                             type="text"
                                             list="tide-color-options"
-                                            className="w-full border rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800"
+                                            className="w-full border border-gray-200 dark:border-slate-800 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
                                             value={tide}
                                             onChange={(e) => setTide(e.target.value)}
                                             placeholder="例: 澄み / 薄濁り"
