@@ -1374,8 +1374,8 @@ function App() {
             <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-200/50 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
-                        {/* 日付・釣り物 ＆ 海況サマリー（落ち着いた砂浜ベージュ ＆ ダーク枠線抑制版） */}
-                        <div className="bg-[#f7f5f0] dark:bg-slate-800/90 rounded-xl p-3.5 shadow-sm border border-stone-300/80 dark:border-slate-800 flex flex-col gap-2.5">
+                        {/* 日付・釣り物 ＆ 海況サマリー（2段階濃いめのクリアな水色） */}
+<div className="bg-sky-200 border border-sky-300 dark:bg-slate-800/90 dark:border-slate-800 rounded-xl p-3.5 shadow-sm flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
                                 {/* 日付選択 */}
                                 <input 
