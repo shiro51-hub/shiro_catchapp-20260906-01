@@ -1361,7 +1361,7 @@ function App() {
                     >
                         山下丸
                     </span>
-                    <span className="font-sans font-extrabold text-xs sm:text-sm tracking-wider text-sky-300 drop-shadow-sm mt-0.5 uppercase">
+                    <span className="font-sans font-extrabold text-sm sm:text-base tracking-tight text-sky-300 drop-shadow-sm mt-0.5 uppercase">
                         {activeTab === 'history' ? 'SeaNote Archive' : activeTab === 'counter' ? 'Count Fish' : 'CatchLog Pro'}
                     </span>
                 </div>
