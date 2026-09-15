@@ -1409,13 +1409,10 @@ function App() {
                         {/* 日付・釣り物 ＆ 海況サマリー（落ち着いた砂浜ベージュ ＆ ダーク枠線抑制版） */}
                         <div className="bg-[#f7f5f0] dark:bg-slate-800/90 rounded-xl p-3.5 shadow-sm border border-stone-300/80 dark:border-slate-800 flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
-                                {/* 日付選択：設定画面と同じグレー枠に統一 */}
+                                {/* 日付選択 */}
                                 <input 
                                     type="date" 
                                     className="border border-stone-300 dark:border-slate-500 rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 shadow-2xs" 
-                                    value={date} 
-                                    onChange={(e) => setDate(e.target.value)} 
-                                /> 
                                     value={date} 
                                     onChange={(e) => setDate(e.target.value)} 
                                 />
