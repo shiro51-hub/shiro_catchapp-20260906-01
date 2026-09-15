@@ -93,11 +93,11 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             <div className="flex-1 w-full overflow-y-auto pb-[240px] pt-6 px-3 flex justify-center items-start no-scrollbar">
                 <div 
                     ref={cardRef} 
-                    className={`${bgClass} ${textClass} relative flex flex-col border-[5px] shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
+                    className={`${bgClass} ${textClass} relative flex flex-col border-[4px] border-slate-700 dark:border-slate-500 shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
-                    <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー：天候を削除し、日付・曜日をロゴ直下に完全センタリング */}
+                    <div className="p-4 pb-5 flex flex-col gap-3 relative z-10">
+                        {/* ヘッダー：天候なし、日付をロゴ直下に完全センタリング */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -117,8 +117,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 成績サマリー枠：【上：釣果 ＆ 竿頭】＋【下：型・総計・平均】 */}
-                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col gap-2 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                        {/* 成績サマリー枠（外枠を dark:border-slate-500 に統一） */}
+                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col gap-2 ${isDark ? 'bg-slate-800/85 border-slate-600 dark:border-slate-500' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
                                     <div className="flex flex-col items-start shrink-0">
@@ -211,10 +211,10 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 座席リスト */}
+                        {/* 座席リスト（外枠を dark:border-slate-500 に統一） */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
-                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600 dark:border-slate-500' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>左舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {pSeats.map((s, i) => {
@@ -244,7 +244,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
                             {/* 右舷 */}
-                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-700/60' : 'bg-black/15 border-white/20'}`}>
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600 dark:border-slate-500' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>右舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {sSeats.map((s, i) => {
@@ -274,6 +274,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
                         {/* 最下段フッター：ポイント・水深を広げ、途切れず全体表示するバランス配分 */}
                         <div className={`rounded-lg px-3 py-2 text-xs sm:text-sm border flex items-center justify-between font-black ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
