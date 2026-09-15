@@ -87,11 +87,11 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
             <div className="flex-1 w-full overflow-y-auto pb-[240px] pt-6 px-3 flex justify-center items-start no-scrollbar">
                 <div 
                     ref={cardRef} 
-                    className={`${bgClass} ${textClass} relative flex flex-col border-[4px] border-slate-700 dark:border-slate-500 shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
+                    className={`${bgClass} ${textClass} relative flex flex-col border-2 border-slate-700 dark:border-slate-600 shadow-2xl rounded-xl overflow-hidden transition-all duration-300`} 
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-5 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー：天候なし、日付をロゴ直下に完全センタリング */}
+                        {/* ヘッダー：日付・曜日を1ランク拡大（text-xs sm:text-sm） */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -100,7 +100,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     className="h-8 sm:h-9 object-contain" 
                                     alt="yamashitamaru" 
                                 />
-                                <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-1 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
+                                <div className={`text-xs sm:text-sm font-bold tracking-wider mt-1 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
                                     {(record.date || '').replace(/-/g, '.')} {getDayOfWeek(record.date)}
                                 </div>
                             </div>
@@ -111,8 +111,8 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 成績サマリー枠（外枠を dark:border-slate-500 に統一） */}
-                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col gap-2 ${isDark ? 'bg-slate-800/85 border-slate-600 dark:border-slate-500' : 'bg-black/20 border-white/20'}`}>
+                        {/* 成績サマリー枠：枠線を細く上品に（border-slate-600）、下部見切れ防止（pb-3.5） */}
+                        <div className={`rounded-lg px-3.5 pt-2.5 pb-3.5 border shadow-sm flex flex-col gap-2.5 ${isDark ? 'bg-slate-800/85 border-slate-600/80' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
                                     <div className="flex flex-col items-start shrink-0">
@@ -185,30 +185,30 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             )}
 
-                            {/* 型・総計・平均 */}
-                            <div className="grid grid-cols-3 pt-2 border-t border-white/10 text-center font-bold text-xs sm:text-sm items-center">
-                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-white'}`}>
-                                    <span className="text-[11px] opacity-75 mr-1">型:</span>
-                                    <span className="font-black text-white inline-block">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span>
-                                    <span className="text-[11px] opacity-75 ml-0.5">cm</span>
+                            {/* 型・総計・平均：フォント1ランク拡大（text-sm sm:text-base）＆ 見切れ防止マージン */}
+                            <div className="grid grid-cols-3 pt-2.5 border-t border-white/10 text-center font-bold text-sm sm:text-base items-center" style={{ minHeight: '34px' }}>
+                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-white'}`} style={{ paddingBottom: '2px' }}>
+                                    <span className="text-xs opacity-75 mr-1 font-normal">型:</span>
+                                    <span className="font-black text-white text-base sm:text-lg inline-block">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span>
+                                    <span className="text-xs opacity-75 ml-0.5 font-normal">cm</span>
                                 </div>
-                                <div className={`truncate border-x border-white/10 px-1 ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>
-                                    <span className="text-[11px] opacity-75 mr-1">総計:</span>
-                                    <span className="font-black text-white inline-block">{record.total || 0}</span>
-                                    <span className="text-[11px] opacity-75 ml-0.5">{unit}</span>
+                                <div className={`truncate border-x border-white/10 px-1 ${isDark ? 'text-slate-300' : 'text-sky-100'}`} style={{ paddingBottom: '2px' }}>
+                                    <span className="text-xs opacity-75 mr-1 font-normal">総計:</span>
+                                    <span className="font-black text-white text-base sm:text-lg inline-block">{record.total || 0}</span>
+                                    <span className="text-xs opacity-75 ml-0.5 font-normal">{unit}</span>
                                 </div>
-                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>
-                                    <span className="text-[11px] opacity-75 mr-1">平均:</span>
-                                    <span className="font-black text-white inline-block">{record.avg || 0}</span>
-                                    <span className="text-[11px] opacity-75 ml-0.5">{unit}</span>
+                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-sky-100'}`} style={{ paddingBottom: '2px' }}>
+                                    <span className="text-xs opacity-75 mr-1 font-normal">平均:</span>
+                                    <span className="font-black text-white text-base sm:text-lg inline-block">{record.avg || 0}</span>
+                                    <span className="text-xs opacity-75 ml-0.5 font-normal">{unit}</span>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 座席リスト（外枠を dark:border-slate-500 に統一） */}
+                        {/* 座席リスト：枠線を落ち着いた border-slate-600/80 に統一 */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
-                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600 dark:border-slate-500' : 'bg-black/15 border-white/20'}`}>
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600/80' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-red-400 border-red-900/50' : 'text-pink-300 border-pink-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>左舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {pSeats.map((s, i) => {
@@ -238,7 +238,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
                             {/* 右舷 */}
-                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600 dark:border-slate-500' : 'bg-black/15 border-white/20'}`}>
+                            <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600/80' : 'bg-black/15 border-white/20'}`}>
                                 <div className={`font-black tracking-widest border-b pb-1 mb-2 text-center text-xs ${isDark ? 'text-emerald-400 border-emerald-900/50' : 'text-emerald-300 border-emerald-300/30'}`} style={{ lineHeight: 1.5, paddingBottom: '3px' }}>右舷</div>
                                 <div className={isCrowded ? 'space-y-1.5' : 'space-y-2'}>
                                     {sSeats.map((s, i) => {
@@ -270,7 +270,6 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                         </div>
                     </div>
                 </div>
-            </div>
 
             {/* コントロールパネル */}
             <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-3.5 flex flex-col gap-2 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
