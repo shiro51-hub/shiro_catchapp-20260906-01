@@ -813,7 +813,7 @@ function SettingsPanel({
                     )}
 
                     {/* ========================================== */}
-                    {/* タブ 2: 気象・潮時（外枠を dark:border-slate-500 に統一） */}
+                    {/* タブ 2: 気象・潮時（外枠：dark:border-slate-500） */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'weather' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
