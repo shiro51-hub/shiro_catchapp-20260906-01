@@ -191,7 +191,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             )}
 
-                            {/* 型・総計・平均をボックス内に自然に統合 */}
+                            {/* 型・総計・平均 */}
                             <div className="grid grid-cols-3 pt-2 border-t border-white/10 text-center font-bold text-xs sm:text-sm items-center">
                                 <div className={`truncate ${isDark ? 'text-slate-300' : 'text-white'}`}>
                                     <span className="text-[11px] opacity-75 mr-1">型:</span>
@@ -296,6 +296,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
 
