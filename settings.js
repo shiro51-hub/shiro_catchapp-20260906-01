@@ -380,7 +380,12 @@ function SettingsPanel({
                     <span className="font-black text-lg flex items-center gap-2">
                         <IconSettings className="w-5 h-5 text-sky-600 dark:text-sky-400" /> 設定・海況管理
                     </span>
-                    <button onClick={() => setIsSettingsOpen(false)} className="w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-sm hover:bg-gray-300 active:scale-95">
+                    <button 
+                        type="button"
+                        onClick={() => setIsSettingsOpen(false)} 
+                        className="w-10 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl flex items-center justify-center font-black text-base text-gray-600 dark:text-slate-300 shadow-xs active:scale-90 transition-all select-none"
+                        aria-label="閉じる"
+                    >
                         ✕
                     </button>
                 </div>
