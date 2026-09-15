@@ -1412,7 +1412,10 @@ function App() {
                                 {/* 日付選択：設定画面と同じグレー枠に統一 */}
                                 <input 
                                     type="date" 
-                                    className="border border-stone-300 dark:border-slate-600 rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 shadow-2xs" 
+                                    className="border border-stone-300 dark:border-slate-500 rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 shadow-2xs" 
+                                    value={date} 
+                                    onChange={(e) => setDate(e.target.value)} 
+                                /> 
                                     value={date} 
                                     onChange={(e) => setDate(e.target.value)} 
                                 />
