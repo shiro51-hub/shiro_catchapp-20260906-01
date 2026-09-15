@@ -91,7 +91,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-5 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー：日付・曜日を1ランク拡大（text-xs sm:text-sm） */}
+                        {/* ヘッダー：天候なし、日付をロゴ直下に完全センタリング */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -111,7 +111,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 成績サマリー枠：枠線を細く上品に（border-slate-600）、下部見切れ防止（pb-3.5） */}
+                        {/* 成績サマリー枠：落ち着いた細枠（border-slate-600/80）＆ 下部見切れ防止 */}
                         <div className={`rounded-lg px-3.5 pt-2.5 pb-3.5 border shadow-sm flex flex-col gap-2.5 ${isDark ? 'bg-slate-800/85 border-slate-600/80' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
@@ -185,7 +185,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             )}
 
-                            {/* 型・総計・平均：フォント1ランク拡大（text-sm sm:text-base）＆ 見切れ防止マージン */}
+                            {/* 型・総計・平均：フォント拡大＆下部見切れ防止パディング */}
                             <div className="grid grid-cols-3 pt-2.5 border-t border-white/10 text-center font-bold text-sm sm:text-base items-center" style={{ minHeight: '34px' }}>
                                 <div className={`truncate ${isDark ? 'text-slate-300' : 'text-white'}`} style={{ paddingBottom: '2px' }}>
                                     <span className="text-xs opacity-75 mr-1 font-normal">型:</span>
@@ -205,7 +205,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 座席リスト：枠線を落ち着いた border-slate-600/80 に統一 */}
+                        {/* 座席リスト */}
                         <div className="flex gap-2 w-full">
                             {/* 左舷 */}
                             <div className={`flex-1 rounded-lg ${isCrowded ? 'p-1.5' : 'p-2.5'} border backdrop-blur-sm ${isDark ? 'bg-slate-800/60 border-slate-600/80' : 'bg-black/15 border-white/20'}`}>
@@ -270,6 +270,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                         </div>
                     </div>
                 </div>
+            </div>
 
             {/* コントロールパネル */}
             <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl p-3.5 flex flex-col gap-2 absolute bottom-0 z-10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)]">
