@@ -337,8 +337,6 @@ function SettingsPanel({
         reader.readAsText(file, 'UTF-8');
     };
 
-    
-
     // 完全初期化
     const handleFullReset = () => {
         const confirm1 = window.confirm('【警告】すべての釣果記録と設定を初期化しますか？\nこの操作は絶対に取り消せません。');
@@ -387,7 +385,7 @@ function SettingsPanel({
                     </button>
                 </div>
 
-                {/* 3タブ切り替えバー（ダークモード枠線を沈めた版） */}
+                {/* 3タブ切り替えバー */}
                 <div className="flex bg-sky-200 dark:bg-slate-950 px-2 pt-0.5 gap-1.5 border-b border-sky-300 dark:border-slate-800 font-black shrink-0 items-end">
                     {[
                         { id: 'basic', label: '基本設定' },
@@ -402,9 +400,7 @@ function SettingsPanel({
                                 onClick={() => setActiveSettingsTab(tab.id)}
                                 className={`flex-1 py-2.5 px-2 rounded-t-xl text-sm font-black transition-all relative select-none ${
                                     isActive
-                                        /* 選択中：下の入力エリアとシームレスに結合しつつ、ダーク時の横枠を暗く抑制 */
                                         ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 border-t-2 border-x border-t-sky-600 dark:border-t-sky-400 border-x-sky-300 dark:border-x-slate-800 -mb-px z-10 shadow-sm'
-                                        /* 未選択：ダーク時は境界線を暗く沈める */
                                         : 'bg-sky-100/85 hover:bg-sky-100 dark:bg-slate-900 hover:dark:bg-slate-850 text-sky-800 dark:text-slate-400 border-t border-x border-sky-200/60 dark:border-slate-800/80 hover:dark:text-white active:scale-[0.98]'
                                 }`}
                             >
@@ -445,16 +441,16 @@ function SettingsPanel({
                     <option value="暗濁り" />
                 </datalist>
 
-                {/* スクロールコンテンツ（選択中タブとシームレスに結合） */}
+                {/* スクロールコンテンツ */}
                 <div className="flex-1 overflow-y-auto p-4 space-y-4 text-sm sm:text-base no-scrollbar bg-white dark:bg-slate-800">
 
                     {/* ========================================== */}
-                    {/* タブ 1: 基本設定（1段階明るいグレー枠版） */}
+                    {/* タブ 1: 基本設定（外枠：dark:border-slate-500） */}
                     {/* ========================================== */}
                     {activeSettingsTab === 'basic' && (
                         <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
                             {/* 画面テーマ切り替えスイッチ */}
-                            <div className="flex justify-between items-center p-3 bg-amber-50/70 dark:bg-slate-900/60 rounded-xl border border-amber-200/80 dark:border-slate-600 shadow-2xs">
+                            <div className="flex justify-between items-center p-3 bg-amber-50/70 dark:bg-slate-900/60 rounded-xl border border-amber-200/80 dark:border-slate-500 shadow-2xs">
                                 <div>
                                     <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
                                     <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
@@ -468,7 +464,7 @@ function SettingsPanel({
                             </div>
 
                             {/* 釣り座席数設定 */}
-                            <div className="bg-emerald-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-emerald-200/80 dark:border-slate-600 space-y-2 shadow-2xs">
+                            <div className="bg-emerald-50/60 dark:bg-slate-900/60 p-3 rounded-xl border border-emerald-200/80 dark:border-slate-500 space-y-2 shadow-2xs">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">釣り座の席数設定（0〜15席）</span>
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
@@ -495,7 +491,7 @@ function SettingsPanel({
                             </div>
 
                             {/* 基本海況・ポイント */}
-                            <div className="bg-sky-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200/80 dark:border-slate-600 space-y-2.5 shadow-2xs">
+                            <div className="bg-sky-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200/80 dark:border-slate-500 space-y-2.5 shadow-2xs">
                                 <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">基本海況・ポイント設定</span>
                                 
                                 {/* 1段目：釣り物 */}
@@ -558,138 +554,6 @@ function SettingsPanel({
                                             onChange={(e) => setTide(e.target.value)}
                                             placeholder="例: 澄み / 薄濁り"
                                         />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ========================================== */}
-                    {/* タブ 2: 気象・潮時（基本設定と統一したグレー枠版） */}
-                    {/* ========================================== */}
-                    {activeSettingsTab === 'weather' && (
-                        <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
-                            
-                            {/* 上段：潮時ブロック */}
-                            <div className="bg-sky-50 dark:bg-slate-900/60 p-3 rounded-xl border border-sky-200/80 dark:border-slate-600 space-y-2.5 shadow-2xs">
-                                <div className="flex justify-between items-center">
-                                    <span className="font-black text-sky-900 dark:text-sky-300 block text-sm">🌊 潮時データ</span>
-                                    <span className="text-xs text-gray-400">カウンターのアラート連動</span>
-                                </div>
-
-                                {/* 潮時表画像解析ボタン */}
-                                <button
-                                    onClick={() => tideImageInputRef.current && tideImageInputRef.current.click()}
-                                    disabled={isAnalyzingTide}
-                                    className="w-full bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
-                                >
-                                    {isAnalyzingTide ? <span className="animate-spin">↻</span> : <span>📷</span>}
-                                    <span>潮時表の画像を自動読み取り</span>
-                                </button>
-                                <input ref={tideImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleTideImageAnalysis} />
-
-                                <div className="pt-1 space-y-2">
-                                    {/* 潮回り */}
-                                    <div>
-                                        <label className="text-xs font-bold text-sky-700 dark:text-sky-300 block mb-1">潮回り（大潮・中潮など）</label>
-                                        <input
-                                            type="text"
-                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
-                                            value={tideState}
-                                            onChange={(e) => setTideState(e.target.value)}
-                                            placeholder="例: 中潮"
-                                        />
-                                    </div>
-
-                                    {/* 満潮・干潮時刻 */}
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (1)</label>
-                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={highTide1} onChange={(e) => setHighTide1(e.target.value)} placeholder="05:30" />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-sky-600 dark:text-sky-400 block mb-1">満潮 (2)</label>
-                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={highTide2} onChange={(e) => setHighTide2(e.target.value)} placeholder="17:45" />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (1)</label>
-                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={lowTide1} onChange={(e) => setLowTide1(e.target.value)} placeholder="11:20" />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-amber-600 dark:text-amber-400 block mb-1">干潮 (2)</label>
-                                            <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 text-center focus:outline-none focus:ring-1 focus:ring-sky-400" value={lowTide2} onChange={(e) => setLowTide2(e.target.value)} placeholder="23:50" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* 下段：気象・風波ブロック */}
-                            <div className="bg-amber-50/70 dark:bg-slate-900/60 p-3 rounded-xl border border-amber-200/80 dark:border-slate-600 space-y-2.5 shadow-2xs">
-                                <span className="font-black text-amber-900 dark:text-amber-300 block text-sm">☀️ 気象・風・波データ</span>
-
-                                {/* 天気予報画像解析ボタン */}
-                                <button
-                                    onClick={() => weatherImageInputRef.current && weatherImageInputRef.current.click()}
-                                    disabled={isAnalyzingWeather}
-                                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-black py-2.5 rounded-xl shadow-sm text-sm flex items-center justify-center gap-1 active:scale-95 transition-all"
-                                >
-                                    {isAnalyzingWeather ? <span className="animate-spin">↻</span> : <span>📷</span>}
-                                    <span>天気予報の画像を自動読み取り</span>
-                                </button>
-                                <input ref={weatherImageInputRef} type="file" accept="image/*" className="hidden" onChange={handleWeatherImageAnalysis} />
-
-                                <div className="grid grid-cols-2 gap-2 pt-1">
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (前半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={weather1} onChange={(e) => setWeather1(e.target.value)} placeholder="例: 晴れ" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">天候 (後半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={weather2} onChange={(e) => setWeather2(e.target.value)} placeholder="例: 曇り" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (前半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windDir1} onChange={(e) => setWindDir1(e.target.value)} placeholder="例: 北東" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風向 (後半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windDir2} onChange={(e) => setWindDir2(e.target.value)} placeholder="例: 南西" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (前半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windSpeed1} onChange={(e) => setWindSpeed1(e.target.value)} placeholder="例: 3m" />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">風速 (後半)</label>
-                                        <input type="text" className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400" value={windSpeed2} onChange={(e) => setWindSpeed2(e.target.value)} placeholder="例: 6m" />
-                                    </div>
-
-                                    {/* 波高プルダウン */}
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (前半)</label>
-                                        <select
-                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
-                                            value={waveHeight1}
-                                            onChange={(e) => setWaveHeight1(e.target.value)}
-                                        >
-                                            <option value="">選択してください</option>
-                                            {waveHeightOptions.map((opt) => (
-                                                <option key={`wh1-${opt}`} value={opt}>{opt}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">波高 (後半)</label>
-                                        <select
-                                            className="w-full border border-gray-200 dark:border-slate-600 rounded-lg px-2.5 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-400"
-                                            value={waveHeight2}
-                                            onChange={(e) => setWaveHeight2(e.target.value)}
-                                        >
-                                            <option value="">選択してください</option>
-                                            {waveHeightOptions.map((opt) => (
-                                                <option key={`wh2-${opt}`} value={opt}>{opt}</option>
-                                            ))}
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -823,6 +687,103 @@ function SettingsPanel({
                                             ))}
                                         </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ========================================== */}
+                    {/* タブ 3: システム（外枠：dark:border-slate-500） */}
+                    {/* ========================================== */}
+                    {activeSettingsTab === 'system' && (
+                        <div className="space-y-4 animate-[fadeIn_0.15s_ease-out]">
+                            {/* データ管理・バックアップ */}
+                            <div className="bg-sky-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-sky-100 dark:border-slate-500 space-y-2.5">
+                                <span className="font-black text-sky-800 dark:text-sky-300 block text-sm">データ管理・メンテナンス</span>
+                                <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
+                                    釣果記録の保存・復元、または初期化を行います。
+                                </p>
+                                
+                                {/* 1段目：保存 と 復元 */}
+                                <div className="grid grid-cols-2 gap-2 pt-1">
+                                    <button
+                                        onClick={handleExportData}
+                                        className="w-full bg-sky-100 hover:bg-sky-200 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                    >
+                                        <span>📥</span> データを保存
+                                    </button>
+
+                                    <button
+                                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                        className="w-full bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-black py-2.5 rounded-xl shadow-xs text-sm flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                    >
+                                        <span>📤</span> データを復元
+                                    </button>
+                                    
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        className="hidden"
+                                        onChange={handleFileImport}
+                                    />
+                                </div>
+
+                                {/* 2段目：コンパクトな初期化ボタン */}
+                                <div className="pt-2 border-t border-sky-200/50 dark:border-slate-800 flex justify-center">
+                                    <button
+                                        onClick={handleFullReset}
+                                        className="w-1/2 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/70 font-bold py-1.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 active:scale-95 transition-all"
+                                    >
+                                        <span>⚠️</span> アプリを初期化
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Gemini AI設定 */}
+                            <div className="bg-gray-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-gray-200 dark:border-slate-500 space-y-3">
+                                <span className="font-black text-gray-700 dark:text-slate-200 block text-sm">Gemini AI設定</span>
+                                
+                                {/* APIキー */}
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">APIキー</label>
+                                    <div className="relative">
+                                        <input
+                                            type={showKey ? "text" : "password"}
+                                            className="w-full border border-gray-300 dark:border-slate-700 rounded-lg pl-3 pr-10 py-2 font-mono text-sm bg-white dark:bg-slate-800"
+                                            placeholder="AIzaSy..."
+                                            value={tempKey}
+                                            onChange={(e) => setTempKey(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowKey(!showKey)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
+                                        >
+                                            {showKey ? '隠す' : '表示'}
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={handleSaveApiKey}
+                                        className="w-full mt-2 bg-sky-600 hover:bg-sky-700 text-white font-black py-2 rounded-lg text-sm shadow-sm transition-all active:scale-95"
+                                    >
+                                        APIキーを保存
+                                    </button>
+                                </div>
+
+                                {/* モデル選択 */}
+                                <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
+                                    <label className="text-xs font-bold text-gray-500 dark:text-slate-400 block mb-1">使用AIモデル（日報・多角分析用）</label>
+                                    <select
+                                        className="w-full border border-gray-300 dark:border-slate-700 rounded-lg px-3 py-2 font-bold text-sm bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100"
+                                        value={selectedAiModel}
+                                        onChange={handleModelChange}
+                                    >
+                                        {aiModelOptions.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                         </div>
