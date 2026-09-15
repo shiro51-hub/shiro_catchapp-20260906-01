@@ -92,26 +92,24 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     );
 };
 
-// タップ式カウンターカード（＋で緑フラッシュ、ーで赤フラッシュ連動版）
+// タップ式カウンターカード（外枠を dark:border-slate-500 に統一）
 const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
-    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
+    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
     
-    // フラッシュ状態管理: null(通常) | 'plus'(緑フラッシュ) | 'minus'(赤フラッシュ)
     const [flashType, setFlashType] = React.useState(null);
     const timerRef = React.useRef(null);
     const isLongPress = React.useRef(false);
     const isPort = side === 'port';
 
     const normalCardBg = isPort 
-        ? 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-red-900/40 text-red-700 dark:text-red-300' 
-        : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/40 text-emerald-700 dark:text-emerald-300';
+        ? 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-slate-500 text-red-700 dark:text-red-300' 
+        : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-100 dark:border-slate-500 text-emerald-700 dark:text-emerald-300';
 
     const nameColor = isPort
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
-    // プラス操作（緑色に発光）
     const handleCardTap = () => {
         onCountDelta(side, index, 1);
         setFlashType('plus');
@@ -119,7 +117,6 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
-    // マイナスボタン長押し（全クリア）
     const handlePointerDown = (e) => {
         e.stopPropagation();
         isLongPress.current = false;
@@ -130,7 +127,6 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         }, 1000);
     };
 
-    // マイナス操作（赤色に発光）
     const handlePointerUp = (e) => {
         e.stopPropagation();
         if (timerRef.current) clearTimeout(timerRef.current);
@@ -142,7 +138,6 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         }
     };
 
-    // プラス時はエメラルドグリーン、マイナス時は赤にフラッシュ
     const flashClass = flashType === 'plus'
         ? 'bg-emerald-500 text-white scale-[0.98]'
         : flashType === 'minus'
@@ -160,14 +155,15 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
                     {seat.count === '' ? '0' : seat.count}
                 </div>
             </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center border-l border-t rounded-tl-lg bg-white/70 dark:bg-slate-800/70 font-black text-base text-gray-800 dark:text-slate-100 active:bg-gray-200" onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>−</button>
+            <button className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center border-l border-t rounded-tl-lg bg-white/70 dark:bg-slate-800/70 border-gray-200 dark:border-slate-500 font-black text-base text-gray-800 dark:text-slate-100 active:bg-gray-200" onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>−</button>
         </div>
     );
 };
 
+// スライド式カウンターカード（外枠を dark:border-slate-500 に統一）
 const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
-    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 dark:text-slate-600 font-black text-xl">{seat.id}</span></div>;
+    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 dark:text-slate-600 font-black text-xl">{seat.id}</span></div>;
     
     const [startX, setStartX] = React.useState(0);
     const [curX, setCurX] = React.useState(0);
@@ -195,8 +191,8 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     };
 
     const cardBg = isPort 
-        ? 'bg-red-50 dark:bg-[#1a0f12] text-red-700 dark:text-red-300 border-red-200 dark:border-red-900/60' 
-        : 'bg-emerald-50 dark:bg-[#0d1c16] text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/60';
+        ? 'bg-red-50 dark:bg-[#1a0f12] text-red-700 dark:text-red-300 border-red-200 dark:border-slate-500' 
+        : 'bg-emerald-50 dark:bg-[#0d1c16] text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-slate-500';
 
     const nameColor = isPort
         ? 'text-red-300/80 dark:text-red-300/40'
@@ -209,7 +205,7 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         : cardBg;
 
     return (
-        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-800 overflow-hidden flex-1 flex flex-col tap-none select-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
+        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 overflow-hidden flex-1 flex flex-col tap-none select-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
             onTouchStart={(e) => handleStart(e.touches[0].clientX)} onTouchMove={(e) => handleMove(e.touches[0].clientX)} onTouchEnd={handleEnd}
             onMouseDown={(e) => handleStart(e.clientX)} onMouseMove={(e) => handleMove(e.clientX)} onMouseUp={handleEnd} onMouseLeave={() => isDragging && handleEnd()}>
             
@@ -233,13 +229,14 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     );
 };
 
+// テンキー式カウンターカード（外枠を dark:border-slate-500 に統一）
 const CounterKeypadCard = ({ side, seat, index, onSeatChange, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
-    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
+    if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
     const isPort = side === 'port';
     const cardBg = isPort 
-        ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-100 dark:border-red-900/40' 
-        : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-emerald-900/40';
+        ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-100 dark:border-slate-500' 
+        : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-100 dark:border-slate-500';
 
     const nameColor = isPort
         ? 'text-red-300/80 dark:text-red-300/40'
@@ -255,7 +252,6 @@ const CounterKeypadCard = ({ side, seat, index, onSeatChange, totalSeats }) => {
         </div>
     );
 };
-
 const TideAlertBanner = ({ tideState, highTide1, highTide2, lowTide1, lowTide2 }) => {
     const [now, setNow] = React.useState(new Date());
 
