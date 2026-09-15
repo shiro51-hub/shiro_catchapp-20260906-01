@@ -321,7 +321,7 @@ const TideAlertBanner = ({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
     const isSlackWater = isNearNextSlack || isNearPrevSlack;
 
     return (
-        <div className={`rounded-xl px-3 py-2 border shadow-sm transition-all duration-300 flex flex-col gap-1 shrink-0 ${
+        <div className={`rounded-xl px-2.5 py-1.5 border shadow-sm transition-all duration-300 flex flex-col gap-0.5 shrink-0 ${
             isSlackWater 
                 ? 'bg-gradient-to-r from-sky-100 via-cyan-100 to-sky-50 dark:from-sky-950/70 dark:via-cyan-950/60 dark:to-slate-800 border-cyan-400 dark:border-cyan-500' 
                 : 'bg-sky-50/90 dark:bg-slate-800/90 border-sky-200 dark:border-sky-900/60'
@@ -329,38 +329,38 @@ const TideAlertBanner = ({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 flex-wrap">
                     {tideState && (
-                        <span className="bg-sky-500 text-white font-black text-[10px] px-1.5 py-0.5 rounded shadow-sm">
+                        <span className="bg-sky-500 text-white font-black text-xs sm:text-sm px-2 py-0.5 rounded shadow-sm leading-none">
                             {tideState}
                         </span>
                     )}
-                    <span className="text-xs font-black text-sky-700 dark:text-sky-300 flex items-center">
-                        <span className="text-sm font-black mr-0.5 text-cyan-600 dark:text-cyan-400">{flowIcon}</span>
+                    <span className="text-base font-black text-sky-700 dark:text-sky-300 flex items-center leading-tight">
+                        <span className="text-lg font-black mr-0.5 text-cyan-600 dark:text-cyan-400">{flowIcon}</span>
                         {currentFlow}
                     </span>
                 </div>
 
                 {isSlackWater && (
-                    <span className="flex items-center text-[10px] font-black bg-cyan-500 text-white px-2 py-0.5 rounded-full shadow animate-pulse">
-                        ⚡ 潮止まり・時合い注意
+                    <span className="flex items-center text-xs sm:text-sm font-black bg-cyan-500 text-white px-2 py-0.5 rounded-full shadow animate-pulse leading-none">
+                        ⚡ 潮止まり注意
                     </span>
                 )}
             </div>
 
             <div className="flex items-baseline justify-between pt-0.5">
                 {nextEvent ? (
-                    <div className="text-xs sm:text-sm font-bold text-sky-800 dark:text-sky-200">
+                    <div className="text-base sm:text-lg font-bold text-sky-800 dark:text-sky-200 tracking-tight leading-tight">
                         次の<span className="font-black text-sky-600 dark:text-sky-400 mx-0.5">【{nextEvent.type} {nextEvent.timeStr}】</span>まで
                     </div>
                 ) : (
-                    <div className="text-xs font-bold text-sky-700 dark:text-sky-300">
+                    <div className="text-sm sm:text-base font-bold text-sky-700 dark:text-sky-300 leading-tight">
                         本日の満干潮スケジュール完了
                     </div>
                 )}
 
                 {nextEvent && (
-                    <div className="text-xs sm:text-sm font-black text-cyan-600 dark:text-cyan-300 flex items-baseline">
-                        <span className="text-[11px] font-bold text-sky-600 dark:text-sky-400 mr-1">あと</span>
-                        <span className="text-base sm:text-lg font-black tracking-tight text-blue-600 dark:text-cyan-300">
+                    <div className="text-base sm:text-lg font-black text-cyan-600 dark:text-cyan-300 flex items-baseline leading-tight">
+                        <span className="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 mr-1">あと</span>
+                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-blue-600 dark:text-cyan-300">
                             {remainingText}
                         </span>
                     </div>
