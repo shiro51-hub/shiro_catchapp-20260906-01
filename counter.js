@@ -287,10 +287,10 @@ const TideAlertBanner = ({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
     let flowIcon = '';
     if (nextEvent) {
         if (nextEvent.isHigh) {
-            currentFlow = '上げ潮（満ち潮）';
+            currentFlow = '上げ潮';
             flowIcon = '↗';
         } else {
-            currentFlow = '下げ潮（引き潮）';
+            currentFlow = '下げ潮';
             flowIcon = '↘';
         }
     } else if (prevEvent) {
