@@ -1676,10 +1676,7 @@ function App() {
                             const isExpanded = expandedRecordId === r.id;
                             const unit = getUnit(r.targetFish);
                             return (
-                                {filteredRecords.map(r => {
-                            const isExpanded = expandedRecordId === r.id;
-                            const unit = getUnit(r.targetFish);
-                            return (
+                               
                                 /* 外枠を dark:border-slate-500 に統一 */
                                 <div key={r.id} className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-100 dark:border-slate-500 overflow-hidden transition-all">
                                     <div 
