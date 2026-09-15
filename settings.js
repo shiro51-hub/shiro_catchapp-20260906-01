@@ -455,11 +455,20 @@ function SettingsPanel({
                                     <span className="font-black text-sm block text-gray-800 dark:text-slate-100">画面テーマ</span>
                                     <span className="text-xs text-gray-500 dark:text-slate-400">日中モード／夜間ダークモード</span>
                                 </div>
-                                <button
+                               <button
+                                    type="button"
                                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                                    className="px-3.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 text-gray-800 dark:text-slate-200 rounded-lg font-black text-sm shadow-2xs active:scale-95 transition-all flex items-center gap-1"
+                                    className={`px-3.5 py-1.5 rounded-lg font-black text-sm shadow-sm active:scale-95 transition-all flex items-center gap-1.5 border-2 select-none ${
+                                        theme === 'dark'
+                                            ? 'bg-slate-800 text-amber-300 border-amber-400/80 shadow-amber-950/40 hover:border-amber-300'
+                                            : 'bg-white text-sky-700 border-sky-400 shadow-sky-100 hover:border-sky-500'
+                                    }`}
                                 >
-                                    {theme === 'dark' ? '🌙 ダークモード' : '☀️ 日中モード'}
+                                    {theme === 'dark' ? (
+                                        <><span>🌙</span><span>ダークモード</span></>
+                                    ) : (
+                                        <><span>☀️</span><span>日中モード</span></>
+                                    )}
                                 </button>
                             </div>
 
