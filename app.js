@@ -97,7 +97,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                     style={{ width: '100%', maxWidth: '420px', minWidth: '330px', boxSizing: 'border-box' }}
                 >
                     <div className="p-4 pb-6 flex flex-col gap-3 relative z-10">
-                        {/* ヘッダー：日付をロゴの真ん中直下に配置 */}
+                        {/* ヘッダー：天候を削除し、日付・曜日をロゴ直下に完全センタリング */}
                         <div className={`flex justify-between items-center border-b pb-2.5 ${isDark ? 'border-slate-700/80' : 'border-blue-400/40'}`}>
                             <div className="flex flex-col items-center">
                                 <img 
@@ -107,7 +107,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     alt="yamashitamaru" 
                                 />
                                 <div className={`text-[11px] sm:text-xs font-bold tracking-wider mt-1 text-center ${isDark ? 'text-sky-300' : 'text-sky-100'}`} style={{ lineHeight: 1.6, paddingBottom: '2px' }}>
-                                    {(record.date || '').replace(/-/g, '.')} {getDayOfWeek(record.date)} {record.weather1 ? `| ${record.weather1}` : ''}
+                                    {(record.date || '').replace(/-/g, '.')} {getDayOfWeek(record.date)}
                                 </div>
                             </div>
                             <div className="text-right pb-1">
@@ -117,15 +117,15 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 【左：釣果＋純白数字】 / 【右：竿頭＋純白名前＋末尾に「さん」】 */}
-                        <div className={`rounded-lg px-3.5 py-3 border shadow-sm ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
+                        {/* 成績サマリー枠：【上：釣果 ＆ 竿頭】＋【下：型・総計・平均】 */}
+                        <div className={`rounded-lg px-3.5 py-2.5 border shadow-sm flex flex-col gap-2 ${isDark ? 'bg-slate-800/85 border-amber-500/30' : 'bg-black/20 border-white/20'}`}>
                             {topCount <= 2 ? (
                                 <div className="flex justify-between items-end gap-2">
                                     <div className="flex flex-col items-start shrink-0">
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             釣果
                                         </span>
-                                        <div className="flex items-baseline gap-1 mt-1" style={{ lineHeight: 1.4 }}>
+                                        <div className="flex items-baseline gap-1 mt-0.5" style={{ lineHeight: 1.4 }}>
                                             <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm inline-block" style={{ paddingBottom: '2px' }}>
                                                 {stats.min}<span className="text-lg sm:text-xl mx-0.5 opacity-75">〜</span>{stats.max}
                                             </span>
@@ -137,7 +137,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                         <span className={`text-[11px] sm:text-xs font-bold tracking-wider flex items-center ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>
                                             <span className="mr-0.5 text-xs">👑</span>竿頭
                                         </span>
-                                        <div className="mt-1 w-full flex justify-end items-baseline">
+                                        <div className="mt-0.5 w-full flex justify-end items-baseline">
                                             {isAnonymous ? (
                                                 <span className="text-lg sm:text-xl font-black text-white inline-block" style={{ lineHeight: 1.5, paddingBottom: '3px' }}>非公開</span>
                                             ) : topCount === 0 ? (
@@ -160,7 +160,7 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                 </div>
                             ) : (
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between items-baseline border-b border-white/10 pb-1.5">
+                                    <div className="flex justify-between items-baseline">
                                         <span className={`text-xs font-bold ${isDark ? 'text-slate-400' : 'text-sky-200'}`}>釣果</span>
                                         <div className="flex items-baseline gap-1" style={{ lineHeight: 1.4 }}>
                                             <span className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm inline-block" style={{ paddingBottom: '2px' }}>
@@ -190,6 +190,25 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                                     </div>
                                 </div>
                             )}
+
+                            {/* 型・総計・平均をボックス内に自然に統合 */}
+                            <div className="grid grid-cols-3 pt-2 border-t border-white/10 text-center font-bold text-xs sm:text-sm items-center">
+                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-white'}`}>
+                                    <span className="text-[11px] opacity-75 mr-1">型:</span>
+                                    <span className="font-black text-white inline-block">{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span>
+                                    <span className="text-[11px] opacity-75 ml-0.5">cm</span>
+                                </div>
+                                <div className={`truncate border-x border-white/10 px-1 ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>
+                                    <span className="text-[11px] opacity-75 mr-1">総計:</span>
+                                    <span className="font-black text-white inline-block">{record.total || 0}</span>
+                                    <span className="text-[11px] opacity-75 ml-0.5">{unit}</span>
+                                </div>
+                                <div className={`truncate ${isDark ? 'text-slate-300' : 'text-sky-100'}`}>
+                                    <span className="text-[11px] opacity-75 mr-1">平均:</span>
+                                    <span className="font-black text-white inline-block">{record.avg || 0}</span>
+                                    <span className="text-[11px] opacity-75 ml-0.5">{unit}</span>
+                                </div>
+                            </div>
                         </div>
 
                         {/* 座席リスト */}
@@ -256,42 +275,25 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* フッター情報（最下段レイアウト） */}
-                        <div className={`rounded-lg px-3 pt-2.5 pb-3.5 text-xs sm:text-sm flex flex-col gap-2 border ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
-                            {/* 上段：型・総計・平均 */}
-                            <div className="flex items-center justify-between font-bold border-b pb-2 border-white/10" style={{ lineHeight: 1.6 }}>
-                                <div className={isDark ? 'text-slate-300' : 'text-white'}>
-                                    型: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{(record.sizeMin || record.sizeMax) ? `${record.sizeMin || '?'}〜${record.sizeMax || '?'}` : '-'}</span> cm
-                                </div>
-                                <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
-                                    総計: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{record.total || 0}</span> {unit}
-                                </div>
-                                <div className={isDark ? 'text-slate-300' : 'text-sky-100'}>
-                                    平均: <span className="font-black text-white inline-block" style={{ paddingBottom: '2px' }}>{record.avg || 0}</span> {unit}
-                                </div>
+                        {/* 最下段フッター：海況専用バー（3等分均等グリッドでピシッと揃えた1行仕様） */}
+                        <div className={`rounded-lg px-3 py-2 text-xs sm:text-sm border grid grid-cols-3 items-center text-center font-black ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
+                            {/* 左：ポイント ＋ 水深 */}
+                            <div className="truncate flex items-center justify-center gap-1 text-white">
+                                <span className="truncate">{record.point || 'ポイント未設定'}</span>
+                                {record.waterDepth && (
+                                    <span className="text-[11px] sm:text-xs opacity-90 shrink-0">{record.waterDepth}m</span>
+                                )}
                             </div>
 
-                            {/* 下段：【ポイント＋水深】 【水温】 【潮回り】 */}
-                            <div className="flex items-center justify-between pt-0.5 font-black text-xs sm:text-sm" style={{ minHeight: '26px' }}>
-                                <div className="flex items-center gap-1.5 truncate text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
-                                    <span className="inline-block">{record.point || 'ポイント未設定'}</span>
-                                    {record.waterDepth ? (
-                                        <span className="text-white font-black inline-block">{record.waterDepth}m</span>
-                                    ) : null}
-                                </div>
+                            {/* 中：水温 */}
+                            <div className="border-x border-white/10 px-1 truncate flex items-center justify-center gap-1 text-white">
+                                <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200/80'}`}>水温</span>
+                                <span>{record.waterTemp ? `${record.waterTemp}℃` : '―'}</span>
+                            </div>
 
-                                <div className="px-2 shrink-0 flex items-center gap-1 text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
-                                    <span className={isDark ? 'text-slate-400 font-bold inline-block' : 'text-sky-200/80 font-bold inline-block'}>水温</span>
-                                    <span className="text-white font-black inline-block">
-                                        {record.waterTemp ? `${record.waterTemp}℃` : '―'}
-                                    </span>
-                                </div>
-
-                                <div className="shrink-0 font-black text-white" style={{ lineHeight: 1.7, paddingBottom: '4px' }}>
-                                    <span className="inline-block">
-                                        {getSafeTideDisplay(record.tideState)}
-                                    </span>
-                                </div>
+                            {/* 右：潮回り */}
+                            <div className="truncate text-white">
+                                <span>{getSafeTideDisplay(record.tideState)}</span>
                             </div>
                         </div>
                     </div>
