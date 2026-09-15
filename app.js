@@ -275,28 +275,27 @@ function ShareImageModal({ record, onClose, setToastMessage }) {
                             </div>
                         </div>
 
-                        {/* 最下段フッター：海況専用バー（3等分均等グリッドでピシッと揃えた1行仕様） */}
-                        <div className={`rounded-lg px-3 py-2 text-xs sm:text-sm border grid grid-cols-3 items-center text-center font-black ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
-                            {/* 左：ポイント ＋ 水深 */}
-                            <div className="truncate flex items-center justify-center gap-1 text-white">
-                                <span className="truncate">{record.point || 'ポイント未設定'}</span>
-                                {record.waterDepth && (
-                                    <span className="text-[11px] sm:text-xs opacity-90 shrink-0">{record.waterDepth}m</span>
-                                )}
+                        {/* 最下段フッター：ポイント・水深を広げ、途切れず全体表示するバランス配分 */}
+                        <div className={`rounded-lg px-3 py-2 text-xs sm:text-sm border flex items-center justify-between font-black ${isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-black/20 border-white/10'}`}>
+                            {/* 左：ポイント ＋ 水深（広めの幅を確保して全体を表示） */}
+                            <div className="flex items-center gap-1.5 text-white pr-2">
+                                <span className="whitespace-nowrap">{record.point || 'ポイント未設定'}</span>
+                                {record.waterDepth ? (
+                                    <span className="text-[11px] sm:text-xs opacity-90 whitespace-nowrap">{record.waterDepth}m</span>
+                                ) : null}
                             </div>
 
-                            {/* 中：水温 */}
-                            <div className="border-x border-white/10 px-1 truncate flex items-center justify-center gap-1 text-white">
-                                <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200/80'}`}>水温</span>
-                                <span>{record.waterTemp ? `${record.waterTemp}℃` : '―'}</span>
-                            </div>
-
-                            {/* 右：潮回り */}
-                            <div className="truncate text-white">
-                                <span>{getSafeTideDisplay(record.tideState)}</span>
+                            {/* 右側まとめ：【水温】 ＋ 【潮回り】 */}
+                            <div className="flex items-center gap-3 shrink-0 text-white">
+                                <div className="flex items-center gap-1">
+                                    <span className={`text-[11px] font-bold ${isDark ? 'text-slate-400' : 'text-sky-200/80'}`}>水温</span>
+                                    <span className="whitespace-nowrap">{record.waterTemp ? `${record.waterTemp}℃` : '―'}</span>
+                                </div>
+                                <div className="border-l border-white/20 pl-3">
+                                    <span className="whitespace-nowrap">{getSafeTideDisplay(record.tideState)}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
 
