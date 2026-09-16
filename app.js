@@ -1371,7 +1371,8 @@ function App() {
             </div>
 
             {/* メインスクロールエリア（bg-slate-200 で白い履歴カードを際立たせる） */}
-            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-200/50 dark:bg-slate-900">
+            // 差し替え後（両舷ボタンで使っていた極淡水色 bg-sky-50 に変更）
+<div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-50 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
                         {/* 日付・釣り物 ＆ 海況サマリー（カウンター竿頭枠と統一したマリンブルー） */}
@@ -1429,17 +1430,18 @@ function App() {
                             </button>
 
                             {/* 両舷ボタン（ダークモード時は枠線を暗く沈める） */}
-                            <button
-                                type="button"
-                                onClick={() => setInputSide('both')}
-                                className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
-                                    inputSide === 'both'
-                                        ? 'bg-sky-50 dark:bg-slate-800 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-850 shadow-2xs'
-                                        : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
-                                }`}
-                            >
-                                両舷
-                            </button>
+                            // 差し替え後（以前の全体背景に合わせた 2段階濃い水色 bg-sky-200 / border-sky-400 に変更）
+<button
+    type="button"
+    onClick={() => setInputSide('both')}
+    className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
+        inputSide === 'both'
+            ? 'bg-sky-200 dark:bg-slate-800 text-sky-900 dark:text-sky-300 border-sky-400 dark:border-sky-700 shadow-2xs'
+            : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
+    }`}
+>
+    両舷
+</button>
 
                             {/* 右舷ボタン */}
                             <button
