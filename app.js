@@ -1423,16 +1423,16 @@ function App() {
                             </button>
 
                             <button
-                                type="button"
-                                onClick={() => setInputSide('both')}
-                                className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
-                                    inputSide === 'both'
-                                        ? 'bg-sky-200 dark:bg-slate-800 text-sky-900 dark:text-sky-300 border-sky-400 dark:border-sky-700 shadow-2xs'
-                                        : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
-                                }`}
-                            >
-                                両舷
-                            </button>
+    type="button"
+    onClick={() => setInputSide('both')}
+    className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
+        inputSide === 'both'
+            ? 'bg-sky-100/70 dark:bg-slate-800 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 shadow-2xs'
+            : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
+    }`}
+>
+    両舷
+</button>
 
                             <button
                                 type="button"
