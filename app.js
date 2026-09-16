@@ -1638,7 +1638,7 @@ function App() {
                             return (
                                
                                 /* 外枠を dark:border-slate-500 に統一 */
-                                <div key={r.id} className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-100 dark:border-slate-500 overflow-hidden transition-all">
+                                <div key={r.id} className="bg-sky-100/70 dark:bg-slate-800 rounded-xl shadow border border-sky-200 dark:border-slate-500 overflow-hidden transition-all">
                                     <div 
                                         className="p-4 cursor-pointer active:bg-gray-50 dark:active:bg-slate-700/50 select-none" 
                                         onClick={() => setExpandedRecordId(isExpanded ? null : r.id)}
