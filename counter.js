@@ -324,7 +324,7 @@ const TideAlertBanner = ({ tideState, highTide1, highTide2, lowTide1, lowTide2 }
         <div className={`rounded-xl px-2.5 py-1.5 border shadow-sm transition-all duration-300 flex flex-col gap-0.5 shrink-0 ${
             isSlackWater 
                 ? 'bg-gradient-to-r from-sky-100 via-cyan-100 to-sky-50 dark:from-sky-950/70 dark:via-cyan-950/60 dark:to-slate-800 border-cyan-400 dark:border-cyan-500' 
-                : 'bg-sky-50/90 dark:bg-slate-800/90 border-sky-200 dark:border-sky-900/60'
+                : 'bg-sky-100/70 dark:bg-slate-800/90 border-sky-200 dark:border-sky-700 shadow-2xs'
         }`}>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 flex-wrap">
