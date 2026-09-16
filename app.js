@@ -1929,11 +1929,11 @@ function App() {
                 )}
             </div>
 
-           {/* 下部ナビゲーションバー（マリンウォッシュ・シームレス型 ＆ 収納機能 ＆ 循環スワイプ対応） */}
+           {/* 下部ナビゲーションバー（マリンウォッシュ・シームレス型 ほんのり濃いめ版） */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
-                className={`fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-sky-100/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-sky-200 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2 transition-transform duration-300 ease-out select-none shadow-[0_-2px_12px_rgba(56,189,248,0.08)] ${
+                className={`fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-sky-200/90 dark:bg-slate-900/95 backdrop-blur-md border-t border-sky-300 dark:border-slate-800 pb-safe z-50 flex h-14 items-center justify-around px-2 transition-transform duration-300 ease-out select-none shadow-[0_-2px_12px_rgba(56,189,248,0.12)] ${
                     isBottomNavVisible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
                 }`}
             >
@@ -1941,8 +1941,8 @@ function App() {
                 <button
                     className={`flex-1 flex flex-col items-center justify-center h-11 py-1 rounded-xl transition-all ${
                         activeTab === 'input' 
-                            ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 font-black shadow-2xs border border-sky-200/80 dark:border-slate-700' 
-                            : 'text-sky-800/60 dark:text-slate-400 hover:text-sky-800 dark:hover:text-slate-200 font-bold active:scale-95'
+                            ? 'bg-white dark:bg-slate-800 text-sky-800 dark:text-sky-300 font-black shadow-xs border border-sky-300/80 dark:border-slate-700' 
+                            : 'text-sky-900/70 dark:text-slate-400 hover:text-sky-950 dark:hover:text-slate-200 font-bold active:scale-95'
                     }`}
                     onClick={() => setActiveTab('input')}
                 >
@@ -1954,8 +1954,8 @@ function App() {
                 <button
                     className={`flex-1 flex flex-col items-center justify-center h-11 py-1 rounded-xl transition-all relative ${
                         activeTab === 'counter' 
-                            ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 font-black shadow-2xs border border-sky-200/80 dark:border-slate-700' 
-                            : 'text-sky-800/60 dark:text-slate-400 hover:text-sky-800 dark:hover:text-slate-200 font-bold active:scale-95'
+                            ? 'bg-white dark:bg-slate-800 text-sky-800 dark:text-sky-300 font-black shadow-xs border border-sky-300/80 dark:border-slate-700' 
+                            : 'text-sky-900/70 dark:text-slate-400 hover:text-sky-950 dark:hover:text-slate-200 font-bold active:scale-95'
                     }`}
                     onClick={() => {
                         if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
@@ -1966,7 +1966,7 @@ function App() {
                         <span className={`text-[10px] font-black leading-none px-1.5 py-0.5 rounded-full h-4.5 flex items-center justify-center transition-all ${
                             activeTab === 'counter'
                                 ? 'bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300'
-                                : 'bg-sky-200/70 dark:bg-slate-800 text-sky-900 dark:text-slate-300'
+                                : 'bg-sky-300/60 dark:bg-slate-800 text-sky-950 dark:text-slate-200'
                         }`}>
                             {counterMode === 'tap' ? 'TAP' : counterMode === 'slide' ? 'SLIDE' : 'KEYPAD'}
                         </span>
@@ -1978,8 +1978,8 @@ function App() {
                 <button
                     className={`flex-1 flex flex-col items-center justify-center h-11 py-1 rounded-xl transition-all ${
                         activeTab === 'history' 
-                            ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-300 font-black shadow-2xs border border-sky-200/80 dark:border-slate-700' 
-                            : 'text-sky-800/60 dark:text-slate-400 hover:text-sky-800 dark:hover:text-slate-200 font-bold active:scale-95'
+                            ? 'bg-white dark:bg-slate-800 text-sky-800 dark:text-sky-300 font-black shadow-xs border border-sky-300/80 dark:border-slate-700' 
+                            : 'text-sky-900/70 dark:text-slate-400 hover:text-sky-950 dark:hover:text-slate-200 font-bold active:scale-95'
                     }`}
                     onClick={() => setActiveTab('history')}
                 >
@@ -1991,7 +1991,7 @@ function App() {
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(false)}
-                    className="w-8 h-full flex items-center justify-center text-sky-700/60 hover:text-sky-800 dark:text-slate-400 dark:hover:text-slate-200 active:scale-90 transition-transform shrink-0"
+                    className="w-8 h-full flex items-center justify-center text-sky-900/60 hover:text-sky-950 dark:text-slate-400 dark:hover:text-slate-200 active:scale-90 transition-transform shrink-0"
                     title="ナビバーを隠す"
                 >
                     <span className="text-lg leading-none font-bold">⌵</span>
@@ -2008,12 +2008,12 @@ function App() {
                 />
             )}
 
-            {/* ナビバーが隠れている時だけ画面右下に出現する、シームレス調復帰ボタン */}
+            {/* ナビバーが隠れている時だけ画面右下に出現する復帰ボタン */}
             {!isBottomNavVisible && (
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(true)}
-                    className="fixed bottom-3 right-3 z-40 bg-sky-100 hover:bg-sky-200 text-sky-800 dark:bg-slate-800 dark:text-sky-300 rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-md shadow-sky-900/10 backdrop-blur-xs border border-sky-300 dark:border-slate-700 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
+                    className="fixed bottom-3 right-3 z-40 bg-sky-200 hover:bg-sky-300 text-sky-900 dark:bg-slate-800 dark:text-sky-300 rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-md shadow-sky-900/15 backdrop-blur-xs border border-sky-400/80 dark:border-slate-700 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
                     title="ナビバーを表示する"
                 >
                     <span className="text-base font-black leading-none -mt-0.5">⌃</span>
