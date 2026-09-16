@@ -1370,28 +1370,23 @@ function App() {
                 </button>
             </div>
 
-            {/* メインスクロールエリア（bg-slate-200 で白い履歴カードを際立たせる） */}
-            // 差し替え後（両舷ボタンで使っていた極淡水色 bg-sky-50 に変更）
-<div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-50 dark:bg-slate-900">
+            {/* メインスクロールエリア */}
+            <div id="main-scroll-container" className="flex-1 flex flex-col overflow-y-auto p-3 sm:p-4 pb-36 no-scrollbar bg-sky-50 dark:bg-slate-900">
                 {activeTab === 'input' && (
                     <div className="space-y-3 animate-[fadeIn_0.2s_ease-out]">
-                        {/* 日付・釣り物 ＆ 海況サマリー（カウンター竿頭枠と統一したマリンブルー） */}
-<div className="bg-blue-100 dark:bg-slate-800 rounded-xl p-3.5 shadow-sm border border-blue-200 dark:border-slate-700 flex flex-col gap-2.5">
+                        <div className="bg-blue-100 dark:bg-slate-800 rounded-xl p-3.5 shadow-sm border border-blue-200 dark:border-slate-700 flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
-                                {/* 日付選択 */}
                                 <input 
                                     type="date" 
                                     className="border border-stone-300 dark:border-slate-500 rounded-lg px-3 py-1.5 text-lg sm:text-xl font-black bg-white dark:bg-slate-900 text-gray-800 dark:text-slate-100 shadow-2xs" 
                                     value={date} 
                                     onChange={(e) => setDate(e.target.value)} 
                                 />
-                                {/* 釣り物 */}
                                 <span className="text-base sm:text-lg font-black text-sky-700 dark:text-sky-400">
                                     {targetFish || '釣り物未設定'}
                                 </span>
                             </div>
 
-                            {/* 概要サマリー行 */}
                             {(point || waterDepth || waterTemp || tide || tideState || weather1 || windDir1 || windSpeed1) && (
                                 <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2 text-sm sm:text-base font-bold text-stone-800 dark:text-slate-200 pt-2 border-t border-stone-200 dark:border-slate-800 leading-normal">
                                     {point && <span className="font-black text-slate-800 dark:text-slate-100">{point}</span>}
@@ -1411,9 +1406,7 @@ function App() {
                             )}
                         </div>
 
-                        {/* 1段に集約した見出し ＆ 表示切り替えセレクター */}
                         <div className="flex items-center justify-between gap-1.5 mb-2 select-none">
-                            {/* 左舷ボタン */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide(inputSide === 'port' ? 'both' : 'port')}
@@ -1429,21 +1422,18 @@ function App() {
                                 {inputSide === 'port' && <span className="text-[11px] font-bold bg-white/20 px-1 rounded">のみ</span>}
                             </button>
 
-                            {/* 両舷ボタン（ダークモード時は枠線を暗く沈める） */}
-                            // 差し替え後（以前の全体背景に合わせた 2段階濃い水色 bg-sky-200 / border-sky-400 に変更）
-<button
-    type="button"
-    onClick={() => setInputSide('both')}
-    className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
-        inputSide === 'both'
-            ? 'bg-sky-200 dark:bg-slate-800 text-sky-900 dark:text-sky-300 border-sky-400 dark:border-sky-700 shadow-2xs'
-            : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
-    }`}
->
-    両舷
-</button>
+                            <button
+                                type="button"
+                                onClick={() => setInputSide('both')}
+                                className={`px-4 py-2 rounded-lg text-sm font-black border transition-all active:scale-95 shrink-0 ${
+                                    inputSide === 'both'
+                                        ? 'bg-sky-200 dark:bg-slate-800 text-sky-900 dark:text-sky-300 border-sky-400 dark:border-sky-700 shadow-2xs'
+                                        : 'bg-transparent text-gray-400 dark:text-slate-500 border-transparent hover:text-gray-600'
+                                }`}
+                            >
+                                両舷
+                            </button>
 
-                            {/* 右舷ボタン */}
                             <button
                                 type="button"
                                 onClick={() => setInputSide(inputSide === 'starboard' ? 'both' : 'starboard')}
