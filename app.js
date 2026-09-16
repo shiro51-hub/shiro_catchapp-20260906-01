@@ -1929,76 +1929,82 @@ function App() {
                 )}
             </div>
 
-            {/* 下部ナビゲーションバー（フローティング・アイランド型 ＆ 収納機能 ＆ 循環スワイプ対応） */}
+            {/* 下部ナビゲーションバー（マリンネイビー・ハードプロ型 ＆ 収納機能 ＆ 循環スワイプ対応） */}
             <div 
                 onTouchStart={handleSwipeStart}
                 onTouchEnd={handleSwipeEnd}
-                className={`fixed bottom-3 inset-x-3 mx-auto w-auto max-w-md z-50 transition-all duration-300 ease-out select-none ${
-                    isBottomNavVisible ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0 pointer-events-none'
+                className={`fixed bottom-0 inset-x-0 mx-auto w-full max-w-md bg-slate-900/95 backdrop-blur-md border-t border-slate-700/80 pb-safe z-50 flex h-14 items-center justify-around px-2 transition-transform duration-300 ease-out select-none shadow-[0_-4px_20px_rgba(0,0,0,0.25)] ${
+                    isBottomNavVisible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
                 }`}
             >
-                <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl p-1.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-sky-200/80 dark:border-slate-700/80 flex h-14 items-center justify-around gap-1">
-                    
-                    {/* 釣り座タブ */}
-                    <button
-                        className={`flex-1 flex flex-col items-center justify-center h-full py-1 rounded-xl transition-all ${
-                            activeTab === 'input' 
-                                ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/30' 
-                                : 'text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-300 active:scale-95'
-                        }`}
-                        onClick={() => setActiveTab('input')}
-                    >
-                        <IconAnchor className="w-5 h-5 mb-0.5" />
-                        <span className="text-xs font-black tracking-tight">釣り座</span>
-                    </button>
+                {/* 釣り座タブ */}
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 relative transition-colors ${
+                        activeTab === 'input' 
+                            ? 'text-cyan-400 font-black' 
+                            : 'text-slate-400 hover:text-slate-200 font-bold active:scale-95'
+                    }`}
+                    onClick={() => setActiveTab('input')}
+                >
+                    {activeTab === 'input' && (
+                        <span className="absolute top-0 inset-x-3 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee] rounded-full" />
+                    )}
+                    <IconAnchor className="w-5 h-5 mb-0.5" />
+                    <span className="text-xs tracking-tight">釣り座</span>
+                </button>
 
-                    {/* カウンタータブ（モード切り替え対応） */}
-                    <button
-                        className={`flex-1 flex flex-col items-center justify-center h-full py-1 rounded-xl transition-all relative ${
-                            activeTab === 'counter' 
-                                ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/30' 
-                                : 'text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-300 active:scale-95'
-                        }`}
-                        onClick={() => {
-                            if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
-                            else setActiveTab('counter');
-                        }}
-                    >
-                        <div className="relative flex items-center justify-center mb-0.5">
-                            <span className={`text-[10px] font-black leading-none px-1.5 py-0.5 rounded-full h-4.5 flex items-center justify-center ${
-                                activeTab === 'counter'
-                                    ? 'bg-white/25 text-white'
-                                    : 'bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300'
-                            }`}>
-                                {counterMode === 'tap' ? 'TAP' : counterMode === 'slide' ? 'SLIDE' : 'KEYPAD'}
-                            </span>
-                        </div>
-                        <span className="text-xs font-black tracking-tight">カウンター</span>
-                    </button>
+                {/* カウンタータブ（モード切り替え対応） */}
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 relative transition-colors ${
+                        activeTab === 'counter' 
+                            ? 'text-cyan-400 font-black' 
+                            : 'text-slate-400 hover:text-slate-200 font-bold active:scale-95'
+                    }`}
+                    onClick={() => {
+                        if (activeTab === 'counter') setCounterMode(prev => prev === 'tap' ? 'slide' : prev === 'slide' ? 'keypad' : 'tap');
+                        else setActiveTab('counter');
+                    }}
+                >
+                    {activeTab === 'counter' && (
+                        <span className="absolute top-0 inset-x-3 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee] rounded-full" />
+                    )}
+                    <div className="relative flex items-center justify-center mb-0.5">
+                        <span className={`text-[10px] font-black leading-none px-1.5 py-0.5 rounded-full h-4.5 flex items-center justify-center border transition-all ${
+                            activeTab === 'counter'
+                                ? 'bg-cyan-950/80 border-cyan-400/80 text-cyan-300 shadow-[0_0_6px_rgba(34,211,238,0.3)]'
+                                : 'bg-slate-800 border-slate-700 text-slate-300'
+                        }`}>
+                            {counterMode === 'tap' ? 'TAP' : counterMode === 'slide' ? 'SLIDE' : 'KEYPAD'}
+                        </span>
+                    </div>
+                    <span className="text-xs tracking-tight">カウンター</span>
+                </button>
 
-                    {/* 履歴タブ */}
-                    <button
-                        className={`flex-1 flex flex-col items-center justify-center h-full py-1 rounded-xl transition-all ${
-                            activeTab === 'history' 
-                                ? 'bg-sky-500 text-white shadow-sm shadow-sky-500/30' 
-                                : 'text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-300 active:scale-95'
-                        }`}
-                        onClick={() => setActiveTab('history')}
-                    >
-                        <IconCalendar className="w-5 h-5 mb-0.5" />
-                        <span className="text-xs font-black tracking-tight">履歴</span>
-                    </button>
+                {/* 履歴タブ */}
+                <button
+                    className={`flex-1 flex flex-col items-center justify-center h-full py-1 relative transition-colors ${
+                        activeTab === 'history' 
+                            ? 'text-cyan-400 font-black' 
+                            : 'text-slate-400 hover:text-slate-200 font-bold active:scale-95'
+                    }`}
+                    onClick={() => setActiveTab('history')}
+                >
+                    {activeTab === 'history' && (
+                        <span className="absolute top-0 inset-x-3 h-0.5 bg-cyan-400 shadow-[0_0_8px_#22d3ee] rounded-full" />
+                    )}
+                    <IconCalendar className="w-5 h-5 mb-0.5" />
+                    <span className="text-xs tracking-tight">履歴</span>
+                </button>
 
-                    {/* ナビバー収納ボタン */}
-                    <button
-                        type="button"
-                        onClick={() => setIsBottomNavVisible(false)}
-                        className="w-7 h-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 active:scale-90 transition-transform shrink-0"
-                        title="ナビバーを隠す"
-                    >
-                        <span className="text-lg leading-none font-bold">⌵</span>
-                    </button>
-                </div>
+                {/* ナビバー収納ボタン */}
+                <button
+                    type="button"
+                    onClick={() => setIsBottomNavVisible(false)}
+                    className="w-8 h-full flex items-center justify-center text-slate-400 hover:text-slate-200 active:scale-90 transition-transform shrink-0"
+                    title="ナビバーを隠す"
+                >
+                    <span className="text-lg leading-none font-bold">⌵</span>
+                </button>
             </div>
 
             {/* ナビバーが隠れている時だけ画面最下端に常駐する透明スワイプエリア */}
@@ -2011,16 +2017,16 @@ function App() {
                 />
             )}
 
-            {/* ナビバーが隠れている時だけ画面右下に出現する復帰ボタン */}
+            {/* ナビバーが隠れている時だけ画面右下に出現する、計器風復帰ボタン */}
             {!isBottomNavVisible && (
                 <button
                     type="button"
                     onClick={() => setIsBottomNavVisible(true)}
-                    className="fixed bottom-4 right-4 z-50 bg-sky-500/90 hover:bg-sky-500 text-white rounded-full w-11 h-11 flex flex-col items-center justify-center shadow-lg shadow-sky-500/25 backdrop-blur-xs border border-white/40 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
+                    className="fixed bottom-3 right-3 z-40 bg-slate-900/90 hover:bg-slate-800 text-cyan-400 rounded-full w-10 h-10 flex flex-col items-center justify-center shadow-lg shadow-black/40 backdrop-blur-xs border border-slate-700 active:scale-95 transition-all animate-[fadeIn_0.2s_ease-out]"
                     title="ナビバーを表示する"
                 >
                     <span className="text-base font-black leading-none -mt-0.5">⌃</span>
-                    <span className="text-[8px] font-black leading-none scale-90">MENU</span>
+                    <span className="text-[8px] font-black leading-none scale-90 text-slate-300">MENU</span>
                 </button>
             )}
         </div>
