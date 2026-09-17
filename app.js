@@ -1648,7 +1648,7 @@ function App() {
                                             <div className="flex items-center gap-1.5">
                                                 {r.targetFish ? (
                                                     <span 
-                                                        className="text-sm bg-sky-100/90 hover:bg-sky-200/80 dark:bg-sky-900/50 dark:hover:bg-sky-900/70 text-sky-800 dark:text-sky-200 px-3 py-1 rounded-lg font-black select-none cursor-pointer border border-sky-300 dark:border-sky-700 active:scale-95 transition-all shadow-2xs"
+                                                        className="text-sm bg-[#e0f2fe] hover:bg-sky-200/60 dark:bg-sky-950/70 dark:hover:bg-sky-900/60 text-sky-900 dark:text-sky-200 px-3 py-1 rounded-lg font-black select-none cursor-pointer border border-sky-300/90 dark:border-sky-700 active:scale-95 transition-all shadow-2xs"
                                                         title="長押しでAI日報作成"
                                                         onPointerDown={(e) => {
                                                             e.stopPropagation();
@@ -1677,7 +1677,7 @@ function App() {
                                                         {r.targetFish}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black border border-gray-200">釣果</span>
+                                                    <span className="text-xs bg-gray-150 text-gray-700 px-2 py-0.5 rounded font-black border border-gray-300">釣果</span>
                                                 )}
                                                 )}
                                                 <span className="text-gray-400 dark:text-slate-500">
