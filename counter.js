@@ -246,13 +246,21 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onMouseUp={handleEnd} 
             onMouseLeave={() => isDragging && handleEnd()}
         >
-            {/* スライド下地レール：淡い緑/赤背景 ＋ 同系色濃いめフォント */}
-            <div className={`absolute inset-0 flex items-center justify-between px-6 font-black text-lg transition-colors ${
-                curX > 35 
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300' 
-                    : curX < -35 
-                    ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300' 
-                    : 'bg-transparent text-transparent'
+            {/* スライド下地レール：70px到達で色が一段濃くなる2段階フィードバック */}
+            <div className={`absolute inset-0 flex items-center justify-between px-6 font-black transition-colors duration-100 ${
+                // プラス側（右スライド）
+                curX >= 70
+                    ? 'bg-emerald-300 text-emerald-950 dark:bg-emerald-800 dark:text-emerald-100 text-xl scale-105' // 確定：濃い緑 ＆ 文字強調
+                    : curX > 35
+                    ? 'bg-emerald-100/70 text-emerald-700/70 dark:bg-emerald-950/50 dark:text-emerald-300/60 text-lg' // 予告：淡い緑
+
+                // マイナス側（左スライド）
+                : curX <= -70
+                    ? 'bg-rose-300 text-rose-950 dark:bg-rose-800 dark:text-rose-100 text-xl scale-105' // 確定：濃い赤 ＆ 文字強調
+                    : curX < -35
+                    ? 'bg-rose-100/70 text-rose-700/70 dark:bg-rose-950/50 dark:text-rose-300/60 text-lg' // 予告：淡い赤
+
+                : 'bg-transparent text-transparent text-lg'
             }`}>
                 <span>{curX > 35 ? '＋ 1' : ''}</span>
                 <span>{curX < -35 ? '− 1' : ''}</span>
