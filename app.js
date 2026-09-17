@@ -1158,7 +1158,22 @@ function App() {
             setShowAnalysisModal(true);
         } catch (e) {
             console.error("AI Analysis Error:", e);
-            setToastMessage(`AI分析に失敗しました: ${e.message}`);
+            const msg = (e && e.message) ? e.message.toLowerCase() : '';
+            let userFriendlyMsg = '通信エラーが発生しました。電波状況をご確認ください。';
+
+            if (msg.includes('failed to fetch') || msg.includes('network') || msg.includes('timeout')) {
+                userFriendlyMsg = '電波が不安定か、通信が切断されました。\n電波の届きやすい場所で再度お試しください。';
+            } else if (msg.includes('api_key') || msg.includes('invalid') || msg.includes('403') || msg.includes('permission')) {
+                userFriendlyMsg = 'APIキーが無効、または認証に失敗しました。\n設定画面で正しいGemini APIキーをご確認ください。';
+            } else if (msg.includes('quota') || msg.includes('resource_exhausted') || msg.includes('429')) {
+                userFriendlyMsg = 'AIの利用上限に達したか、アクセスが集中しています。\n1〜2分ほど時間を置いてから再度お試しください。';
+            } else if (msg.includes('json') || msg.includes('parse')) {
+                userFriendlyMsg = 'AIからの回答の読み込みに失敗しました。\nもう一度「分析」ボタンを押してください。';
+            } else if (msg.includes('500') || msg.includes('503') || msg.includes('service unavailable')) {
+                userFriendlyMsg = 'AIサーバーが混雑またはメンテナンス中です。\nしばらく待ってからお試しください。';
+            }
+
+            setToastMessage(`【AI分析エラー】\n${userFriendlyMsg}`);
         } finally {
             setAnalyzingRecordId(null);
         }
@@ -1838,27 +1853,40 @@ function App() {
                                                 )}
                                             </button>
 
-                                            {/* 2. AI分析ボタン（分析済なら黄色に変化） */}
-                                            <button
-                                                type="button"
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    if (r.aiAnalysisResult) {
-                                                        setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
-                                                        setShowAnalysisModal(true);
-                                                    } else {
-                                                        handleRunAiAnalysis(r);
-                                                    }
-                                                }}
-                                                className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 border shadow-2xs active:scale-95 transition-all select-none ${
-                                                    r.aiAnalysisResult
-                                                        ? 'bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700'
-                                                        : 'bg-white hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-700 dark:text-emerald-400 border-slate-200 dark:border-slate-700'
-                                                }`}
-                                            >
-                                                <span>📊</span>
-                                                <span>{analyzingRecordId === r.id ? '分析中...' : r.aiAnalysisResult ? '分析済' : '分析'}</span>
-                                            </button>
+                                            {/* 2. AI分析ボタン（分析中に右側でくるくる回転） */}
+<button
+    type="button"
+    disabled={analyzingRecordId === r.id}
+    onClick={(e) => {
+        e.stopPropagation();
+        if (analyzingRecordId === r.id) return;
+        if (r.aiAnalysisResult) {
+            setCurrentAnalysis({ record: r, data: r.aiAnalysisResult });
+            setShowAnalysisModal(true);
+        } else {
+            handleRunAiAnalysis(r);
+        }
+    }}
+    className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 border shadow-2xs transition-all select-none ${
+        analyzingRecordId === r.id
+            ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-700/80 cursor-wait'
+            : r.aiAnalysisResult
+            ? 'bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700 active:scale-95'
+            : 'bg-white hover:bg-emerald-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-emerald-700 dark:text-emerald-400 border-slate-200 dark:border-slate-700 active:scale-95'
+    }`}
+>
+    {analyzingRecordId === r.id ? (
+        <>
+            <span>分析中</span>
+            <span className="inline-block animate-spin text-sm leading-none ml-0.5 text-amber-600 dark:text-amber-400">↻</span>
+        </>
+    ) : (
+        <>
+            <span>📊</span>
+            <span>{r.aiAnalysisResult ? '分析済' : '分析'}</span>
+        </>
+    )}
+</button>
 
                                             {/* 3. 日報ボタン（作成中、または保存済み日報がある時のみ表示） */}
                                             {generatingAiId === r.id ? (
