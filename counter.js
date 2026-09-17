@@ -246,24 +246,24 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onMouseUp={handleEnd} 
             onMouseLeave={() => isDragging && handleEnd()}
         >
-            {/* スライド下地レール：70px到達で色が一段濃くなる2段階フィードバック */}
+            {/* スライド下地レール：35px〜は淡い色のみ、70px到達で濃色化＋初めて「＋1 / −1」を表示 */}
             <div className={`absolute inset-0 flex items-center justify-between px-6 font-black transition-colors duration-100 ${
                 // プラス側（右スライド）
                 curX >= 70
-                    ? 'bg-emerald-300 text-emerald-950 dark:bg-emerald-800 dark:text-emerald-100 text-xl scale-105' // 確定：濃い緑 ＆ 文字強調
+                    ? 'bg-emerald-300 text-emerald-950 dark:bg-emerald-800 dark:text-emerald-100 text-xl' // 確定：濃緑 ＋ 濃い文字色
                     : curX > 35
-                    ? 'bg-emerald-100/70 text-emerald-700/70 dark:bg-emerald-950/50 dark:text-emerald-300/60 text-lg' // 予告：淡い緑
+                    ? 'bg-emerald-100/70 text-transparent dark:bg-emerald-950/50' // 助走：淡緑のみ（文字は透明）
 
                 // マイナス側（左スライド）
                 : curX <= -70
-                    ? 'bg-rose-300 text-rose-950 dark:bg-rose-800 dark:text-rose-100 text-xl scale-105' // 確定：濃い赤 ＆ 文字強調
+                    ? 'bg-rose-300 text-rose-950 dark:bg-rose-800 dark:text-rose-100 text-xl' // 確定：濃赤 ＋ 濃い文字色
                     : curX < -35
-                    ? 'bg-rose-100/70 text-rose-700/70 dark:bg-rose-950/50 dark:text-rose-300/60 text-lg' // 予告：淡い赤
+                    ? 'bg-rose-100/70 text-transparent dark:bg-rose-950/50' // 助走：淡赤のみ（文字は透明）
 
-                : 'bg-transparent text-transparent text-lg'
+                : 'bg-transparent text-transparent'
             }`}>
-                <span>{curX > 35 ? '＋ 1' : ''}</span>
-                <span>{curX < -35 ? '− 1' : ''}</span>
+                <span>{curX >= 70 ? '＋ 1' : ''}</span>
+                <span>{curX <= -70 ? '− 1' : ''}</span>
             </div>
 
             <div 
