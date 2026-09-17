@@ -92,14 +92,12 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     );
 };
 
-// タップ式カウンターカード（外枠を dark:border-slate-500 に統一）
+// タップ式カウンターカード（長押し全廃・左下マイナス配置・スクロール両立版）
 const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
     if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
     
     const [flashType, setFlashType] = React.useState(null);
-    const timerRef = React.useRef(null);
-    const isLongPress = React.useRef(false);
     const isPort = side === 'port';
 
     const normalCardBg = isPort 
@@ -110,6 +108,7 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
+    // ＋1 カウント処理
     const handleCardTap = () => {
         onCountDelta(side, index, 1);
         setFlashType('plus');
@@ -117,25 +116,13 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
-    const handlePointerDown = (e) => {
-        e.stopPropagation();
-        isLongPress.current = false;
-        timerRef.current = setTimeout(() => {
-            isLongPress.current = true;
-            onClear(side, index);
-            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(40);
-        }, 1000);
-    };
-
-    const handlePointerUp = (e) => {
-        e.stopPropagation();
-        if (timerRef.current) clearTimeout(timerRef.current);
-        if (!isLongPress.current) {
-            onCountDelta(side, index, -1);
-            setFlashType('minus');
-            setTimeout(() => setFlashType(null), 150);
-            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
-        }
+    // −1 カウント処理（長押し判定なし・即時反応）
+    const handleMinusTap = (e) => {
+        e.stopPropagation(); // 背景の ＋1 発火を阻止
+        onCountDelta(side, index, -1);
+        setFlashType('minus');
+        setTimeout(() => setFlashType(null), 150);
+        if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
     const flashClass = flashType === 'plus'
@@ -146,6 +133,8 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
 
     return (
         <div className={`relative rounded-lg shadow-sm border overflow-hidden flex-1 flex flex-col tap-none select-none transition-all duration-150 ${flashClass}`} style={{ minHeight: minH }}>
+            
+            {/* メインエリア：タップで ＋1 */}
             <div className="flex-1 flex flex-col items-center justify-center cursor-pointer pt-2" onClick={handleCardTap}>
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
@@ -155,7 +144,16 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
                     {seat.count === '' ? '0' : seat.count}
                 </div>
             </div>
-            <button className="absolute bottom-0 right-0 w-8 h-8 flex items-center justify-center border-l border-t rounded-tl-lg bg-white/70 dark:bg-slate-800/70 border-gray-200 dark:border-slate-500 font-black text-base text-gray-800 dark:text-slate-100 active:bg-gray-200" onPointerDown={handlePointerDown} onPointerUp={handlePointerUp}>−</button>
+
+            {/* 左下の角に移動したマイナスボタン（角丸・枠線も左下用に最適化） */}
+            <button 
+                type="button"
+                className="absolute bottom-0 left-0 w-9 h-9 flex items-center justify-center border-r border-t rounded-tr-lg bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-500 font-black text-lg text-gray-800 dark:text-slate-100 active:bg-gray-200 dark:active:bg-slate-700 active:scale-90 transition-all select-none" 
+                onClick={handleMinusTap}
+                title="1減らす"
+            >
+                −
+            </button>
         </div>
     );
 };
