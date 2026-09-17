@@ -173,15 +173,16 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
 
     const handleStart = (cx) => { setStartX(cx); setIsDragging(true); };
     const handleMove = (cx) => { if (isDragging) setCurX(Math.max(-120, Math.min(120, cx - startX))); };
-    const handleEnd = () => {
+    cconst handleEnd = () => {
         if (!isDragging) return;
         setIsDragging(false);
-        if (curX > 40) {
+        // 判定距離を 40px から 70px へ引き上げ（誤操作防止）
+        if (curX > 70) {
             onCountDelta(side, index, 1);
             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
             setFlashType('plus');
             setTimeout(() => setFlashType(null), 150);
-        } else if (curX < -40) {
+        } else if (curX < -70) {
             onCountDelta(side, index, -1);
             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
             setFlashType('minus');
@@ -209,11 +210,12 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onTouchStart={(e) => handleStart(e.touches[0].clientX)} onTouchMove={(e) => handleMove(e.touches[0].clientX)} onTouchEnd={handleEnd}
             onMouseDown={(e) => handleStart(e.clientX)} onMouseMove={(e) => handleMove(e.clientX)} onMouseUp={handleEnd} onMouseLeave={() => isDragging && handleEnd()}>
             
+            {/* ガイド文字の表示もしきい値に合わせて 15px から 35px へ調整 */}
             <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
-                curX > 15 ? 'bg-emerald-600 text-white' : curX < -15 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
+                curX > 35 ? 'bg-emerald-600 text-white' : curX < -35 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
             }`}>
-                <span>{curX > 15 ? '＋ 1' : ''}</span>
-                <span>{curX < -15 ? '− 1' : ''}</span>
+                <span>{curX > 35 ? '＋ 1' : ''}</span>
+                <span>{curX < -35 ? '− 1' : ''}</span>
             </div>
 
             <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm transition-all duration-150 ${flashClass}`} style={{ transform: `translateX(${curX}px)` }}>
