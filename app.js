@@ -1677,8 +1677,7 @@ function App() {
                                                         {r.targetFish}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-xs bg-gray-150 text-gray-700 px-2 py-0.5 rounded font-black border border-gray-300">釣果</span>
-                                                )}
+                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black border border-gray-200">釣果</span>
                                                 )}
                                                 <span className="text-gray-400 dark:text-slate-500">
                                                     {isExpanded ? <IconChevronUp className="w-5 h-5" /> : <IconChevronDown className="w-5 h-5" />}
