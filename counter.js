@@ -173,7 +173,7 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
 
     const handleStart = (cx) => { setStartX(cx); setIsDragging(true); };
     const handleMove = (cx) => { if (isDragging) setCurX(Math.max(-120, Math.min(120, cx - startX))); };
-    cconst handleEnd = () => {
+    const handleEnd = () => {
         if (!isDragging) return;
         setIsDragging(false);
         // 判定距離を 40px から 70px へ引き上げ（誤操作防止）
