@@ -383,7 +383,7 @@ function SettingsPanel({
                     <button 
                         type="button"
                         onClick={() => setIsSettingsOpen(false)} 
-                        className="w-10 h-10 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-xl flex items-center justify-center font-black text-base text-gray-600 dark:text-slate-300 shadow-xs active:scale-90 transition-all select-none"
+                        className="w-10 h-10 bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 border border-slate-400 dark:border-slate-500 rounded-xl flex items-center justify-center font-black text-lg text-slate-800 dark:text-white shadow-sm active:scale-90 transition-all select-none"
                         aria-label="閉じる"
                     >
                         ✕
