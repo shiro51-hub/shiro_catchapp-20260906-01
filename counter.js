@@ -92,13 +92,13 @@ const SeatInput = ({ side, seat, index, onSeatChange, onCountDelta, viewMode, on
     );
 };
 
-// タップ式カウンターカード（長押し全廃・左下マイナス配置・スクロール両立版）
+// タップ式カウンターカード（左舷は左下、右舷は右下にマイナスを逃がして中央を広くする版）
 const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
     if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 font-black text-xl">{seat.id}</span></div>;
     
     const [flashType, setFlashType] = React.useState(null);
-    const isPort = side === 'port';
+    const isPort = side === 'port'; // 左舷判定
 
     const normalCardBg = isPort 
         ? 'bg-red-50 dark:bg-red-900/10 border-red-100 dark:border-slate-500 text-red-700 dark:text-red-300' 
@@ -108,7 +108,7 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         ? 'text-red-300/80 dark:text-red-300/40'
         : 'text-emerald-400/80 dark:text-emerald-400/40';
 
-    // ＋1 カウント処理
+    // ＋1 カウント
     const handleCardTap = () => {
         onCountDelta(side, index, 1);
         setFlashType('plus');
@@ -116,9 +116,9 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
     };
 
-    // −1 カウント処理（長押し判定なし・即時反応）
+    // −1 カウント（長押しタイマーなし・即時反応）
     const handleMinusTap = (e) => {
-        e.stopPropagation(); // 背景の ＋1 発火を阻止
+        e.stopPropagation(); // ＋1の発火を防ぐ
         onCountDelta(side, index, -1);
         setFlashType('minus');
         setTimeout(() => setFlashType(null), 150);
@@ -131,10 +131,15 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
         ? 'bg-red-500 text-white scale-[0.98]'
         : normalCardBg;
 
+    // 左舷なら左下、右舷なら右下に配置するクラスの切り替え
+    const minusBtnPositionClass = isPort
+        ? 'bottom-0 left-0 border-r border-t rounded-tr-lg'
+        : 'bottom-0 right-0 border-l border-t rounded-tl-lg';
+
     return (
         <div className={`relative rounded-lg shadow-sm border overflow-hidden flex-1 flex flex-col tap-none select-none transition-all duration-150 ${flashClass}`} style={{ minHeight: minH }}>
             
-            {/* メインエリア：タップで ＋1 */}
+            {/* メインエリア：左右中央がまるごと広々とした ＋1 タップ領域 */}
             <div className="flex-1 flex flex-col items-center justify-center cursor-pointer pt-2" onClick={handleCardTap}>
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
@@ -145,10 +150,10 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
                 </div>
             </div>
 
-            {/* 左下の角に移動したマイナスボタン（角丸・枠線も左下用に最適化） */}
+            {/* 左舷は「左下隅」、右舷は「右下隅」にマイナスボタンを配置 */}
             <button 
                 type="button"
-                className="absolute bottom-0 left-0 w-9 h-9 flex items-center justify-center border-r border-t rounded-tr-lg bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-500 font-black text-lg text-gray-800 dark:text-slate-100 active:bg-gray-200 dark:active:bg-slate-700 active:scale-90 transition-all select-none" 
+                className={`absolute w-9 h-9 flex items-center justify-center bg-white/80 dark:bg-slate-800/80 border-gray-200 dark:border-slate-500 font-black text-lg text-gray-800 dark:text-slate-100 active:bg-gray-200 dark:active:bg-slate-700 active:scale-90 transition-all select-none ${minusBtnPositionClass}`} 
                 onClick={handleMinusTap}
                 title="1減らす"
             >
