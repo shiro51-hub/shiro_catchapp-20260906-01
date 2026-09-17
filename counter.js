@@ -243,8 +243,13 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onMouseUp={handleEnd} 
             onMouseLeave={() => isDragging && handleEnd()}
         >
-            <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
-                curX > 35 ? 'bg-emerald-600 text-white' : curX < -35 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
+            {/* スライド下地レール：1番のマリン＆スレートレール案（文字表示付き） */}
+            <div className={`absolute inset-0 flex items-center justify-between px-6 font-black text-lg transition-colors ${
+                curX > 35 
+                    ? 'bg-sky-200 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300' 
+                    : curX < -35 
+                    ? 'bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-300' 
+                    : 'bg-transparent text-transparent'
             }`}>
                 <span>{curX > 35 ? '＋ 1' : ''}</span>
                 <span>{curX < -35 ? '− 1' : ''}</span>
