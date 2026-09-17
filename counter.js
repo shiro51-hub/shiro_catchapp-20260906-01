@@ -243,12 +243,12 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
             onMouseUp={handleEnd} 
             onMouseLeave={() => isDragging && handleEnd()}
         >
-            {/* スライド下地レール：1番のマリン＆スレートレール案（文字表示付き） */}
+            {/* スライド下地レール：淡い緑/赤背景 ＋ 同系色濃いめフォント */}
             <div className={`absolute inset-0 flex items-center justify-between px-6 font-black text-lg transition-colors ${
                 curX > 35 
-                    ? 'bg-sky-200 text-sky-900 dark:bg-sky-950/80 dark:text-sky-300' 
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300' 
                     : curX < -35 
-                    ? 'bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-300' 
+                    ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300' 
                     : 'bg-transparent text-transparent'
             }`}>
                 <span>{curX > 35 ? '＋ 1' : ''}</span>
