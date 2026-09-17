@@ -1648,7 +1648,7 @@ function App() {
                                             <div className="flex items-center gap-1.5">
                                                 {r.targetFish ? (
                                                     <span 
-                                                        className="text-sm bg-sky-100 dark:bg-sky-900/40 text-sky-800 dark:text-sky-300 px-3 py-1 rounded-lg font-black select-none cursor-pointer border border-sky-200 dark:border-sky-800 active:bg-sky-200 transition-all shadow-sm"
+                                                        className="text-sm bg-sky-200/90 hover:bg-sky-300/80 dark:bg-sky-900/70 dark:hover:bg-sky-850 text-sky-900 dark:text-sky-200 px-3 py-1 rounded-lg font-black select-none cursor-pointer border-2 border-sky-400 dark:border-sky-600 active:scale-95 transition-all shadow-xs"
                                                         title="長押しでAI日報作成"
                                                         onPointerDown={(e) => {
                                                             e.stopPropagation();
@@ -1677,7 +1677,8 @@ function App() {
                                                         {r.targetFish}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded font-black">釣果</span>
+                                                    <span className="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded font-black border border-gray-300">釣果</span>
+                                                )}
                                                 )}
                                                 <span className="text-gray-400 dark:text-slate-500">
                                                     {isExpanded ? <IconChevronUp className="w-5 h-5" /> : <IconChevronDown className="w-5 h-5" />}
@@ -1820,20 +1821,20 @@ function App() {
                                         {/* 【上段】左から メモ ➔ 分析 ➔ 日報 ➔ ボード */}
                                         <div className="flex items-center gap-1.5 w-full">
                                             
-                                            {/* 1. メモボタン */}
+                                            {/* 1. メモボタン（分析済・日報と完全に同じアンバー配色に統一） */}
                                             <button
                                                 type="button"
                                                 onClick={(e) => { e.stopPropagation(); openMemoModal(r); }}
                                                 className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1 border shadow-2xs active:scale-95 transition-all select-none ${
                                                     r.detailedMemo && r.detailedMemo.trim() !== ''
-                                                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700/80'
+                                                        ? 'bg-amber-100/80 hover:bg-amber-200/80 dark:bg-amber-950/50 dark:hover:bg-amber-900/60 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700'
                                                         : 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
                                                 }`}
                                             >
                                                 <span>📝</span>
                                                 <span>メモ</span>
                                                 {r.detailedMemo && r.detailedMemo.trim() !== '' && (
-                                                    <span className="text-amber-500 dark:text-amber-400 font-black text-xs leading-none">✓</span>
+                                                    <span className="text-amber-600 dark:text-amber-400 font-black text-xs leading-none">✓</span>
                                                 )}
                                             </button>
 
