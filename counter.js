@@ -160,35 +160,62 @@ const CounterCardTap = ({ side, seat, index, onCountDelta, onClear, totalSeats }
     );
 };
 
-// スライド式カウンターカード（外枠を dark:border-slate-500 に統一）
+// スライド式カウンターカード（上下スクロール両立版）
 const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
     if (seat.isVisible === false) return <div className="rounded-lg border-2 border-dashed border-gray-200 dark:border-slate-500 bg-gray-50 dark:bg-slate-800/30 flex-1 flex items-center justify-center" style={{ minHeight: minH }}><span className="text-gray-300 dark:text-slate-600 font-black text-xl">{seat.id}</span></div>;
     
     const [startX, setStartX] = React.useState(0);
+    const [startY, setStartY] = React.useState(0);
     const [curX, setCurX] = React.useState(0);
     const [isDragging, setIsDragging] = React.useState(false);
+    const [isScrolling, setIsScrolling] = React.useState(false); // 縦スクロール中フラグ
     const [flashType, setFlashType] = React.useState(null);
     const isPort = side === 'port';
 
-    const handleStart = (cx) => { setStartX(cx); setIsDragging(true); };
-    const handleMove = (cx) => { if (isDragging) setCurX(Math.max(-120, Math.min(120, cx - startX))); };
+    const handleStart = (cx, cy) => {
+        setStartX(cx);
+        setStartY(cy || 0);
+        setIsDragging(true);
+        setIsScrolling(false);
+    };
+
+    const handleMove = (cx, cy) => {
+        if (!isDragging || isScrolling) return;
+
+        // 縦方向の移動が大きい場合はスクロールとみなして横スライドを破棄
+        if (cy !== undefined) {
+            const diffY = Math.abs(cy - startY);
+            const diffX = Math.abs(cx - startX);
+            if (diffY > 10 && diffY > diffX) {
+                setIsScrolling(true);
+                setCurX(0);
+                return;
+            }
+        }
+
+        setCurX(Math.max(-120, Math.min(120, cx - startX)));
+    };
+
     const handleEnd = () => {
         if (!isDragging) return;
         setIsDragging(false);
-        // 判定距離を 40px から 70px へ引き上げ（誤操作防止）
-        if (curX > 70) {
-            onCountDelta(side, index, 1);
-            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
-            setFlashType('plus');
-            setTimeout(() => setFlashType(null), 150);
-        } else if (curX < -70) {
-            onCountDelta(side, index, -1);
-            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
-            setFlashType('minus');
-            setTimeout(() => setFlashType(null), 150);
+
+        if (!isScrolling) {
+            if (curX > 70) {
+                onCountDelta(side, index, 1);
+                if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
+                setFlashType('plus');
+                setTimeout(() => setFlashType(null), 150);
+            } else if (curX < -70) {
+                onCountDelta(side, index, -1);
+                if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(25);
+                setFlashType('minus');
+                setTimeout(() => setFlashType(null), 150);
+            }
         }
         setCurX(0);
+        setIsScrolling(false);
     };
 
     const cardBg = isPort 
@@ -206,18 +233,16 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         : cardBg;
 
     return (
-        /* 1. touch-none を追加してブラウザのスクロール干渉を完全遮断 */
-        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 overflow-hidden flex-1 flex flex-col tap-none select-none touch-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
-            onTouchStart={(e) => handleStart(e.touches[0].clientX)} 
-            onTouchMove={(e) => handleMove(e.touches[0].clientX)} 
+        /* touch-pan-y に変更し、縦スクロールを完全に許可 */
+        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 overflow-hidden flex-1 flex flex-col tap-none select-none touch-pan-y bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
+            onTouchStart={(e) => handleStart(e.touches[0].clientX, e.touches[0].clientY)} 
+            onTouchMove={(e) => handleMove(e.touches[0].clientX, e.touches[0].clientY)} 
             onTouchEnd={handleEnd}
-            onMouseDown={(e) => handleStart(e.clientX)} 
-            onMouseMove={(e) => handleMove(e.clientX)} 
+            onMouseDown={(e) => handleStart(e.clientX, e.clientY)} 
+            onMouseMove={(e) => handleMove(e.clientX, e.clientY)} 
             onMouseUp={handleEnd} 
             onMouseLeave={() => isDragging && handleEnd()}
         >
-            
-            {/* 背景の ＋1 / −1 表示 */}
             <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
                 curX > 35 ? 'bg-emerald-600 text-white' : curX < -35 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
             }`}>
@@ -225,10 +250,9 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
                 <span>{curX < -35 ? '− 1' : ''}</span>
             </div>
 
-            {/* 2. isDragging 中は transition-none に切り替えて指の動きに1対1で吸い付かせる */}
             <div 
                 className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm ${
-                    isDragging ? 'transition-none' : 'transition-all duration-150'
+                    isDragging && !isScrolling ? 'transition-none' : 'transition-all duration-150'
                 } ${flashClass}`} 
                 style={{ transform: `translateX(${curX}px)` }}
             >
@@ -245,7 +269,6 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         </div>
     );
 };
-
 // テンキー式カウンターカード（外枠を dark:border-slate-500 に統一）
 const CounterKeypadCard = ({ side, seat, index, onSeatChange, totalSeats }) => {
     const minH = (totalSeats > 0 && totalSeats <= 6) ? `max(7.5rem, calc((100dvh - 240px) / ${totalSeats}))` : '6.5rem';
