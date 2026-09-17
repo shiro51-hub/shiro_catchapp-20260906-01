@@ -1969,7 +1969,6 @@ function App() {
                     >
                         <span className="text-lg leading-none font-bold">⌵</span>
                     </button>
-                </div>
             </div>
 
             {/* ナビバーが隠れている時の透明スワイプエリア */}
