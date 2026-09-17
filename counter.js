@@ -206,11 +206,18 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
         : cardBg;
 
     return (
-        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 overflow-hidden flex-1 flex flex-col tap-none select-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
-            onTouchStart={(e) => handleStart(e.touches[0].clientX)} onTouchMove={(e) => handleMove(e.touches[0].clientX)} onTouchEnd={handleEnd}
-            onMouseDown={(e) => handleStart(e.clientX)} onMouseMove={(e) => handleMove(e.clientX)} onMouseUp={handleEnd} onMouseLeave={() => isDragging && handleEnd()}>
+        /* 1. touch-none を追加してブラウザのスクロール干渉を完全遮断 */
+        <div className="relative rounded-lg shadow-sm border border-gray-200 dark:border-slate-500 overflow-hidden flex-1 flex flex-col tap-none select-none touch-none bg-gray-200 dark:bg-slate-950" style={{ minHeight: minH }}
+            onTouchStart={(e) => handleStart(e.touches[0].clientX)} 
+            onTouchMove={(e) => handleMove(e.touches[0].clientX)} 
+            onTouchEnd={handleEnd}
+            onMouseDown={(e) => handleStart(e.clientX)} 
+            onMouseMove={(e) => handleMove(e.clientX)} 
+            onMouseUp={handleEnd} 
+            onMouseLeave={() => isDragging && handleEnd()}
+        >
             
-            {/* ガイド文字の表示もしきい値に合わせて 15px から 35px へ調整 */}
+            {/* 背景の ＋1 / −1 表示 */}
             <div className={`absolute inset-0 flex items-center justify-between px-5 font-black text-lg transition-colors ${
                 curX > 35 ? 'bg-emerald-600 text-white' : curX < -35 ? 'bg-red-600 text-white' : 'bg-transparent text-transparent'
             }`}>
@@ -218,10 +225,18 @@ const CounterCardSlide = ({ side, seat, index, onCountDelta, totalSeats }) => {
                 <span>{curX < -35 ? '− 1' : ''}</span>
             </div>
 
-            <div className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm transition-all duration-150 ${flashClass}`} style={{ transform: `translateX(${curX}px)` }}>
+            {/* 2. isDragging 中は transition-none に切り替えて指の動きに1対1で吸い付かせる */}
+            <div 
+                className={`absolute inset-0 z-10 flex flex-col items-center justify-center border rounded-lg shadow-sm ${
+                    isDragging ? 'transition-none' : 'transition-all duration-150'
+                } ${flashClass}`} 
+                style={{ transform: `translateX(${curX}px)` }}
+            >
                 <div className="absolute top-2 left-2 right-2 flex items-baseline space-x-1.5">
                     <span className="text-2xl font-black shrink-0">{seat.id}</span>
-                    <span className={`text-lg font-bold truncate ${flashType ? 'text-white/90' : nameColor}`}>{seat.name || '-'} {seat.memo && `(${seat.memo})`}</span>
+                    <span className={`text-lg font-bold truncate ${flashType ? 'text-white/90' : nameColor}`}>
+                        {seat.name || '-'} {seat.memo && `(${seat.memo})`}
+                    </span>
                 </div>
                 <div className={`text-4xl sm:text-5xl font-black mt-3 transition-transform duration-100 ${flashType ? 'scale-110' : 'scale-100'}`}>
                     {seat.count || '0'}
